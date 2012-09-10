@@ -8,4 +8,6 @@ module Pixiv
 	
 	# 存在しないユーザが呼ばれたら返す
 	class UserNotFoundError < StandardError; end
+	
+	
 end

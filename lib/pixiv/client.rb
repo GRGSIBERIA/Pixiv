@@ -1,12 +1,27 @@
-=begin
-Pixiv‚ÉƒAƒNƒZƒX‚·‚é‚½‚ß‚ÌƒNƒ‰ƒCƒAƒ“ƒgƒNƒ‰ƒX
-‚±‚ÌƒNƒ‰ƒXƒCƒ“ƒXƒ^ƒ“ƒX‚ğ—˜—p‚µ‚ÄPixiv‚ÉƒAƒNƒZƒX‚·‚é
+ï»¿=begin
+Pixivã«ã‚¢ã‚¯ã‚»ã‚¹ã™ã‚‹ãŸã‚ã®ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‚¯ãƒ©ã‚¹
+ã“ã®ã‚¯ãƒ©ã‚¹ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’åˆ©ç”¨ã—ã¦Pixivã«ã‚¢ã‚¯ã‚»ã‚¹ã™ã‚‹
 =end
+require 'yaml'
+require 'mechanize'
 
 module Pixiv
 	class Client
 		def initialize
-			
+			ReadConfiguration()
 		end
+		
+		# ãƒ¦ãƒ¼ã‚¶IDã‚„ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’ä¿å­˜ã™ã‚‹
+		def ReadConfiguration()
+			config = YAML::load_file("./pixiv_config.ini")
+			@user_id = config['pixiv']['user_id']
+			@password = config['pixiv']['password']
+			# yaml example
+			# pixiv:
+			#		user_id:	hogehoge
+			#		password:	puyopuyo
+		end
+		
+		
 	end
 end
