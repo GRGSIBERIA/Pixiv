@@ -22,8 +22,13 @@ module Pixiv
 			
 			end
 			
-			# @return [Presenter::Author] ユーザ情報
-			def author
+			# @return [String] ユーザ名
+			def username
+			
+			end
+			
+			# @return [Int] ユーザID
+			def userid
 			
 			end
 			
@@ -34,6 +39,26 @@ module Pixiv
 			
 			# @return [String] イラストの大きさ
 			def size
+			
+			end
+			
+			# @return [Array<String>] 使用したツール
+			def tools
+			
+			end
+			
+			# @return [Int] イラストの閲覧数
+			def view_count
+			
+			end
+			
+			# @return [Int] イラストの評価回数
+			def evaluation_count
+			
+			end
+			
+			# @return [Int] 総合点数
+			def total_points
 			
 			end
 		end
