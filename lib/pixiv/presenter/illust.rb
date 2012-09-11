@@ -60,7 +60,7 @@ module Pixiv
 			
 			# @return [Int] イラストの評価回数
 			def rated_count
-				
+				@rated_count ||= Parser::Illust.rated_count(@page)
 			end
 			
 			# @return [Int] 総合点数

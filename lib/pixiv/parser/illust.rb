@@ -79,6 +79,15 @@ module Pixiv
 				path = 'dd[class=view-count]'
 				page.at(path).inner_text
 			end
+			
+			# @param [Mechanize::Page] 調べたいページ
+			# @return [String] 評価回数
+			def self.rated_count(page)
+				path = 'dd[class=rated-count]'
+				page.at(path).inner_text
+			end
+			
+			
 		end
 	end
 end
