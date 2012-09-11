@@ -93,9 +93,21 @@ module Pixiv
 			# @return [String] 画像ファイルが実際に格納されている場所のパス
 			def self.location(page)
 				path = 'a[@class=avatar_m]'
-				File.dirname(page.at(path).child['src'])
+				File.dirname(page.at(path).child['src']).sub!(/profile/, 'img')
 			end
 			
+			# @param [Mechanize::Page] 調べたいページ
+			# @return [String] イラストの拡張子
+			def self.extension(page)
+				path = 'div[@class=works_display]'
+				File.extname(page.at(path).child.child['src']).split('?')[0]
+			end
+			
+			# @param [Mechanize::Page] 調べたいページ
+			# @return [Bool] イラストかマンガか
+			def self.is_manga(page)
+				page.at('div[@class=works_display]').child['href'].include?('manga')
+			end
 		end
 	end
 end

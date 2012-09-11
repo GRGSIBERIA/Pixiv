@@ -13,11 +13,17 @@ module Pixiv
 			end
 		
 			# @param illust_id [Int] 情報を取得するイラストID
-			# @return [Presenter::Illust] 取得したイラスト情報
+			# @return [Presenter::Image => Presenter::Illust || Presenter::Manga] 取得したイラスト情報
 			def show(illust_id)
 				uri = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=#{illust_id.to_s}"
-				File.write("test.txt", @agent.get(uri).body)
-				Presenter::Illust.new(@agent.page)
+				@agent.get(uri).body
+				#File.write("test.txt", @agent.page.body)
+				
+				if !Parser::Illust.is_manga(@agent.page) then	# イラスト
+					Presenter::Illust.new(@agent.page, illust_id)
+				else	# 漫画
+					Presenter::Manga.new(@agent.page, illust_id)
+				end
 			end
 		end
 	end
