@@ -7,6 +7,10 @@ module Pixiv
 	module Presenter
 		# イラスト情報を格納するためのクラス
 		class Illust < Base
+			def initialize(page)
+				super(page)
+			def
+		
 			# @return [Array<String>] タグ情報の配列
 			def tags
 			
@@ -14,7 +18,7 @@ module Pixiv
 			
 			# @return [String] タイトル
 			def title
-			
+				
 			end
 
 			# @return [String] キャプション

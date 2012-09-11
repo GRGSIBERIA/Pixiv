@@ -1,11 +1,14 @@
-=begin
-\‘¢‚ğ•\‚·‚½‚ß‚Ìƒx[ƒXƒNƒ‰ƒX
+ï»¿=begin
+æ§‹é€ ã‚’è¡¨ã™ãŸã‚ã®ãƒ™ãƒ¼ã‚¹ã‚¯ãƒ©ã‚¹
 =end
 
 module Pixiv
 	module Presenter
 		class Base
-			
+			# @param [Mechanize::Page] ã‚¢ã‚¯ã‚»ã‚¹ã—ãŸãƒšãƒ¼ã‚¸
+			def initialize(page)
+				@page = page
+			end
 		end
 	end
 end

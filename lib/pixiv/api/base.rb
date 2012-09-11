@@ -5,8 +5,9 @@ Pixivに問い合わせるためのAPIのベースクラス
 module Pixiv
 	module API
 		class Base
-			def initialize
-				
+			# @param agent [Mechanize] セッションの確立している状態のもの
+			def initialize(agent)
+				@agent = agent
 			end
 		end
 	end
