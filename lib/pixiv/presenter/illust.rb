@@ -10,7 +10,7 @@ module Pixiv
 		class Illust < Base
 			def initialize(page)
 				super(page)
-			def
+			end
 		
 			# @return [Array<String>] タグ情報の配列
 			def tags
@@ -29,12 +29,12 @@ module Pixiv
 			
 			# @return [String] ユーザ名
 			def artist
-			
+				@artist ||= Parser::Illust.artist(@page)
 			end
 			
 			# @return [Int] ユーザID
 			def userid
-			
+				@userid ||= Parser::Illust.userid(@page)
 			end
 			
 			# @return [Date] 投稿した日付

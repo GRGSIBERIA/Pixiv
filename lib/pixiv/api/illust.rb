@@ -16,7 +16,8 @@ module Pixiv
 			# @return [Presenter::Illust] æ“¾‚µ‚½ƒCƒ‰ƒXƒgî•ñ
 			def show(illust_id)
 				uri = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=#{illust_id.to_s}"
-				@agent.get(uri)
+				File.write("test.txt", @agent.get(uri).body)
+				Presenter::Illust.new(@agent.page)
 			end
 		end
 	end

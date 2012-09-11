@@ -5,11 +5,16 @@ Pixivにアクセスするためのクライアントクラス
 require 'yaml'
 require 'mechanize'
 
+require './pixiv/api/illust.rb'
+
 module Pixiv
 	class Client
+		attr_reader :illust
+	
 		def initialize
 			user_info = ReadConfiguration()
 			@connection = Connection.new(user_info['user_id'], user_info['password'])
+			@illust = API::Illust.new(@connection.agent)
 		end
 		
 		# ユーザIDやパスワードを保存する

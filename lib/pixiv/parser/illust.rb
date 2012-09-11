@@ -7,24 +7,24 @@ module Pixiv
 		class Illust
 			# @param [Mechanize::Page] 調べたいページ
 			# @return [String] タイトル
-			def Parser.title(page)
-				page.at("h1[@class=title]").inner_text
+			def self.title(page)
+				page.at("h1[@class='title']").inner_text
 			end
 			
 			# @param [Mechanize::Page] 調べたいページ
-			# @param [String] イラストの概要
-			def Parser.caption(page)
+			# @return [String] イラストの概要
+			def self.caption(page)
 				path = 'div[@id="caption_long"]'
-				@agent.page.at(path).inner_text
+				page.at(path).inner_text
 			end
 			
 			# @param [Mechanize::Page] 調べたいページ
-			# @param [Array<String>] タグの配列
-			def Parser.tags(page)
+			# @return [Array<String>] タグの配列
+			def self.tags(page)
 				path = 'span[@id=tags]/a'
 				
 				# 拾ってきたタグの中から意味のないタグを排除する
-				all_tags = @agent.page.search(path)
+				all_tags = page.search(path)
 				tags = Array.new
 				for i in 0..all_tags.length-1 do
 					all_tags[i].each{|k,v| 
@@ -34,6 +34,20 @@ module Pixiv
 					}
 				end
 				tags
+			end
+			
+			# @param [Mechanize::Page] 調べたいページ
+			# @return [String] 投稿者の名前
+			def self.artist(page)
+				path = 'a[@class=avater_m]'
+				page.at(path)['title']
+			end
+			
+			# @param [Mechanize::Page] 調べたいページ
+			# @param [String] 投稿者のID
+			def self.userid(page)
+				path = 'a[@class=avater_m]'
+				page.at(path)['href'].delete('/member.php?id=')
 			end
 		end
 	end
