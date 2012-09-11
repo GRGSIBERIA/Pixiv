@@ -8,6 +8,7 @@ module Pixiv
 	module Presenter
 		# イラスト情報を格納するためのクラス
 		class Illust < Base
+			# @param [Mechanize::Page] ページ
 			def initialize(page)
 				super(page)
 			end
@@ -32,14 +33,14 @@ module Pixiv
 				@artist ||= Parser::Illust.artist(@page)
 			end
 			
-			# @return [Int] ユーザID
+			# @return [String] ユーザID
 			def userid
 				@userid ||= Parser::Illust.userid(@page)
 			end
 			
-			# @return [Date] 投稿した日付
+			# @return [String] 投稿した日付
 			def date
-			
+				@date ||= Parser::Illust.date(@page)
 			end
 			
 			# @return [String] イラストの大きさ
