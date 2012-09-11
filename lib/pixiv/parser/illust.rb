@@ -52,42 +52,50 @@ module Pixiv
 			# @param [Mechanize::Page] 調べたいページ
 			# @return [Date] 日時用クラスを返す
 			def self.date(page)
-				path = 'ul[class=meta]'
+				path = 'ul[@class=meta]'
 				Date.strptime(page.at(path).inner_text, "%Y年%m月%d日 %H:%M")
 			end
 			
 			# @param [Mechanize::Page] 調べたいページ
-			# @return [Array<String>{width, height}] 画像の大きさ 
+			# @return [String] 画像の大きさ、もしくはページ数
 			def self.size(page)
-				path = 'ul[class=meta]'
-				page.search(path).children[1].inner_text.split('×')
+				path = 'ul[@class=meta]'
+				page.search(path).children[1].inner_text
 			end
 			
 			# @param [Mechanize::Page] 調べたいページ
 			# @return [Array<String>] 使ってるツール
 			def self.tools(page)
 				result = Array.new
-				page.search('ul[class=tools]').each{|str| result << str.inner_text }
+				page.search('ul[@class=tools]').each{|str| result << str.inner_text }
 				result
 			end
 			
 			# @param [Mechanize::Page] 調べたいページ
 			# @return [String] 閲覧回数
 			def self.view_count(page)
-				page.at('dd[class=view-count]').inner_text
+				page.at('dd[@class=view-count]').inner_text
 			end
 			
 			# @param [Mechanize::Page] 調べたいページ
 			# @return [String] 評価回数
 			def self.rated_count(page)
-				page.at('dd[class=rated-count]').inner_text
+				page.at('dd[@class=rated-count]').inner_text
 			end
 			
 			# @param [Mechanize::Page] 調べたいページ
 			# @return [String] 評価点数
 			def self.score_count(page)
-				page.at('dd[class=score_count]').inner_text
+				page.at('dd[@class=score-count]').inner_text
 			end
+			
+			# @param [Mechanize::Page] 調べたいページ
+			# @return [String] 画像ファイルが実際に格納されている場所のパス
+			def self.location(page)
+				path = 'a[@class=avatar_m]'
+				File.dirname(page.at(path).child['src'])
+			end
+			
 		end
 	end
 end

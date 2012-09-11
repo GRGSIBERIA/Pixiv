@@ -43,9 +43,13 @@ module Pixiv
 				@date ||= Parser::Illust.date(@page)
 			end
 			
-			# @return [String] イラストの大きさ
+			# @return [String] イラストの大きさ、もしくはページ枚数
 			def size
 				@size ||= Parser::Illust.size(@page)
+			end
+			
+			def page_count
+				@page_count = size.
 			end
 			
 			# @return [Array<String>] 使用したツール
@@ -65,7 +69,14 @@ module Pixiv
 			
 			# @return [Int] 総合点数
 			def score_count
+				@score_count ||= Parser::Illust.score_count(@page)
+			end
 			
+			# @return [String] 実際の画像が置かれている置かれているURI
+			# EXAMPLE:
+			# 		http://i2.pixiv.net/img12/img/hoge123/
+			def location
+				@location ||= Parser::Illust.location(@page) + "/"
 			end
 		end
 	end
