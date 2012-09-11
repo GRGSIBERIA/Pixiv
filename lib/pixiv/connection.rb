@@ -2,8 +2,8 @@
 Pixivと通信を行うためのクラス
 =end
 
-#require 'openssl'
-#OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+require 'openssl'
+OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 require 'mechanize'
 
 require './pixiv/error.rb'
@@ -28,7 +28,8 @@ module Pixiv
 				form.pass = pass
 				@agent.submit(form)
 			rescue
-				# 証明書エラーを握りつぶす
+				# 証明書エラーを握りつぶせない！
+				# 握りつぶそうとするとログインできない
 			end
 		end
 	end
