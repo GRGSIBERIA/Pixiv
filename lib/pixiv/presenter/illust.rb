@@ -50,21 +50,21 @@ module Pixiv
 			
 			# @return [Array<String>] 使用したツール
 			def tools
-			
+				@tools ||= Parser::Illust.tools(@page)
 			end
 			
 			# @return [Int] イラストの閲覧数
 			def view_count
-			
+				@view_count ||= Parser::Illust.view_count(@page)
 			end
 			
 			# @return [Int] イラストの評価回数
-			def evaluation_count
-			
+			def rated_count
+				
 			end
 			
 			# @return [Int] 総合点数
-			def total_points
+			def score_count
 			
 			end
 		end
