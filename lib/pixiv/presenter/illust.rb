@@ -48,8 +48,39 @@ module Pixiv
 				@size ||= Parser::Illust.size(@page)
 			end
 			
+			# @return [Int] 画像の横幅
+			def width
+				if @width == nil then
+					@width = size.split('×')[0].to_i
+				end
+				@width
+			end
+			
+			# @return [Int] 画像の縦幅
+			def height
+				if @height == nil then
+					@height = size.split('×')[1].to_i
+				end
+				@height
+			end
+			
+			# @return [Int] ページ数、0の場合はマンガじゃない
 			def page_count
-				@page_count = size.
+				if @page_count == nil then
+					if is_comic then
+						buf = size
+						buf =~ /漫画 ([0-9]*)P/
+						@page_count = $+.to_i
+					else
+						@page_count = 0
+					end
+				end
+				@page_count
+			end
+			
+			# @return [Bool] 漫画かどうか
+			def is_comic
+				size.include?("漫画")
 			end
 			
 			# @return [Array<String>] 使用したツール
