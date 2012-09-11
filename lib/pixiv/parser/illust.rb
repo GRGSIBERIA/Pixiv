@@ -25,7 +25,6 @@ module Pixiv
 				
 				# 拾ってきたタグの中から意味のないタグを排除する
 				all_tags = page.search(path)
-				
 				tags = Array.new
 				for i in 0..all_tags.length-1 do
 					all_tags[i].each{|k,v| 
@@ -67,27 +66,28 @@ module Pixiv
 			# @param [Mechanize::Page] 調べたいページ
 			# @return [Array<String>] 使ってるツール
 			def self.tools(page)
-				path = 'ul[class=tools]'
 				result = Array.new
-				page.search(path).each{|str| result << str.inner_text }
+				page.search('ul[class=tools]').each{|str| result << str.inner_text }
 				result
 			end
 			
 			# @param [Mechanize::Page] 調べたいページ
 			# @return [String] 閲覧回数
 			def self.view_count(page)
-				path = 'dd[class=view-count]'
-				page.at(path).inner_text
+				page.at('dd[class=view-count]').inner_text
 			end
 			
 			# @param [Mechanize::Page] 調べたいページ
 			# @return [String] 評価回数
 			def self.rated_count(page)
-				path = 'dd[class=rated-count]'
-				page.at(path).inner_text
+				page.at('dd[class=rated-count]').inner_text
 			end
 			
-			
+			# @param [Mechanize::Page] 調べたいページ
+			# @return [String] 評価点数
+			def self.score_count(page)
+				page.at('dd[class=score_count]').inner_text
+			end
 		end
 	end
 end
