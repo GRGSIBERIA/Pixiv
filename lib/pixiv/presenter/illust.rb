@@ -4,9 +4,9 @@ Pixivのイラスト情報をまとめておくためのクラス
 require './pixiv/presenter/base.rb'
 
 module Pixiv
-	module Presenter < Base
+	module Presenter
 		# イラスト情報を格納するためのクラス
-		class Illust
+		class Illust < Base
 			# @return [Array<String>] タグ情報の配列
 			def tags
 			
