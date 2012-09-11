@@ -1,67 +1,68 @@
-=begin
-Pixiv‚ÌƒCƒ‰ƒXƒgî•ñ‚ğ‚Ü‚Æ‚ß‚Ä‚¨‚­‚½‚ß‚ÌƒNƒ‰ƒX
+ï»¿=begin
+Pixivã®ã‚¤ãƒ©ã‚¹ãƒˆæƒ…å ±ã‚’ã¾ã¨ã‚ã¦ãŠããŸã‚ã®ã‚¯ãƒ©ã‚¹
 =end
 require './pixiv/presenter/base.rb'
+require './pixiv/parser/illust.rb'
 
 module Pixiv
 	module Presenter
-		# ƒCƒ‰ƒXƒgî•ñ‚ğŠi”[‚·‚é‚½‚ß‚ÌƒNƒ‰ƒX
+		# ã‚¤ãƒ©ã‚¹ãƒˆæƒ…å ±ã‚’æ ¼ç´ã™ã‚‹ãŸã‚ã®ã‚¯ãƒ©ã‚¹
 		class Illust < Base
 			def initialize(page)
 				super(page)
 			def
 		
-			# @return [Array<String>] ƒ^ƒOî•ñ‚Ì”z—ñ
+			# @return [Array<String>] ã‚¿ã‚°æƒ…å ±ã®é…åˆ—
 			def tags
-			
+				@tags ||= Parser::Illust.tags(@page)
 			end
 			
-			# @return [String] ƒ^ƒCƒgƒ‹
+			# @return [String] ã‚¿ã‚¤ãƒˆãƒ«
 			def title
-				
+				@title ||= Parser::Illust.title(@page)
 			end
 
-			# @return [String] ƒLƒƒƒvƒVƒ‡ƒ“
+			# @return [String] ã‚­ãƒ£ãƒ—ã‚·ãƒ§ãƒ³
 			def caption
+				@caption ||= Parser::Illust.caption(@page)
+			end
+			
+			# @return [String] ãƒ¦ãƒ¼ã‚¶å
+			def artist
 			
 			end
 			
-			# @return [String] ƒ†[ƒU–¼
-			def username
-			
-			end
-			
-			# @return [Int] ƒ†[ƒUID
+			# @return [Int] ãƒ¦ãƒ¼ã‚¶ID
 			def userid
 			
 			end
 			
-			# @return [Date] “Še‚µ‚½“ú•t
+			# @return [Date] æŠ•ç¨¿ã—ãŸæ—¥ä»˜
 			def date
 			
 			end
 			
-			# @return [String] ƒCƒ‰ƒXƒg‚Ì‘å‚«‚³
+			# @return [String] ã‚¤ãƒ©ã‚¹ãƒˆã®å¤§ãã•
 			def size
 			
 			end
 			
-			# @return [Array<String>] g—p‚µ‚½ƒc[ƒ‹
+			# @return [Array<String>] ä½¿ç”¨ã—ãŸãƒ„ãƒ¼ãƒ«
 			def tools
 			
 			end
 			
-			# @return [Int] ƒCƒ‰ƒXƒg‚Ì‰{——”
+			# @return [Int] ã‚¤ãƒ©ã‚¹ãƒˆã®é–²è¦§æ•°
 			def view_count
 			
 			end
 			
-			# @return [Int] ƒCƒ‰ƒXƒg‚Ì•]‰¿‰ñ”
+			# @return [Int] ã‚¤ãƒ©ã‚¹ãƒˆã®è©•ä¾¡å›æ•°
 			def evaluation_count
 			
 			end
 			
-			# @return [Int] ‘‡“_”
+			# @return [Int] ç·åˆç‚¹æ•°
 			def total_points
 			
 			end
