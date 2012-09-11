@@ -40,22 +40,31 @@ module Pixiv
 			# @param [Mechanize::Page] 調べたいページ
 			# @return [String] 投稿者の名前
 			def self.artist(page)
-				path = 'a[@class=avater_m]'
-				page.at(path)['title']
+				page.at('a[@class=avater_m]')['title']
 			end
 			
 			# @param [Mechanize::Page] 調べたいページ
-			# @param [String] 投稿者のID
+			# @return [String] 投稿者のID
 			def self.userid(page)
 				path = 'a[@class=avater_m]'
 				page.at(path)['href'].delete('/member.php?id=')
 			end
 			
+			# @param [Mechanize::Page] 調べたいページ
+			# @return [Date] 日時用クラスを返す
 			def self.date(page)
 				path = 'ul[class=meta]'
-				#puts page.at(path).inner_text
-				#Date.strptime(page.at(path).inner_text, "%Y年%m月%d日 %H:%M")
+				Date.strptime(page.at(path).inner_text, "%Y年%m月%d日 %H:%M")
 			end
+			
+			# @param [Mechanize::Page] 調べたいページ
+			# @return [Array<Int>{width, height}] 画像の大きさ 
+			def self.size(page)
+				path = 'ul[class=meta]'
+				page.search(path)[1].inner_text.split('×')
+			end
+			
+			
 		end
 	end
 end

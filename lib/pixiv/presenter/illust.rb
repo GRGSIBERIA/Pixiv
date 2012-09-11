@@ -45,7 +45,7 @@ module Pixiv
 			
 			# @return [String] イラストの大きさ
 			def size
-			
+				@size ||= Parser::Illust.size(@page)
 			end
 			
 			# @return [Array<String>] 使用したツール
