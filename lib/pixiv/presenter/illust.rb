@@ -43,6 +43,11 @@ module Pixiv
 			def large
 				@large ||= @agent.get(large_uri, nil, uri).body
 			end
+			
+			# @return [String] 大きな画像のファイル名のみ取得
+			def large_filename
+				@large_filename ||= File.basename(large_uri)
+			end
 		end
 	end
 end

@@ -36,4 +36,4 @@ show(c, 30042252)
 show(c, 29908791)
 test = show(c, 28637532)
 
-File.binwrite("./test#{test.extension}", test.large(1))
+File.binwrite("./" + test.large_filename(1), test.large(1))

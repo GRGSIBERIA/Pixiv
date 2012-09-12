@@ -107,6 +107,16 @@ module Pixiv
 				@medium ||= @agent.get(medium_uri, nil, uri).body
 			end
 			
+			# @return [String] サムネのファイル名を取得する
+			def thumbnail_filename
+				@thumbnail_fillename ||= File.basename(thumbnail_uri)
+			end
+			
+			# @return [String] 中くらいの画像のファイル名を取得する
+			def medium_filename
+				@medium_filename ||= File.basename(medium_uri)
+			end
+			
 			# @param [String] イラストIDの後につけたい識別子的なもの
 			# @return [String] 完全な画像のURI
 			def AppendedPrefixURI(pref)
