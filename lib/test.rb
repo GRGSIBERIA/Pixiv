@@ -1,7 +1,7 @@
 require './pixiv.rb'
 
 def show(c, id)
-	i = c.illust.show(id)
+	i = c.image.show(id)
 	puts i.class
 	puts i.uri
 	puts i.title

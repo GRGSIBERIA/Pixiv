@@ -19,7 +19,7 @@ module Pixiv
 			
 			# @return [Int] ページ数
 			def page_count
-				@page_count ||= Parser::Illust.size(@page).delete('漫画 ').delete('P').to_i
+				@page_count ||= Parser::Image.size(@page).delete('漫画 ').delete('P').to_i
 			end
 			
 			# @return [Array<String>] 漫画内の画像のURIの配列

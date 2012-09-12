@@ -2,7 +2,7 @@
 イラストや漫画など、ある程度共通した情報が入る
 =end
 require './pixiv/presenter/base.rb'
-require './pixiv/parser/illust.rb'
+require './pixiv/parser/image.rb'
 
 module Pixiv
 	module Presenter
@@ -25,66 +25,66 @@ module Pixiv
 			
 			# @return [Array<String>] タグ情報の配列
 			def tags
-				@tags ||= Parser::Illust.tags(@page)
+				@tags ||= Parser::Image.tags(@page)
 			end
 			
 			# @return [String] タイトル
 			def title
-				@title ||= Parser::Illust.title(@page)
+				@title ||= Parser::Image.title(@page)
 			end
 
 			# @return [String] キャプション
 			def caption
-				@caption ||= Parser::Illust.caption(@page)
+				@caption ||= Parser::Image.caption(@page)
 			end
 			
 			# @return [String] ユーザ名
 			def artist
-				@artist ||= Parser::Illust.artist(@page)
+				@artist ||= Parser::Image.artist(@page)
 			end
 			
 			# @return [String] ユーザID
 			def userid
-				@userid ||= Parser::Illust.userid(@page)
+				@userid ||= Parser::Image.userid(@page)
 			end
 			
 			# @return [String] 投稿した日付
 			def date
-				@date ||= Parser::Illust.date(@page)
+				@date ||= Parser::Image.date(@page)
 			end
 			
 			# @return [Array<String>] 使用したツール
 			def tools
-				@tools ||= Parser::Illust.tools(@page)
+				@tools ||= Parser::Image.tools(@page)
 			end
 			
 			# @return [Int] イラストの閲覧数
 			def view_count
-				@view_count ||= Parser::Illust.view_count(@page)
+				@view_count ||= Parser::Image.view_count(@page)
 			end
 			
 			# @return [Int] イラストの評価回数
 			def rated_count
-				@rated_count ||= Parser::Illust.rated_count(@page)
+				@rated_count ||= Parser::Image.rated_count(@page)
 			end
 			
 			# @return [Int] 総合点数
 			def score_count
-				@score_count ||= Parser::Illust.score_count(@page)
+				@score_count ||= Parser::Image.score_count(@page)
 			end
 			
 			# @return [String] 実際の画像が置かれている置かれているURI
 			# EXAMPLE:
 			# 		http://i2.pixiv.net/img12/img/hoge123/
 			def location
-				@location ||= Parser::Illust.location(@page) + "/"
+				@location ||= Parser::Image.location(@page) + "/"
 			end
 			
 			# @return [String] イラストの拡張子
 			# EXAMPLE:
 			#		.jpg, .gif, .png
 			def extension
-				@extension ||= Parser::Illust.extension(@page)
+				@extension ||= Parser::Image.extension(@page)
 			end
 			
 			# @return [String] サムネ画像のURI

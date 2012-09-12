@@ -16,7 +16,7 @@ require './pixiv/presenter/author.rb'
 
 
 require './pixiv/api/base.rb'
-require './pixiv/api/illust.rb'
+require './pixiv/api/image.rb'
 require './pixiv/api/author.rb'
 
-require './pixiv/parser/illust.rb'
+require './pixiv/parser/image.rb'

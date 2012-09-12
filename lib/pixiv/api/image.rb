@@ -3,12 +3,13 @@
 =end
 require './pixiv/api/base.rb'
 require './pixiv/presenter/illust.rb'
+require './pixiv/presenter/manga.rb'
 require 'net/http'
 require 'uri'
 
 module Pixiv
 	module API
-		class Illust < Base
+		class Image < Base
 			# @param agent [Mechanize] セッションの確立している状態のもの
 			def initialize(agent)
 				super(agent)
@@ -22,7 +23,7 @@ module Pixiv
 				@agent.get(uri).body
 				#File.write("test.txt", @agent.page.body)
 				
-				if !Parser::Illust.is_manga(@agent.page) then	# イラスト
+				if !Parser::Image.is_manga(@agent.page) then	# イラスト
 					Presenter::Illust.new(@agent, illust_id)
 				else	# 漫画
 					Presenter::Manga.new(@agent, illust_id)

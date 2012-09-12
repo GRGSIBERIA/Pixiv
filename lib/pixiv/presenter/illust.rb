@@ -2,7 +2,7 @@
 Pixivのイラスト情報をまとめておくためのクラス
 =end
 require './pixiv/presenter/image.rb'
-require './pixiv/parser/illust.rb'
+require './pixiv/parser/image.rb'
 
 module Pixiv
 	module Presenter
@@ -15,7 +15,7 @@ module Pixiv
 		
 			# @return [String] イラストの大きさ、もしくはページ枚数
 			def size
-				@size ||= Parser::Illust.size(@page)
+				@size ||= Parser::Image.size(@page)
 			end
 			
 			# @return [Int] 画像の横幅

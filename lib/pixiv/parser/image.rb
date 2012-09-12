@@ -5,7 +5,7 @@ require 'date'
 
 module Pixiv
 	module Parser
-		class Illust
+		class Image
 			# @param [Mechanize::Page] 調べたいページ
 			# @return [String] タイトル
 			def self.title(page)
