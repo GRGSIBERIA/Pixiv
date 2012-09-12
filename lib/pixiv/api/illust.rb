@@ -1,29 +1,36 @@
-=begin
-“Á’è‚ÌƒCƒ‰ƒXƒgî•ñ‚ğ–â‚¢‡‚í‚¹‚é‚½‚ß‚ÌƒNƒ‰ƒX
+ï»¿=begin
+ç‰¹å®šã®ã‚¤ãƒ©ã‚¹ãƒˆæƒ…å ±ã‚’å•ã„åˆã‚ã›ã‚‹ãŸã‚ã®ã‚¯ãƒ©ã‚¹
 =end
 require './pixiv/api/base.rb'
 require './pixiv/presenter/illust.rb'
+require 'net/http'
+require 'uri'
 
 module Pixiv
 	module API
 		class Illust < Base
-			# @param agent [Mechanize] ƒZƒbƒVƒ‡ƒ“‚ÌŠm—§‚µ‚Ä‚¢‚éó‘Ô‚Ì‚à‚Ì
+			# @param agent [Mechanize] ã‚»ãƒƒã‚·ãƒ§ãƒ³ã®ç¢ºç«‹ã—ã¦ã„ã‚‹çŠ¶æ…‹ã®ã‚‚ã®
 			def initialize(agent)
 				super(agent)
 			end
 		
-			# @param illust_id [Int] î•ñ‚ğæ“¾‚·‚éƒCƒ‰ƒXƒgID
-			# @return [Presenter::Image => Presenter::Illust || Presenter::Manga] æ“¾‚µ‚½ƒCƒ‰ƒXƒgî•ñ
+			# ã‚ã‚‹ã‚¤ãƒ©ã‚¹ãƒˆæƒ…å ±ã®ã‚ã‚‹ãƒšãƒ¼ã‚¸ã‚’ã‚¯ãƒ­ãƒ¼ãƒ«ã—ã«è¡Œã
+			# @param illust_id [Int] æƒ…å ±ã‚’å–å¾—ã™ã‚‹ã‚¤ãƒ©ã‚¹ãƒˆID
+			# @return [Presenter::Image] å–å¾—ã—ãŸã‚¤ãƒ©ã‚¹ãƒˆæƒ…å ±
 			def show(illust_id)
 				uri = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=#{illust_id.to_s}"
 				@agent.get(uri).body
 				#File.write("test.txt", @agent.page.body)
 				
-				if !Parser::Illust.is_manga(@agent.page) then	# ƒCƒ‰ƒXƒg
+				if !Parser::Illust.is_manga(@agent.page) then	# ã‚¤ãƒ©ã‚¹ãƒˆ
 					Presenter::Illust.new(@agent.page, illust_id)
-				else	# –Ÿ‰æ
+				else	# æ¼«ç”»
 					Presenter::Manga.new(@agent.page, illust_id)
 				end
+			end
+			
+			def binary(image, uri)
+				@agent.get(uri, nil, image.uri).body
 			end
 		end
 	end

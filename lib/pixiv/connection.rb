@@ -17,6 +17,7 @@ module Pixiv
 		def initialize(user_id, password)
 			@agent = Mechanize.new
 			Login(user_id, password)
+			@agent.user_agent_alias = 'Windows Mozilla'
 		end
 		
 		# @param pixiv_id [String] 自分のPixivのユーザ名

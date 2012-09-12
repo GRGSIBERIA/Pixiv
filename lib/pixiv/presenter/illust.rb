@@ -36,7 +36,7 @@ module Pixiv
 			
 			# @return [String] もっと大きな画像のURI
 			def large_uri
-			
+				@large_uri ||= AppendedPrefixURI("")
 			end
 		end
 	end

@@ -11,6 +11,11 @@ module Pixiv
 			def initialize(page, illust_id)
 				super(page)
 				@illust_id = illust_id
+				@uri = page.uri
+			end
+			
+			def uri
+				@uri
 			end
 			
 			# @return [String] ƒCƒ‰ƒXƒg‚ÌID
