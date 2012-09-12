@@ -3,6 +3,7 @@ require './pixiv.rb'
 def show(c, id)
 	i = c.illust.show(id)
 	puts i.class
+	puts i.uri
 	puts i.title
 	puts i.caption
 	puts i.tags
@@ -27,9 +28,12 @@ def show(c, id)
 	end
 	
 	puts "------------"
+	i
 end
 
 c = Pixiv::Client.new
 show(c, 30042252)
 show(c, 29908791)
-show(c, 28637532)
+test = show(c, 28637532)
+
+File.binwrite("./test#{test.extension}", c.illust.binary(test, test.thumbnail_uri))
