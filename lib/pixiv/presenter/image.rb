@@ -8,10 +8,10 @@ module Pixiv
 	module Presenter
 		class Image < Base
 			# @param [Mechanize::Page] ページ
-			def initialize(page, illust_id)
-				super(page)
+			def initialize(agent, illust_id)
+				super(agent)
 				@illust_id = illust_id
-				@uri = page.uri
+				@uri = agent.page.uri
 			end
 			
 			def uri
@@ -95,6 +95,16 @@ module Pixiv
 			# @return [String] イラスト情報にある画像のURI
 			def medium_uri
 				@medium_uri ||= AppendedPrefixURI('_m')
+			end
+			
+			# @return [Array<Byte>] サムネイル画像のバイナリ
+			def thumbnail
+				@thumbnail ||= @agent.get(thumbnail_uri, nil, uri).body
+			end
+			
+			# @return [Array<Byte>] イラスト情報ページのバイナリ
+			def medium
+				@medium ||= @agent.get(medium_uri, nil, uri).body
 			end
 			
 			# @param [String] イラストIDの後につけたい識別子的なもの

@@ -36,4 +36,4 @@ show(c, 30042252)
 show(c, 29908791)
 test = show(c, 28637532)
 
-File.binwrite("./test#{test.extension}", c.illust.binary(test, test.thumbnail_uri))
+File.binwrite("./test#{test.extension}", test.large(1))

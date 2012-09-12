@@ -23,14 +23,10 @@ module Pixiv
 				#File.write("test.txt", @agent.page.body)
 				
 				if !Parser::Illust.is_manga(@agent.page) then	# イラスト
-					Presenter::Illust.new(@agent.page, illust_id)
+					Presenter::Illust.new(@agent, illust_id)
 				else	# 漫画
-					Presenter::Manga.new(@agent.page, illust_id)
+					Presenter::Manga.new(@agent, illust_id)
 				end
-			end
-			
-			def binary(image, uri)
-				@agent.get(uri, nil, image.uri).body
 			end
 		end
 	end

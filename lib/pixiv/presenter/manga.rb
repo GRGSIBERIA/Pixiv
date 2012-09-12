@@ -7,10 +7,12 @@ module Pixiv
 	module Presenter
 		class Manga < Image
 			# @param [Mechanize::Page] ページ
-			def initialize(page, illust_id)
-				super(page, illust_id)
-				@large_uris = Array.new
-				@big_uris = Array.new
+			def initialize(agent, illust_id)
+				super(agent, illust_id)
+				@large_uris = Array.new(page_count, nil)
+				@big_uris = Array.new(page_count, nil)
+				@large = Array.new(page_count, nil)
+				@big = Array.new(page_count, nil)
 			end
 			
 			# @return [Int] ページ数
@@ -20,18 +22,43 @@ module Pixiv
 			
 			# @return [Array<String>] 漫画内の画像のURIの配列
 			def large_uris
-				for i in @large_uris.length..page_count-1 do
-					@large_uris << AppendedPrefixURI('_p' + i.to_s)
+				for i in 0..page_count-1 do
+					@large_uris[i] ||= AppendedPrefixURI('_p' + i.to_s)
 				end
 				@large_uris
 			end
 			
 			# @return [Array<String>] 漫画の大きな画像のURIの配列
 			def big_uris
-				for i in @big_uris.length..page_count-1 do
-					@big_uris << AppendedPrefixURI('_big_p' + i.to_s)
+				for i in 0..page_count-1 do
+					@big_uris[i] ||= AppendedPrefixURI('_big_p' + i.to_s)
 				end
 				@big_uris
+			end
+			
+			# @return [Array<Array<Byte>>] 漫画の画像のバイナリを取得してくる
+			# NOTE: 一気に取得するので注意
+			def large
+				for i in 0..page_count-1 do large(i) end
+				@large
+			end
+			
+			# @param i 画像の番号
+			# @return [Array<Byte>] 漫画の画像を個別に取得してくる
+			def large(num)
+				@large[num] ||= @agent.get(large_uris[num], nil, uri).body
+			end
+			
+			# @return [Array<Array<Byte>>] 漫画の大きな画像のバイナリを取得してくる
+			def big
+				for i in 0..page_count-1 do big(i) end
+				@big
+			end
+			
+			# @param i 画像の番号
+			# @return [Array<Byte>] 漫画の大きな画像を個別に取得してくる
+			def big(num)
+				@big[num] ||= @agent.get(big_uris[num], nil, uri).body
 			end
 		end
 	end

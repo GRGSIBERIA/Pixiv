@@ -9,8 +9,8 @@ module Pixiv
 		# イラスト情報を格納するためのクラス
 		class Illust < Image
 			# @param [Mechanize::Page] ページ
-			def initialize(page, illust_id)
-				super(page, illust_id)
+			def initialize(agent, illust_id)
+				super(agent, illust_id)
 			end
 		
 			# @return [String] イラストの大きさ、もしくはページ枚数
@@ -37,6 +37,11 @@ module Pixiv
 			# @return [String] もっと大きな画像のURI
 			def large_uri
 				@large_uri ||= AppendedPrefixURI("")
+			end
+			
+			# @return [Array<Byte>] 大きめの画像のバイナリを取得する
+			def large
+				@large ||= @agent.get(large_uri, nil, uri).body
 			end
 		end
 	end
