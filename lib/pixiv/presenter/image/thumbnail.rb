@@ -8,19 +8,28 @@ module Pixiv
 	module Presenter
 		module Image
 			class Thumbnail < Image
-				def initialize(agent, illust_id)
+				# @param agent [Mechanize] エージェント
+				# @param param [Hash] 引数パラメータ
+				# @param :illust_id [Int] イラストID
+				# @param :bkmk_count [Int] ブックマーク数
+				def initialize(agent, param={})
 					super(agent, illust_id, "thumbnail")
+					param[:bookmark_count] ||= -1
+					param[:image_type] ||= raise ArgumentError, "サムネ画像がイラストか漫画なのかなぜかわからない"
+					@bookmark_count = param[:bookmark_count]
+					@image_type = param[:image_type]
 				end
 			
-				# @param [Int] ブクマ数
+				# @return [Int] ブクマ数
 				# NOTE: -1は不明
 				def bookmark_count
-				
+					@bookmark_count
 				end
 				
-				# @param [String] イラストか、マンガか
+				# @return [String] イラストか、マンガか
+				# NOTE: illust, manga
 				def image_type
-				
+					@image_type
 				end
 			end
 		end

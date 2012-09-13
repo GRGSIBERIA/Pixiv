@@ -11,7 +11,7 @@ module Pixiv
 			
 			end
 			
-			# @return [String] ホームページ
+			# @return [String] ホームページアドレス
 			def homepage
 			
 			end
@@ -21,9 +21,19 @@ module Pixiv
 			
 			end
 			
+			# @return [String] TwitterアカウントへのURI
+			def twitter_uri
+			
+			end
+			
 			# @return [Int] 投稿したイラスト数
-			def illust_count
+			def picture_count
 				
+			end
+			
+			# @return [String] ニックネーム
+			def nickname
+			
 			end
 		end
 	end

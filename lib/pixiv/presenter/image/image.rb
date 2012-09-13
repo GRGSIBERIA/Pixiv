@@ -18,6 +18,14 @@ module Pixiv
 					@type = picture_type
 				end
 				
+				# イラスト情報ページを保存する
+				# @param directory [String] 保存先のディレクトリ
+				def save(directory)
+					File.write(directory + illust_id.to_s + ".html", @page.body)
+				end
+				
+				# @return [String] 画像のタイプ
+				# NOTE: 
 				def type
 					@type
 				end

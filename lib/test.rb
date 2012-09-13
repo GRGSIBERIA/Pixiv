@@ -24,7 +24,6 @@ def show(c, id)
 		end
 	end
 	
-	
 	puts "------------"
 	i
 end
