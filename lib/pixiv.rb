@@ -9,9 +9,13 @@ require './pixiv/client.rb'
 require './pixiv/connection.rb'
 
 require './pixiv/presenter/base.rb'
+
 require './pixiv/presenter/image/image.rb'
 require './pixiv/presenter/image/manga.rb'
 require './pixiv/presenter/image/illust.rb'
+
+require './pixiv/presenter/instance/picture.rb'
+
 require './pixiv/presenter/artist.rb'
 
 
