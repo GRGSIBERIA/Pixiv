@@ -1,4 +1,4 @@
-require './pixiv.rb'
+ï»¿require './pixiv.rb'
 
 def show(c, id)
 	i = c.image.get(id)
@@ -33,6 +33,6 @@ c = Pixiv::Client.new
 show(c, 30042252)
 show(c, 29908791)
 show(c, 28637532)
-#show(c, 10)	# ‘¶İ‚µ‚È‚¢ƒCƒ‰ƒXƒg
+#show(c, 10)	# å­˜åœ¨ã—ãªã„ã‚¤ãƒ©ã‚¹ãƒˆ
 
 #File.binwrite("./" + test.large_filename(1), test.large(1))
