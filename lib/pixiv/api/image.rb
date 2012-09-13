@@ -21,6 +21,9 @@ module Pixiv
 			def show(illust_id)
 				uri = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=#{illust_id.to_s}"
 				@agent.get(uri).body
+				
+				# イラストが見つからなければ例外で落とす
+				if @agent.page.search('span[@class=error]').length > 0 then raise IllustNotFoundError; end
 				#File.write("test.txt", @agent.page.body)
 				
 				if !Parser::Image.is_manga(@agent.page) then	# イラスト
