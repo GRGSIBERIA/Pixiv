@@ -2,8 +2,8 @@
 特定のイラスト情報を問い合わせるためのクラス
 =end
 require './pixiv/api/base.rb'
-require './pixiv/presenter/illust.rb'
-require './pixiv/presenter/manga.rb'
+require './pixiv/presenter/image/illust.rb'
+require './pixiv/presenter/image/manga.rb'
 require 'net/http'
 require 'uri'
 
@@ -24,9 +24,9 @@ module Pixiv
 				#File.write("test.txt", @agent.page.body)
 				
 				if !Parser::Image.is_manga(@agent.page) then	# イラスト
-					Presenter::Illust.new(@agent, illust_id)
+					Presenter::Image::Illust.new(@agent, illust_id)
 				else	# 漫画
-					Presenter::Manga.new(@agent, illust_id)
+					Presenter::Image::Manga.new(@agent, illust_id)
 				end
 			end
 		end

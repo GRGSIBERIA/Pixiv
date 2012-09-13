@@ -8,7 +8,7 @@ def show(c, id)
 	puts i.caption
 	puts i.tags
 	puts i.date.to_s
-	if i.class == Pixiv::Presenter::Illust
+	if i.class == Pixiv::Presenter::Image::Illust
 		puts i.size
 	end
 	puts i.tools
@@ -21,7 +21,7 @@ def show(c, id)
 	puts i.thumbnail_uri
 	puts i.medium_uri
 	
-	if i.class == Pixiv::Presenter::Manga
+	if i.class == Pixiv::Presenter::Image::Manga
 		puts i.page_count
 		puts i.large_uris
 		puts i.big_uris
