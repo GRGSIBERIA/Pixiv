@@ -1,22 +1,22 @@
-=begin
-“Á’è‚Ìƒ†[ƒUî•ñ‚ğ–â‚¢‡‚í‚¹‚é‚½‚ß‚ÌƒNƒ‰ƒX
+ï»¿=begin
+ç‰¹å®šã®ãƒ¦ãƒ¼ã‚¶æƒ…å ±ã‚’å•ã„åˆã‚ã›ã‚‹ãŸã‚ã®ã‚¯ãƒ©ã‚¹
 =end
 require './pixiv/api/base.rb'
 
 module Pixiv
 	module API
 		class Artist < Base
-			# @param agent [Mechanize] ƒZƒbƒVƒ‡ƒ“‚ÌŠm—§‚µ‚Ä‚¢‚éó‘Ô‚Ì‚à‚Ì
+			# @param agent [Mechanize] ã‚»ãƒƒã‚·ãƒ§ãƒ³ã®ç¢ºç«‹ã—ã¦ã„ã‚‹çŠ¶æ…‹ã®ã‚‚ã®
 			def initialize(agent)
 				super(agent)
 			end
 			
-			# @param userid [Int] ƒ†[ƒUID
+			# @param userid [Int] ãƒ¦ãƒ¼ã‚¶ID
 			def get(userid)
 				uri = "http://www.pixiv.net/member.php?id=#{userid}"
 				@agent.get(uri)
 				
-				# ƒ†[ƒU‚ª‘¶İ‚µ‚È‚¯‚ê‚Î—‚Æ‚·
+				# ãƒ¦ãƒ¼ã‚¶ãŒå­˜åœ¨ã—ãªã‘ã‚Œã°è½ã¨ã™
 				if @agent.page.search('span[@class="error"]') > 0 then
 					raise ArtistNotFoundError; end
 				
