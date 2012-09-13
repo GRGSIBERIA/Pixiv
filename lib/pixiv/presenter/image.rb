@@ -1,5 +1,6 @@
 =begin
-イラストや漫画など、ある程度共通した情報が入る
+イラストや漫画、サムネなどの共通した情報が入る
+イラスト情報ページはimage_info.rbを参照
 =end
 require './pixiv/presenter/base.rb'
 require './pixiv/parser/image.rb'
@@ -14,6 +15,7 @@ module Pixiv
 				@uri = agent.page.uri
 			end
 			
+			# @return [String] イラスト情報ページのID
 			def uri
 				@uri
 			end
@@ -23,19 +25,9 @@ module Pixiv
 				@illust_id
 			end
 			
-			# @return [Array<String>] タグ情報の配列
-			def tags
-				@tags ||= Parser::Image.tags(@page)
-			end
-			
 			# @return [String] タイトル
 			def title
 				@title ||= Parser::Image.title(@page)
-			end
-
-			# @return [String] キャプション
-			def caption
-				@caption ||= Parser::Image.caption(@page)
 			end
 			
 			# @return [String] ユーザ名
@@ -46,31 +38,6 @@ module Pixiv
 			# @return [String] ユーザID
 			def userid
 				@userid ||= Parser::Image.userid(@page)
-			end
-			
-			# @return [String] 投稿した日付
-			def date
-				@date ||= Parser::Image.date(@page)
-			end
-			
-			# @return [Array<String>] 使用したツール
-			def tools
-				@tools ||= Parser::Image.tools(@page)
-			end
-			
-			# @return [Int] イラストの閲覧数
-			def view_count
-				@view_count ||= Parser::Image.view_count(@page)
-			end
-			
-			# @return [Int] イラストの評価回数
-			def rated_count
-				@rated_count ||= Parser::Image.rated_count(@page)
-			end
-			
-			# @return [Int] 総合点数
-			def score_count
-				@score_count ||= Parser::Image.score_count(@page)
 			end
 			
 			# @return [String] 実際の画像が置かれている置かれているURI

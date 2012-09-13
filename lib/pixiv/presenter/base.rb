@@ -10,6 +10,12 @@ module Pixiv
 			def initialize(agent)
 				@agent = agent
 				@page = agent.page
+				@size = agent.page.body.length
+			end
+			
+			# @return 取得したページの容量
+			def size
+				@size
 			end
 		end
 	end

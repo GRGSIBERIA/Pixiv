@@ -1,11 +1,11 @@
 ﻿=begin
 漫画の情報が入る
 =end
-require './pixiv/presenter/image.rb'
+require './pixiv/presenter/image_info.rb'
 
 module Pixiv
 	module Presenter
-		class Manga < Image
+		class Manga < ImageInfo
 			# @param [Mechanize::Page] ページ
 			def initialize(agent, illust_id)
 				super(agent, illust_id)

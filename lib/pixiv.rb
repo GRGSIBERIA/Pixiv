@@ -12,11 +12,11 @@ require './pixiv/presenter/base.rb'
 require './pixiv/presenter/image.rb'
 require './pixiv/presenter/manga.rb'
 require './pixiv/presenter/illust.rb'
-require './pixiv/presenter/author.rb'
+require './pixiv/presenter/artist.rb'
 
 
 require './pixiv/api/base.rb'
 require './pixiv/api/image.rb'
-require './pixiv/api/author.rb'
+require './pixiv/api/artist.rb'
 
 require './pixiv/parser/image.rb'

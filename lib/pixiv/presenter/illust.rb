@@ -1,21 +1,16 @@
 ﻿=begin
 Pixivのイラスト情報をまとめておくためのクラス
 =end
-require './pixiv/presenter/image.rb'
+require './pixiv/presenter/image_info.rb'
 require './pixiv/parser/image.rb'
 
 module Pixiv
 	module Presenter
 		# イラスト情報を格納するためのクラス
-		class Illust < Image
+		class Illust < ImageInfo
 			# @param [Mechanize::Page] ページ
 			def initialize(agent, illust_id)
 				super(agent, illust_id)
-			end
-		
-			# @return [String] イラストの大きさ、もしくはページ枚数
-			def size
-				@size ||= Parser::Image.size(@page)
 			end
 			
 			# @return [Int] 画像の横幅
