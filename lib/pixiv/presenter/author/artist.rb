@@ -2,6 +2,7 @@
 Pixivのユーザ情報を格納する
 =end
 require './pixiv/presenter/base.rb'
+require './pixiv/presenter/author/detail.rb'
 require './pixiv/parser/author.rb'
 
 module Pixiv
@@ -42,7 +43,7 @@ module Pixiv
 				
 				# @return [Presenter::Author::Profile] プロフィール
 				def detail
-					@detail ||= Presenter::Author::Profile.new(@agent)
+					@detail ||= Presenter::Author::Detail.new(@agent)
 				end
 				
 				# @return [Presenter::Author::WorkingEnvironment] 作業環境

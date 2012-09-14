@@ -15,8 +15,7 @@ require './pixiv/presenter/image/manga.rb'
 require './pixiv/presenter/image/illust.rb'
 
 require './pixiv/presenter/author/artist.rb'
-require './pixiv/presenter/author/profile.rb'
-require './pixiv/presenter/author/working_environment.rb'
+require './pixiv/presenter/author/detail.rb'
 
 require './pixiv/presenter/instance/picture.rb'
 
