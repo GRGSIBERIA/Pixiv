@@ -41,8 +41,8 @@ module Pixiv
 				end
 				
 				# @return [Presenter::Author::Profile] プロフィール
-				def profile
-					@profile ||= Presenter::Author::Profile.new(@agent)
+				def detail
+					@detail ||= Presenter::Author::Profile.new(@agent)
 				end
 				
 				# @return [Presenter::Author::WorkingEnvironment] 作業環境

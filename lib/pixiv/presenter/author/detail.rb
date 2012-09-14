@@ -6,38 +6,37 @@ require './pixiv/presenter/author/artist.rb'
 module Pixiv
 	module Presenter
 		module Author
-			class Detail < Base
+			class Profile < Base
 				# @param agent [Mechanize] セッションを確立したインスタンス
 				def initialize(agent)
 					super(agent)
 					@hash = Parser::Author.get_profile_hash(@page)
+					puts @hash.class
 				end
 				
-				# ハッシュを取得するけどない場合はnilを返すだけ。例外に対応。
-				def GetHash(name)
+				# @return [String] ニックネーム
+				def nickname
 					begin
-						@hash[name]
+						@nickname ||= @hash["ニックネーム"]
 					rescue
 						nil
 					end
 				end
-				private :GetHash
-				
-				# @return [String] ニックネーム
-				def nickname
-					@nickname ||= GetHash("ニックネーム")
-				end
 				
 				# @return [String] 自己紹介
 				def profile
-					@profile ||= GetHash("自己紹介")
+					begin
+						@profile ||= @hash["自己紹介"]
+					rescue
+						nil
+					end
 				end
 				
 				# @return [Array<String>] パーソナルタグ
 				def personal_tags
 					begin
 						@personal_tags ||= @hash["パーソナルタグ"].split(' ')
-					rescue
+					rescue NoMethodError
 						nil
 					end
 				end
@@ -45,19 +44,31 @@ module Pixiv
 				# @return [String] 性別
 				# NOTE: 男性, 女性
 				def sex
-					@sex ||= GetHash("性別")
+					begin
+						@sex ||= @hash["性別"]
+					rescue
+						nil
+					end
 				end
 				
 				# @return [String] 血液型
 				# NOTE: A型, B型, O型, AB型
 				def blood
-					@blood ||= GetHash("血液型")
+					begin
+						@blood ||= @hash["血液型"]
+					rescue
+						nil
+					end
 				end
 				
 				# @return [String] 住所
 				# NOTE: 県名もしくは海外
 				def address
-					@address ||= GetHash("住所")
+					begin
+						@address ||= @hash["住所"]
+					rescue
+						nil
+					end
 				end
 				
 				# @return [Int] 年齢
@@ -80,77 +91,38 @@ module Pixiv
 				
 				# @return [String] 職業
 				def job
-					@job ||= GetHash("職業")
+					begin
+						@job ||= @hash["職業"]
+					rescue
+						nil
+					end
 				end
 				
 				# @return [String] ホームページアドレス
 				def homepage
-					@homepage ||= GetHash("HPアドレス")
+					begin
+						@homepage ||= @hash["HPアドレス"]
+					rescue
+						nil
+					end
 				end
 				
 				# @return [String] Twitterアカウント名
 				def twitter
-					@twitter ||= GetHash("Twitter")
+					begin
+						@twitter ||= @hash["Twitter"]
+					rescue
+						nil
+					end
 				end
 				
 				# @return [String] Skypeアカウント名
 				def skype
-					@skype ||= GetHash("Skype")
-				end
-				
-				# @return [String] コンピュータ
-				def computer
-				
-				end
-				
-				# @return [String] モニター
-				def monitor
-				
-				end
-				
-				# @return [String] ソフト
-				def software
-				
-				end
-				
-				# @return [String] スキャナー
-				def scaner
-				
-				end
-				
-				# @return [String] タブレット
-				def tablet
-				
-				end
-				
-				# @return [String] マウス
-				def mouse
-				
-				end
-				
-				# @return [String] プリンター
-				def printer
-				
-				end
-				
-				# @return [String] デスクトップの上にあるもの
-				def on_the_desk
-				
-				end
-				
-				# @return [String] 好きな音楽
-				def like_music
-				
-				end
-				
-				# @return [String] 椅子
-				def chair
-				
-				end
-				
-				# @return [String] その他
-				def other
-				
+					begin
+						@skype ||= @hash["Skype"]
+					rescue
+						nil
+					end
 				end
 			end
 		end
