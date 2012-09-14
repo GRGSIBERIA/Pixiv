@@ -11,4 +11,7 @@ module Pixiv
 	
 	# ログインに失敗したら返す
 	class LoginFailedError < StandardError; end
+	
+	# 特定のページが見つからない場合に返す
+	class PageNotFoundError < StandardError; end
 end

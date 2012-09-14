@@ -13,7 +13,8 @@ module Pixiv
 					@hash = Parser::Author.get_profile_hash(@page)
 				end
 				
-				# ハッシュを取得するけどない場合はnilを返すだけ。例外に対応。
+				# ハッシュを取得するけどない場合はnilを返すだけ
+				# ハッシュがないときに処理を止めないよう配慮
 				def GetHash(name)
 					begin
 						@hash[name]
@@ -100,57 +101,57 @@ module Pixiv
 				
 				# @return [String] コンピュータ
 				def computer
-				
+					@computer ||= GetHash("コンピュータ")
 				end
 				
 				# @return [String] モニター
 				def monitor
-				
+					@monitor ||= GetHash("モニター")
 				end
 				
 				# @return [String] ソフト
 				def software
-				
+					@software ||= GetHash("ソフト")
 				end
 				
 				# @return [String] スキャナー
 				def scaner
-				
+					@scaner ||= GetHash("スキャナー")
 				end
 				
 				# @return [String] タブレット
 				def tablet
-				
+					@tablet ||= GetHash("タブレット")
 				end
 				
 				# @return [String] マウス
 				def mouse
-				
+					@mouse ||= GetHash("マウス")
 				end
 				
 				# @return [String] プリンター
 				def printer
-				
+					@printer ||= GetHash("プリンター")
 				end
 				
-				# @return [String] デスクトップの上にあるもの
+				# @return [String] 机の上にあるもの
 				def on_the_desk
-				
+					@on_the_dest ||= GetHash("机の上にあるもの")
 				end
 				
-				# @return [String] 好きな音楽
+				# @return [String] 絵を描く時に聞く音楽
 				def like_music
-				
+					@like_music ||= GetHash("絵を描く時に聞く音楽")
 				end
 				
 				# @return [String] 椅子
 				def chair
-				
+					@chair ||= GetHash("椅子")
 				end
 				
 				# @return [String] その他
 				def other
-				
+					@other ||= GetHash("その他")
 				end
 			end
 		end

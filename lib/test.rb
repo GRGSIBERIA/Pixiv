@@ -36,18 +36,17 @@ def showu(c, id)
 	puts u.bookmark_count
 	puts u.response_count
 	
-	puts u.profile.nickname
-	puts u.profile.profile
-	puts u.profile.personal_tags
-	puts u.profile.sex
-	puts u.profile.blood
-	puts u.profile.address
-	puts u.profile.age
-	puts u.profile.birthday
-	puts u.profile.job
-	puts u.profile.homepage
-	puts u.profile.twitter
-	puts u.profile.twitter_uri
+	puts u.detail.nickname
+	puts u.detail.profile
+	puts u.detail.personal_tags
+	puts u.detail.sex
+	puts u.detail.blood
+	puts u.detail.address
+	puts u.detail.age
+	puts u.detail.birthday
+	puts u.detail.job
+	puts u.detail.homepage
+	puts u.detail.twitter
 end
 
 c = Pixiv::Client.new

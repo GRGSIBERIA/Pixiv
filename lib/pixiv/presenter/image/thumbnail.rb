@@ -10,8 +10,9 @@ module Pixiv
 			class Thumbnail < Image
 				# @param agent [Mechanize] エージェント
 				# @param param [Hash] 引数パラメータ
-				# @param :illust_id [Int] イラストID
-				# @param :bkmk_count [Int] ブックマーク数
+				# @param param [Int] :illust_id イラストID
+				# @param param [Int] :bookmark_count ブックマーク数
+				# @param param [String] :image_type 画像の種類
 				def initialize(agent, param={})
 					super(agent, illust_id, "thumbnail")
 					param[:bookmark_count] ||= -1

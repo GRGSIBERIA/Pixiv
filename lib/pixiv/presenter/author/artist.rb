@@ -46,11 +46,6 @@ module Pixiv
 					@detail ||= Presenter::Author::Detail.new(@agent)
 				end
 				
-				# @return [Presenter::Author::WorkingEnvironment] 作業環境
-				def working_environment
-				
-				end
-				
 				# @return [String] 背景色
 				# EXAMPLE: RRGGBB
 				def background_color
