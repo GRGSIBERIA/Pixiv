@@ -9,12 +9,13 @@ require './pixiv/api/image.rb'
 
 module Pixiv
 	class Client
-		attr_reader :image
+		attr_reader :image, :artist
 	
 		def initialize
 			user_info = ReadConfiguration()
 			@connection = Connection.new(user_info['user_id'], user_info['password'])
 			@image = API::Image.new(@connection.agent)
+			@artist = API::Artist.new(@connection.agent)
 		end
 		
 		# ユーザIDやパスワードを保存する

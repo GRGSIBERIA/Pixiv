@@ -14,13 +14,15 @@ require './pixiv/presenter/image/image.rb'
 require './pixiv/presenter/image/manga.rb'
 require './pixiv/presenter/image/illust.rb'
 
+require './pixiv/presenter/author/artist.rb'
+require './pixiv/presenter/author/profile.rb'
+require './pixiv/presenter/author/working_environment.rb'
+
 require './pixiv/presenter/instance/picture.rb'
-
-require './pixiv/presenter/artist.rb'
-
 
 require './pixiv/api/base.rb'
 require './pixiv/api/image.rb'
 require './pixiv/api/artist.rb'
 
 require './pixiv/parser/image.rb'
+require './pixiv/parser/author.rb'

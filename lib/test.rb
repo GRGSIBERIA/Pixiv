@@ -1,6 +1,6 @@
 ﻿require './pixiv.rb'
 
-def show(c, id)
+def showi(c, id)
 	i = c.image.get(id)
 	puts i.class
 	puts i.uri
@@ -28,10 +28,36 @@ def show(c, id)
 	i
 end
 
-c = Pixiv::Client.new
-show(c, 30042252)
-show(c, 29908791)
-show(c, 28637532)
-#show(c, 10)	# 存在しないイラスト
+def showu(c, id)
+	u = c.artist.get(id)
+	puts u.userid
+	puts u.name
+	puts u.picture_count
+	puts u.bookmark_count
+	puts u.response_count
+	
+	puts u.profile.nickname
+	puts u.profile.profile
+	puts u.profile.personal_tags
+	puts u.profile.sex
+	puts u.profile.blood
+	puts u.profile.address
+	puts u.profile.age
+	puts u.profile.birthday
+	puts u.profile.job
+	puts u.profile.homepage
+	puts u.profile.twitter
+	puts u.profile.twitter_uri
+end
 
-#File.binwrite("./" + test.large_filename(1), test.large(1))
+c = Pixiv::Client.new
+
+=begin
+showi(c, 30042252)	# イラスト
+showi(c, 29908791)
+showi(c, 28637532)	# 漫画
+#show(c, 10)	# 存在しないイラスト
+=end
+
+showu(c, 515127)
+showu(c, 44588)

@@ -13,14 +13,14 @@ module Pixiv
 			
 			# @param userid [Int] ユーザID
 			def get(userid)
-				uri = "http://www.pixiv.net/member.php?id=#{userid}"
+				uri = "http://www.pixiv.net/member.php?id=#{userid.to_s}"
 				@agent.get(uri)
 				
 				# ユーザが存在しなければ落とす
-				if @agent.page.search('span[@class="error"]') > 0 then
+				if @agent.page.search('span[@class="error"]').length > 0 then
 					raise ArtistNotFoundError; end
 				
-				Presenter::Artist.new(@agent, userid)
+				Presenter::Author::Artist.new(@agent, userid)
 			end
 		end
 	end
