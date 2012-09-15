@@ -13,6 +13,7 @@ require './pixiv/presenter/base.rb'
 require './pixiv/presenter/image/image.rb'
 require './pixiv/presenter/image/manga.rb'
 require './pixiv/presenter/image/illust.rb'
+require './pixiv/presenter/image/thumbnail.rb'
 
 require './pixiv/presenter/author/artist.rb'
 require './pixiv/presenter/author/detail.rb'

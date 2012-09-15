@@ -38,32 +38,33 @@ module Pixiv
 			def pictures(userid, param={})
 				uri = "http://www.pixiv.net/member_illust.php?id=#{userid.to_s}"
 				
-				GetPictures(userid, param, 1)
+				GetPictures(uri, param, 1)
 			end
 			
-			def GetPictures(uri, userid, param, times)
+			def GetPictures(uri, param, times)
 				# ページを取得して存在チェック
 				@agent.get(uri + "&p=#{times.to_s}")
 				if @agent.page.body.scan('見つかりませんでした').length > 0 then
 					raise PageNotFoundError; end
 				
 				# 何件の登録があるのか調べて存在するページ数か調べる
+				all_thumbnails = Array.new
 				max_page = @agent.page.at('div[@class="two_column_body"]/h3/span').inner_text.scan(/[0-9]+/).to_i.div(20) + 1
 				if max_page >= page
-					
+					# ページごとに取得した画像を結合していく
+					all_thumbnails.concat(GetPicturesArrayInPage)
 				else
 					nil
 				end
 			end
 			
-			# 
+			# ページ内のイラストを取得する
 			def GetPicturesArrayInPage
 				thumbnails = Array.new # 表示されている件数だけ
 				img_array = @agent.page.search('ul/li/a/img')
 				for img in img_array do
 					# イラストIDを抽出してサムネを追加していく
 					illust_id = img['href'].scan(/[0-9]+\_s/)[0].delete('_s').to_i
-					# TODO: image_typeが指定されていないので推定する方法を考える
 					thumbnails << Presenter::Image::Thumbnail.new(@agent, :illust_id => illust_id)
 				end
 				thumbnails

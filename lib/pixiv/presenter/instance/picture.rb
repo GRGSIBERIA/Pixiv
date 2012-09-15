@@ -35,6 +35,8 @@ module Pixiv
 				# @return [Array<Byte>] サムネイル画像のバイナリ
 				def binary
 					@binary ||= @agent.get(uri, nil, referer).body
+					if @binary.scan('<h1>This Page is Not Found :(</h1>').length > 0 then
+						raise PageNotFoundError; end
 				end
 				
 				# @return [Array<Byte>] 画像の容量

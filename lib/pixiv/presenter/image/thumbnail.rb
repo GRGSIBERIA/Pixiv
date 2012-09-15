@@ -17,6 +17,8 @@ module Pixiv
 					param[:bookmark_count] ||= -1
 					param[:image_type] ||= raise ArgumentError, "サムネ画像がイラストか漫画なのかなぜかわからない"
 					@bookmark_count = param[:bookmark_count]
+					@larges = Array.new
+					@bigs = Array.new
 					# 画像の種類はリンク上からでは拾うことができない
 					#@image_type = param[:image_type]
 				end
@@ -37,18 +39,22 @@ module Pixiv
 				# @param repeat_times [Int] 漫画に対する試行回数
 				# @return [Presenter::Instance::Picture] 漫画の大きな画像配列
 				def bigs(repeat_times=1)
-					@bigs ||= repeat_times.times{|i|
-						@bigs << CreatePicture("_big_p#{i.to_s}_")
-					}
+					if @bigs.length > 0 then
+						@bigs ||= repeat_times.times{|i|
+							@bigs << CreatePicture("_big_p#{i.to_s}_")
+						}
+					end
 				end
 				
 				# サムネからは漫画のページ数が見えないためめくら打ちする
 				# @param repeat_times [Int] 漫画に対する試行回数
 				# @return [Presenter::Instance::Picture] 漫画の画像配列
 				def larges(repeat_times=1)
-					@larges ||= repeat_times.times(|i|
-						@larges << CreatePicture("_p#{i.to_s}_")
-					}
+					if @bigs.length > 0 then
+						@larges ||= repeat_times.times(|i|
+							@larges << CreatePicture("_p#{i.to_s}_")
+						}
+					end
 				end
 			end
 		end
