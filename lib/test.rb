@@ -50,7 +50,7 @@ def showu(c, id)
 	puts u.detail.twitter
 	
 	pics = c.artist.pictures(id)
-	for i in 0..40 do
+	for i in 0..10 do
 		pic = pics[i]
 		if pic != nil then pic.thumbnail.save("./") end
 	end

@@ -33,7 +33,7 @@ module Pixiv
 			# @param param [Range] :range 表示させたいページ範囲
 			def pictures(userid, param={})
 				uri = "http://www.pixiv.net/member_illust.php?id=#{userid.to_s}"
-				Presenter::Author::Array::Pictures.new(param = {:uri => uri})
+				Presenter::Author::Array::Pictures.new(@agent, param = {:uri => uri})
 			end
 			
 			# ブックマークに登録したユーザを取得する
@@ -42,7 +42,7 @@ module Pixiv
 			# @param param [Range] :range 表示させたいページ範囲
 			def bookmarks(userid, param={})
 				uri = "http://www.pixiv.net/bookmark.php?id=#{userid.to_s}"
-				#Presenter::Author::Array::Bookmarks.new(param = {:uri => uri})
+				#Presenter::Author::Array::Bookmarks.new(@agent, param = {:uri => uri})
 			end
 			
 			# 作品に設定されたタグの取得を行う

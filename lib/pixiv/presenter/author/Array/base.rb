@@ -2,19 +2,21 @@
 アーティストのイラスト情報を
 配列として扱えるようにするためのベースクラス
 =end
+require './pixiv/presenter/base.rb'
 require 'mechanize'
 
 module Pixiv
 	module Presenter
 		module Author
 			module Array
-				class Base
+				class Base < Presenter::Base
 					# @param param [Hash]
 					# @param param [String] :uri member_illust.phpやbookmark.phpなどのパス
-					def initialize(param)
+					def initialize(agent, param)
+						super(agent)
 						@param = param
 						
-						@thumbnails = GetThumbnails(param[:uri])
+						@thumbnails = GetThumbnails(param[:uri], param)
 					end
 					
 					# 演算子のオーバーロード
@@ -25,7 +27,7 @@ module Pixiv
 					
 					# あるURIからサムネを取得する
 					def GetThumbnails(uri, param)
-						pictures_array = Array.new	# いわゆる探索結果
+						pictures_array = []	# いわゆる探索結果
 						result = nil
 						
 						# 一度agentが指す位置を移動させておく
@@ -68,7 +70,8 @@ module Pixiv
 					
 					# ページ内のイラストを取得する
 					def GetPicturesArrayInPage()
-						thumbnails = Array.new # 表示されている件数だけ
+						# どうやらArray.newすると名前が被ってエラーを吐いてしまうらしい
+						thumbnails = [] # 表示されている件数だけ
 						img_array = @agent.page.search('div[@class="display_works linkStyleWorks"]/ul/li/a/img')
 						for img in img_array do
 							begin

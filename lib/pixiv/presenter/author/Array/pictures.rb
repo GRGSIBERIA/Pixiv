@@ -7,13 +7,13 @@ module Pixiv
 	module Presenter
 		module Author
 			module Array
-				class Pictures
+				class Pictures < Array::Base
 					# 投稿されたイラストを取得する
 					# @param userid [Int] ユーザID
 					# @param param [Hash]
 					# @param param [Range] :range 表示させたいページ範囲
-					def initialize(param={})
-						super(param)
+					def initialize(agent, param={})
+						super(agent, param)
 					end
 				end
 			end
