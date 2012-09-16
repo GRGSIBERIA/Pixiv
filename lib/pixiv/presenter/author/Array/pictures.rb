@@ -1,6 +1,7 @@
 =begin
 ユーザが投稿したサムネ用の画像をまとめたもの
 =end
+require './pixiv/presenter/author/array/base.rb'
 
 module Pixiv
 	module Presenter
@@ -11,8 +12,8 @@ module Pixiv
 					# @param userid [Int] ユーザID
 					# @param param [Hash]
 					# @param param [Range] :range 表示させたいページ範囲
-					def initialize(userid, param={})
-						super(userid, param)
+					def initialize(param={})
+						super(param)
 					end
 				end
 			end
