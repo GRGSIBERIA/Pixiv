@@ -26,22 +26,35 @@ module Pixiv
 				Presenter::Author::Artist.new(@agent, userid)
 			end
 			
+			# 投稿されたイラストを取得する
+			# @param userid [Int] ユーザID
+			# @param param [Hash]
+			# @param param [Range] :range 表示させたいページ範囲
+			def pictures(userid, param={})
+				uri = "http://www.pixiv.net/member_illust.php?id=#{userid.to_s}"
+				GetThumbnails(uri, param)
+			end
+			
+			# ブックマークに登録したユーザを取得する
+			# @param userid [Int] ユーザID
+			# @param param [Hash]
+			# @param param [Range] :range 表示させたいページ範囲
+			def bookmarks(userid, param={})
+				uri = "http://www.pixiv.net/bookmark.php?id=#{userid.to_s}"
+				GetThumbnails(uri, param)
+			end
+			
 			# 作品に設定されたタグの取得を行う
 			# @param userid [Int] ユーザID
 			def tags(userid)
 			
 			end
 			
-			# 投稿されたイラストを取得する
-			# @param userid [Int] ユーザID
-			# @param param [Hash]
-			# @param param [Range] :range 表示させたい範囲
-			def pictures(userid, param={})
-				uri = "http://www.pixiv.net/member_illust.php?id=#{userid.to_s}"
+			def GetThumbnails(uri, param)
 				pictures_array = Array.new	# いわゆる探索結果
 				result = nil
 				
-				# ページを移動させる
+				# 一度agentが指す位置を移動させておく
 				page_num = 2
 				if GetPictures(uri, 1, 1, pictures_array) == nil
 					return pictures_array
@@ -82,10 +95,11 @@ module Pixiv
 			# ページ内のイラストを取得する
 			def GetPicturesArrayInPage()
 				thumbnails = Array.new # 表示されている件数だけ
-				img_array = @agent.page.search('ul/li/a/img')
+				img_array = @agent.page.search('div[@class="display_works linkStyleWorks"]/ul/li/a/img')
 				for img in img_array do
 					begin
 						# イラストIDを抽出してサムネを追加していく
+						if img['src'].include?('/source/images/') then break end
 						illust_id = img['src'].scan(/[0-9]+\_s/)[0].delete('_s').to_i
 						thumbnails << Presenter::Image::Thumbnail.new(@agent, param = {:illust_id => illust_id})
 					rescue Pixiv::PageNotFoundError
@@ -107,11 +121,7 @@ module Pixiv
 			
 			end
 			
-			# ブックマークに登録したユーザを取得する
-			# @param userid [Int] ユーザID
-			def bookmarks(userid)
 			
-			end
 		end
 	end
 end

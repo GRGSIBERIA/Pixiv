@@ -68,7 +68,7 @@ module Pixiv
 			end
 			
 			def self.extension(page, illust_id)
-				img_tag = page.at("li[@id='li_#{illust_id.to_s}']/a/img")
+				img_tag = page.at("li/a/img")
 				File.extname(img_tag['src'].split("?")[0])
 			end
 		end

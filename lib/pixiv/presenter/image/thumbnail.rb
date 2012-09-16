@@ -13,18 +13,28 @@ module Pixiv
 				# @param param [Hash] 引数パラメータ
 				# @param param [Int] :illust_id イラストID
 				# @param param [Int] :bookmark_count ブックマーク数
+				# @param param [String] :thumbnail_type サムネイルの種類, bookmark, tag, searchなど
+				# @param param [String] :location
 				def initialize(agent, param={})
 					super(agent, param[:illust_id], "thumbnail")
 					param[:bookmark_count] ||= -1
 					@bookmark_count = param[:bookmark_count]
 					@larges = Array.new
 					@bigs = Array.new
+					
+					# サムネがブックマークからだった場合
+					if param[:thumbnail_type] == "bookmark" then
+						# 強制的にサーバ上の位置を再設定する
+						@location = param[:location]
+					end
 				end
 				
 				# サムネ画像の拡張子を取得するコード
 				def extension
 					# ページごとに判断する
 					if @page.uri.request_uri.include?("member_illust") then
+						@extension ||= Parser::Author.extension(@page, @illust_id)
+					elsif @page.uri.request_uri.include?("bookmark") then
 						@extension ||= Parser::Author.extension(@page, @illust_id)
 					elsif @page.uri.request_uri.include?("tags") then
 						# 未実装
