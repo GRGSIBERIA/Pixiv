@@ -3,6 +3,7 @@
 主に検索結果などで表示される奴
 =end
 require './pixiv/presenter/image/image.rb'
+require './pixiv/parser/author.rb'
 
 module Pixiv
 	module Presenter
@@ -13,15 +14,40 @@ module Pixiv
 				# @param param [Int] :illust_id イラストID
 				# @param param [Int] :bookmark_count ブックマーク数
 				def initialize(agent, param={})
-					super(agent, illust_id, "thumbnail")
+					super(agent, param[:illust_id], "thumbnail")
 					param[:bookmark_count] ||= -1
-					param[:image_type] ||= raise ArgumentError, "サムネ画像がイラストか漫画なのかなぜかわからない"
 					@bookmark_count = param[:bookmark_count]
 					@larges = Array.new
 					@bigs = Array.new
-					# 画像の種類はリンク上からでは拾うことができない
-					#@image_type = param[:image_type]
 				end
+				
+				# サムネ画像の拡張子を取得するコード
+				def extension
+					# ページごとに判断する
+					if @page.uri.request_uri.include?("member_illust") then
+						@extension ||= Parser::Author.extension(@page, @illust_id)
+					elsif @page.uri.request_uri.include?("tags") then
+						# 未実装
+						raise NotImplementedError
+					elsif @page.uri.request_uri.include?("search") then
+						raise NotImplementedError
+					end
+				end
+				
+				# ユーザ情報なのか検索ページなのか判断し
+				# 適切なサムネを見つけるためにオーバーライドしてる
+				# @param [String] イラストIDの後に付ける奴
+				# @return [Presenter::Instance::Picture] 画像インスタンス
+				def CreatePicture(prefix)
+					arg = {	
+						:illust_id => illust_id, 
+						:location => location, 
+						:referer => uri, 
+						:prefix => prefix,
+						:extension => extension}
+					Presenter::Instance::Picture.new(@agent, arg)
+				end
+				private :CreatePicture
 			
 				# @return [Int] ブクマ数
 				# NOTE: -1は不明

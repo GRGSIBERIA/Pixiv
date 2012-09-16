@@ -66,6 +66,11 @@ module Pixiv
 				if result != nil then result.scan(/[0-9]+/)[0].to_i
 				else 0 end
 			end
+			
+			def self.extension(page, illust_id)
+				img_tag = page.at("li[@id='li_#{illust_id.to_s}']/a/img")
+				File.extname(img_tag['src'].split("?")[0])
+			end
 		end
 	end
 end

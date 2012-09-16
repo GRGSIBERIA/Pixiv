@@ -48,14 +48,19 @@ def showu(c, id)
 	puts u.detail.job
 	puts u.detail.homepage
 	puts u.detail.twitter
+	
+	pics = c.artist.pictures(id)
+	for i in 0..5 do
+		pics[i].medium.save("./")
+	end
 end
 
 c = Pixiv::Client.new
 
-showi(c, 30042252)	# イラスト
+#showi(c, 30042252)	# イラスト
 #showi(c, 29908791)
-showi(c, 28637532)	# 漫画
+#showi(c, 28637532)	# 漫画
 #show(c, 10)	# 存在しないイラスト
 
-#showu(c, 515127)
+showu(c, 515127)
 #showu(c, 44588)
