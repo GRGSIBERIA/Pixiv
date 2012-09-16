@@ -21,27 +21,21 @@ module Pixiv
 					@bookmark_count = param[:bookmark_count]
 					@larges = Array.new
 					@bigs = Array.new
+					@extension = param[:extension]
 					
-					# サムネがブックマークからだった場合
-					if param[:thumbnail_type] == "bookmark" then
-						# 強制的にサーバ上の位置を再設定する
-						@location = param[:location]
+					# 強制的にサーバ上の位置を再設定する
+					if param[:location] != nil then
+						@location = param[:location] + "/"
+					end
+					
+					if param[:referer] != nil then
+						@referer = param[:referer]
 					end
 				end
 				
 				# サムネ画像の拡張子を取得するコード
 				def extension
-					# ページごとに判断する
-					if @page.uri.request_uri.include?("member_illust") then
-						@extension ||= Parser::Author.extension(@page, @illust_id)
-					elsif @page.uri.request_uri.include?("bookmark") then
-						@extension ||= Parser::Author.extension(@page, @illust_id)
-					elsif @page.uri.request_uri.include?("tags") then
-						# 未実装
-						raise NotImplementedError
-					elsif @page.uri.request_uri.include?("search") then
-						raise NotImplementedError
-					end
+					@extension
 				end
 				
 				# ユーザ情報なのか検索ページなのか判断し

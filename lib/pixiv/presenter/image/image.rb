@@ -16,6 +16,7 @@ module Pixiv
 					@illust_id = illust_id
 					@uri = agent.page.uri
 					@type = picture_type
+					@referer = @uri
 				end
 				
 				# イラスト情報ページを保存する
@@ -33,6 +34,10 @@ module Pixiv
 				# @return [String] イラスト情報ページのID
 				def uri
 					@uri
+				end
+				
+				def referer
+					@referer
 				end
 				
 				# @return [String] イラストのID
@@ -80,14 +85,16 @@ module Pixiv
 				end
 				
 				# @param [String] イラストIDの後に付ける奴
+				# @param [String] 拡張子、自由につけたい場合は
 				# @return [Presenter::Instance::Picture] 画像インスタンス
-				def CreatePicture(prefix)
+				def CreatePicture(prefix, ext=nil)
+					if ext == nil then ext = extension end
 					arg = {	
 						:illust_id => illust_id, 
 						:location => location, 
-						:referer => uri, 
+						:referer => @referer, 
 						:prefix => prefix,
-						:extension => extension}
+						:extension => ext}
 					Presenter::Instance::Picture.new(@agent, arg)
 				end
 				protected :CreatePicture

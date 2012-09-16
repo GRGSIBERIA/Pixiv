@@ -49,7 +49,7 @@ def showu(c, id)
 	puts u.detail.homepage
 	puts u.detail.twitter
 	
-	pics = c.artist.pictures(id)
+	pics = c.artist.bookmarks(id)
 	for i in 0..10 do
 		pic = pics[i]
 		if pic != nil then pic.thumbnail.save("./") end
