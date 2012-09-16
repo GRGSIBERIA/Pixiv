@@ -51,7 +51,7 @@ module Pixiv
 				# @return [Presenter::Instance::Picture] 漫画の画像配列
 				def larges(repeat_times=1)
 					if @bigs.length > 0 then
-						@larges ||= repeat_times.times(|i|
+						@larges ||= repeat_times.times{|i|
 							@larges << CreatePicture("_p#{i.to_s}_")
 						}
 					end

@@ -88,13 +88,14 @@ module Pixiv
 			
 			# @return [String] イラストの拡張子
 			def self.extension(page)
-				path = 'div[@class=works_display]'
+				path = 'div[@class="works_display"]'
 				File.extname(page.at(path).child.child['src']).split('?')[0]
 			end
 			
 			# @return [Bool] イラストかマンガか
 			def self.is_manga(page)
-				page.at('div[@class=works_display]').child['href'].include?('manga')
+				path = 'div[@class="works_display"]/a'
+				page.at(path)['href'].include?('manga')
 			end
 		end
 	end

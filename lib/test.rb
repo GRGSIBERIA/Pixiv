@@ -14,6 +14,7 @@ def showi(c, id)
 	
 	i.thumbnail.save("./")
 	i.medium.save("./")
+	puts "size:" + i.thumbnail.size.to_s
 	
 	case i.type
 	when "illust"
@@ -51,12 +52,10 @@ end
 
 c = Pixiv::Client.new
 
-=begin
 showi(c, 30042252)	# イラスト
-showi(c, 29908791)
+#showi(c, 29908791)
 showi(c, 28637532)	# 漫画
 #show(c, 10)	# 存在しないイラスト
-=end
 
-showu(c, 515127)
-showu(c, 44588)
+#showu(c, 515127)
+#showu(c, 44588)

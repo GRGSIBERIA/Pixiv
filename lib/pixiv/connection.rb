@@ -23,14 +23,13 @@ module Pixiv
 		# @param pixiv_id [String] 自分のPixivのユーザ名
 		# @param pass [String] 自分のパスワード
 		def Login(pixiv_id, pass)
-			begin
-				form = @agent.get('https://ssl.pixiv.net/login.php').forms[1]
-				form.pixiv_id = pixiv_id
-				form.pass = pass
-				@agent.submit(form)
-			rescue
-				# 証明書エラーを握りつぶせない！
-				# 握りつぶそうとするとログインできない
+			form = @agent.get('https://ssl.pixiv.net/login.php').forms[1]
+			form.pixiv_id = pixiv_id
+			form.pass = pass
+			@agent.submit(form)
+			
+			if @agent.page.at('div[@class="errorArea"]/h2') != nil then
+				raise LoginFailedError
 			end
 		end
 	end

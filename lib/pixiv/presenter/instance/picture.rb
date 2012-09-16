@@ -34,14 +34,15 @@ module Pixiv
 				
 				# @return [Array<Byte>] サムネイル画像のバイナリ
 				def binary
-					@binary ||= @agent.get(uri, nil, referer).body
-					if @binary.scan('<h1>This Page is Not Found :(</h1>').length > 0 then
+					@binary ||= @agent.get(uri, nil, referer)
+					if @binary.body.scan('<h1>This Page is Not Found :(</h1>').length > 0 then
 						raise PageNotFoundError; end
+					@binary
 				end
 				
 				# @return [Array<Byte>] 画像の容量
 				def size
-					@size ||= binary.size
+					@size ||= binary.body.size
 				end
 				
 				# @return [String] サムネのファイル名を取得する
@@ -75,7 +76,7 @@ module Pixiv
 				
 				# @param directory [String] 保存したいパス
 				def save(directory)
-					File.binwrite(directory + filename, binary)
+					binary.save(directory + filename)
 				end
 				
 				# @param pref [String] イラストIDの後につけたい識別子的なもの
