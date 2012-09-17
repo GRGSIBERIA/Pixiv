@@ -4,9 +4,6 @@
 require './pixiv/api/base.rb'
 require './pixiv/presenter/image/thumbnail.rb'
 
-#require './pixiv/presenter/author/array/pictures.rb'
-#require './pixiv/presenter/author/array/bookmarks.rb'
-
 module Pixiv
 	module API
 		class Artist < Base
@@ -49,27 +46,32 @@ module Pixiv
 				param[:picture_count] = 'div[@class="two_column_body"]/h3/span'
 				param[:image_tag_path] = 'div[@class="display_works linkStyleWorks"]/ul/li/a/img'
 				param[:invalid_img_src] = '/source/'
+				param[:a_tag_is_two_parent] = false
 				GetThumbnails(param)
-				#Presenter::Author::Array::Pictures.new(@agent, param = {:uri => uri})
 			end
 			
 			# ブックマークに登録したユーザを取得する
 			# @param userid [Int] ユーザID
 			# @param param [Hash]
 			# @param param [Range] :range 表示させたいページ範囲
+			# @return [Array<Presenter::Thumbnail>] 取得できたサムネイル一覧
 			def bookmarks(userid, param={})
 				param[:uri] = "http://www.pixiv.net/bookmark.php?id=#{userid.to_s}"
 				param[:picture_count] = 'div[@class="two_column_body"]/h3/span'
 				param[:image_tag_path] = 'div[@class="display_works linkStyleWorks"]/ul/li/a/img'
 				param[:invalid_img_src] = '/source/'
+				param[:bookmark_count] = true		# カウントしたいって意味
+				param[:a_tag_is_two_parent] = false
 				GetThumbnails(param)
-				#Presenter::Author::Array::Bookmarks.new(@agent, param = {:uri => uri})
 			end
 			
-			# 作品に設定されたタグの取得を行う
+			# 投稿されたタグ一覧を取得する
 			# @param userid [Int] ユーザID
 			def tags(userid)
-			
+				# タグの場合、微妙に形式が異なるので注意
+				# 本当にタグとURIと件数だけ
+				param[:uri] = "http://www.pixiv.net/member_tag_all.php?id=#{userid.to_s}"
+				
 			end
 			
 			# お気に入りに登録されたユーザを取得する
@@ -135,18 +137,12 @@ module Pixiv
 				for img in img_array do
 					begin
 						# イラストIDを抽出してサムネを追加していく
-						img_src = img['src']
 						# 無効なURIが含まれる時があるのでその時は無視する
-						if !img_src.include?(param[:invalid_img_src]) then
-							# リファラーがpタグのせいで祖父ノードにある場合の処理
-							parent_href = param[:referer_is_two_parent] != nil ? img.parent.parent['href'] : img.parent['href']
-							referer = "http://www.pixiv.net/" + parent_href
-							arg_param = {
-								:illust_id => img_src.scan(/[0-9]+\_s/)[0].delete('_s').to_i,
-								:location => File.dirname(img_src),
-								:referer => referer,
-								:extension => File.extname(img_src)
-							}
+						if !img['src'].include?(param[:invalid_img_src]) then
+							arg_param = SetupArgParams(img, param)	# サムネクラスに投げるパラメータの設定
+							if param[:bookmark_count] == true then	# ブクマ数を取得する
+								arg_param[:bookmark_count] = GetBookmarkCount(img, param[:a_tag_is_two_parent])
+							end
 							thumbnails << Presenter::Image::Thumbnail.new(@agent, arg_param)
 						end
 					rescue Pixiv::PageNotFoundError
@@ -154,6 +150,29 @@ module Pixiv
 					end
 				end
 				thumbnails
+			end
+			
+			# ブクマ数をタグから探してくる
+			def GetBookmarkCount(img, a_tag_is_two_parent)
+				# aタグの上にpタグが挟まっている場合の処理
+				path = 'ul[@class="count-list"]/li/a'
+				count_list = a_tag_is_two_parent == true ? 
+					img.parent.parent.parent.at(path) : img.parent.parent.at(path)
+				if count_list == nil then return nil; end
+				count_list['data-tooltip'].scan(/[0-9]+/)[0].to_i
+			end
+			
+			def SetupArgParams(img, param)
+				# aタグがpタグのせいで祖父ノードにある場合の処理
+				img_src = img['src']
+				parent_href = param[:a_tag_is_two_parent] == true ? img.parent.parent['href'] : img.parent['href']
+				referer = "http://www.pixiv.net/" + parent_href
+				arg_param = {
+					:illust_id => img_src.scan(/[0-9]+\_s/)[0].delete('_s').to_i,
+					:location => File.dirname(img_src),
+					:referer => referer,
+					:extension => File.extname(img_src)
+				}
 			end
 		end
 	end

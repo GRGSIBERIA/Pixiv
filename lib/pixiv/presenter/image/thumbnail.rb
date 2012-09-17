@@ -14,7 +14,8 @@ module Pixiv
 				# @param param [Int] :illust_id イラストID
 				# @param param [Int] :bookmark_count ブックマーク数
 				# @param param [String] :thumbnail_type サムネイルの種類, bookmark, tag, searchなど
-				# @param param [String] :location
+				# @param param [String] :location サーバ上の位置
+				# @param param [String] :extension 拡張子、事前に入れておく
 				def initialize(agent, param={})
 					super(agent, param[:illust_id], "thumbnail")
 					param[:bookmark_count] ||= -1
@@ -28,6 +29,7 @@ module Pixiv
 						@location = param[:location] + "/"
 					end
 					
+					# リファラーがあった場合、そっちに再設定する
 					if param[:referer] != nil then
 						@referer = param[:referer]
 					end
