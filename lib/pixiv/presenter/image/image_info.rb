@@ -1,7 +1,8 @@
-=begin
-–Ÿ‰æ‚âƒCƒ‰ƒXƒg‚È‚Ç‚Ìî•ñƒy[ƒW
+ï»¿=begin
+æ¼«ç”»ã‚„ã‚¤ãƒ©ã‚¹ãƒˆãªã©ã®æƒ…å ±ãƒšãƒ¼ã‚¸
 =end
 require './pixiv/presenter/image/image.rb'
+require './pixiv/presenter/instance/tag.rb'
 
 module Pixiv
 	module Presenter
@@ -11,37 +12,40 @@ module Pixiv
 					super(agent, illust_id, picture_type)
 				end
 				
-				# @return [Array<String>] ƒ^ƒOî•ñ‚Ì”z—ñ
+				# @return [Array<Presenter::Instance::Tag>] ã‚¿ã‚°æƒ…å ±ã®é…åˆ—
 				def tags
-					@tags ||= Parser::Image.tags(@page)
+					# å–å¾—ã§ããŸã‚¿ã‚°ã‚’èµ°æŸ»ã—ã¦ã€ã‚¿ã‚°æƒ…å ±ã‚’Tagã‚¯ãƒ©ã‚¹ã«å…¥ã‚Œã¦ã„ã
+					@tags ||= Parser::Image.tags(@page).each{|tag| 
+						tags << Presenter::Instance::Tag.new(@agent, tag)
+					}
 				end
 				
-				# @return [String] ƒLƒƒƒvƒVƒ‡ƒ“Aà–¾
+				# @return [String] ã‚­ãƒ£ãƒ—ã‚·ãƒ§ãƒ³ã€èª¬æ˜
 				def caption
 					@caption ||= Parser::Image.caption(@page)
 				end
 				
-				# @return [String] “Še‚µ‚½“ú•t
+				# @return [String] æŠ•ç¨¿ã—ãŸæ—¥ä»˜
 				def date
 					@date ||= Parser::Image.date(@page)
 				end
 				
-				# @return [Array<String>] g—p‚µ‚½ƒc[ƒ‹
+				# @return [Array<String>] ä½¿ç”¨ã—ãŸãƒ„ãƒ¼ãƒ«
 				def tools
 					@tools ||= Parser::Image.tools(@page)
 				end
 				
-				# @return [Int] ƒCƒ‰ƒXƒg‚Ì‰{——”
+				# @return [Int] ã‚¤ãƒ©ã‚¹ãƒˆã®é–²è¦§æ•°
 				def view_count
 					@view_count ||= Parser::Image.view_count(@page)
 				end
 				
-				# @return [Int] ƒCƒ‰ƒXƒg‚Ì•]‰¿‰ñ”
+				# @return [Int] ã‚¤ãƒ©ã‚¹ãƒˆã®è©•ä¾¡å›æ•°
 				def rated_count
 					@rated_count ||= Parser::Image.rated_count(@page)
 				end
 				
-				# @return [Int] ‘‡“_”
+				# @return [Int] ç·åˆç‚¹æ•°
 				def score_count
 					@score_count ||= Parser::Image.score_count(@page)
 				end
