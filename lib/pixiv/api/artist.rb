@@ -65,13 +65,14 @@ module Pixiv
 				GetThumbnails(param)
 			end
 			
-			# 投稿されたタグ一覧を取得する
+			# 投稿されたイラストに付いたタグ一覧を取得する
 			# @param userid [Int] ユーザID
 			def tags(userid)
 				# タグの場合、微妙に形式が異なるので注意
 				# 本当にタグとURIと件数だけ
+				param = Hash.new
 				param[:uri] = "http://www.pixiv.net/member_tag_all.php?id=#{userid.to_s}"
-				
+				GetTags(param)
 			end
 			
 			# お気に入りに登録されたユーザを取得する
@@ -84,6 +85,27 @@ module Pixiv
 			# @param userid [Int] ユーザID
 			def responses(userid)
 			
+			end
+			
+			# @param param [Hash]
+			# @param param [String] :uri ユーザが付けたタグ一覧を取得しに行くためのURI
+			def GetTags(param)
+				# ページを取得して行ごとにタグ情報を取得してくる
+				result_tags = Array.new
+				@agent.get(param[:uri])
+				used_tag_counts = @agent.page.search('div[@class="tagListNaviBody"]/dl/dt')
+				tag_lines = @agent.page.search('div[@class="tagListNaviBody"]/dl/dd')
+				
+				# 1行（タグ数カウント）ごとに格納する感じ
+				for line_num in 0..used_tag_counts.length-1 do
+					# タグが利用されたイラスト数と実際の名前を取得して格納する
+					count = used_tag_counts[line_num].inner_text.to_i
+					tag_lines[line_num].search('a').each{|tag|
+						result_tags << Presenter::Instance::Tag.new(
+							@agent, tag.inner_text, {:used_illust_count => count})
+					}
+				end
+				result_tags
 			end
 			
 			# あるURIからサムネを取得する

@@ -1,5 +1,5 @@
 ﻿=begin
-タグ
+タグ情報を入れるためのクラス
 =end
 require './pixiv/presenter/base.rb'
 require 'cgi'

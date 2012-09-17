@@ -6,7 +6,7 @@ def showi(c, id)
 	puts i.uri
 	puts i.title
 	puts i.caption
-	puts i.tags
+	puts i.tags.each{|t| puts t.name}
 	puts i.date.to_s
 	
 	puts i.thumbnail.uri
@@ -49,11 +49,16 @@ def showu(c, id)
 	puts u.detail.homepage
 	puts u.detail.twitter
 	
-	pics = c.artist.bookmarks(id)
-	for i in 0..40 do
-		pic = pics[i]
+	#pics = c.artist.bookmarks(id)
+	#for i in 0..40 do
+		#pic = pics[i]
 		#if pic != nil then pic.thumbnail.save("./") end
-		puts "bkm: " + pic.bookmark_count.to_s
+	#	puts "bkm: " + pic.bookmark_count.to_s
+	#end
+	
+	tags = c.artist.tags(id)
+	for tag in tags do
+		puts tag.count.to_s + ":" + tag.name
 	end
 end
 
