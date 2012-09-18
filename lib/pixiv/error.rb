@@ -14,4 +14,7 @@ module Pixiv
 	
 	# 特定のページが見つからない場合に返す
 	class PageNotFoundError < StandardError; end
+	
+	# ログインしてもブロックされている場合に返す
+	class LoginBlockError < StandardError; end
 end

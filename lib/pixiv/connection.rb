@@ -29,6 +29,10 @@ module Pixiv
 			@agent.submit(form)
 			
 			if @agent.page.at('div[@class="errorArea"]/h2') != nil then
+				raise LoginBlockError
+			end
+			
+			if @agent.page.at('span[@class="error"]') != nil then
 				raise LoginFailedError
 			end
 		end
