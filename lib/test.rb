@@ -1,4 +1,4 @@
-﻿require './pixiv.rb'
+require './pixiv.rb'
 
 def showi(c, id)
 	i = c.image.get(id)
