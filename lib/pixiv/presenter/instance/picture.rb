@@ -1,4 +1,4 @@
-﻿=begin
+=begin
 画像のインスタンスを扱うためのクラス
 =end
 require './pixiv/presenter/base.rb'

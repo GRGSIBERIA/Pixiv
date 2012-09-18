@@ -1,4 +1,4 @@
-﻿=begin
+=begin
 イラスト用クラスのファイル
 =end
 require 'net/http'

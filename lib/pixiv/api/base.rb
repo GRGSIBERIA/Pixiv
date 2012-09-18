@@ -1,12 +1,12 @@
 =begin
-Pixiv�ɖ₢���킹�邽�߂�API�̃x�[�X�N���X
+Pixivに問い合わせるためのAPIのベースクラス
 =end
 require './pixiv/error.rb'
 
 module Pixiv
 	module API
 		class Base
-			# @param agent [Mechanize] �Z�b�V�����̊m�����Ă����Ԃ̂���
+			# @param agent [Mechanize] セッションの確立している状態のもの
 			def initialize(agent)
 				@agent = agent
 			end
