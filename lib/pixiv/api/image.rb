@@ -1,4 +1,4 @@
-=begin
+﻿=begin
 特定のイラスト情報を問い合わせるためのクラス
 =end
 require './pixiv/api/base.rb'

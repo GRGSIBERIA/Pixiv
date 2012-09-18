@@ -1,4 +1,4 @@
-=begin
+﻿=begin
 投稿者のプロフィール
 =end
 require './pixiv/presenter/author/artist.rb'

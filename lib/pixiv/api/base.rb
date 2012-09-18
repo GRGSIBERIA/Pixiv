@@ -1,4 +1,4 @@
-=begin
+﻿=begin
 Pixivに問い合わせるためのAPIのベースクラス
 =end
 require './pixiv/error.rb'

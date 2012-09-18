@@ -1,4 +1,4 @@
-=begin
+﻿=begin
 イラストページから情報を取得してくるクラスメソッド
 =end
 require 'date'

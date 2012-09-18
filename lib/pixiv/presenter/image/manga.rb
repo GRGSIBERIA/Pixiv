@@ -1,4 +1,4 @@
-=begin
+﻿=begin
 漫画の情報が入る
 =end
 require './pixiv/presenter/image/image_info.rb'

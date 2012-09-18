@@ -1,4 +1,4 @@
-=begin
+﻿=begin
 漫画やイラストなどの情報ページ
 =end
 require './pixiv/presenter/image/image.rb'
