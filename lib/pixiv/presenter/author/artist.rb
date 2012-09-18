@@ -1,4 +1,4 @@
-﻿=begin
+=begin
 Pixivのユーザ情報を格納する
 =end
 require './pixiv/presenter/base.rb'

@@ -1,4 +1,4 @@
-﻿=begin
+=begin
 Pixivのイラスト情報をまとめておくためのクラス
 =end
 require './pixiv/presenter/image/image_info.rb'

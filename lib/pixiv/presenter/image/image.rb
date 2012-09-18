@@ -1,6 +1,6 @@
 =begin
-ƒCƒ‰ƒXƒg‚â–Ÿ‰æAƒTƒ€ƒl‚È‚Ç‚Ì‹¤’Ê‚µ‚½î•ñ‚ª“ü‚é
-ƒCƒ‰ƒXƒgî•ñƒy[ƒW‚Íimage_info.rb‚ğQÆ
+ã‚¤ãƒ©ã‚¹ãƒˆã‚„æ¼«ç”»ã€ã‚µãƒ ãƒãªã©ã®å…±é€šã—ãŸæƒ…å ±ãŒå…¥ã‚‹
+ã‚¤ãƒ©ã‚¹ãƒˆæƒ…å ±ãƒšãƒ¼ã‚¸ã¯image_info.rbã‚’å‚ç…§
 =end
 require './pixiv/presenter/base.rb'
 require './pixiv/parser/image.rb'
@@ -10,7 +10,7 @@ module Pixiv
 	module Presenter
 		module Image
 			class Image < Base
-				# @param [Mechanize::Page] ƒy[ƒW
+				# @param [Mechanize::Page] ãƒšãƒ¼ã‚¸
 				def initialize(agent, illust_id, picture_type)
 					super(agent)
 					@illust_id = illust_id
@@ -19,19 +19,19 @@ module Pixiv
 					@referer = @uri
 				end
 				
-				# ƒCƒ‰ƒXƒgî•ñƒy[ƒW‚ğ•Û‘¶‚·‚é
-				# @param directory [String] •Û‘¶æ‚ÌƒfƒBƒŒƒNƒgƒŠ
+				# ã‚¤ãƒ©ã‚¹ãƒˆæƒ…å ±ãƒšãƒ¼ã‚¸ã‚’ä¿å­˜ã™ã‚‹
+				# @param directory [String] ä¿å­˜å…ˆã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
 				def save(directory)
 					File.write(directory + illust_id.to_s + ".html", @page.body)
 				end
 				
-				# @return [String] ‰æ‘œ‚Ìƒ^ƒCƒv
+				# @return [String] ç”»åƒã®ã‚¿ã‚¤ãƒ—
 				# NOTE: 
 				def type
 					@type
 				end
 				
-				# @return [String] ƒCƒ‰ƒXƒgî•ñƒy[ƒW‚ÌID
+				# @return [String] ã‚¤ãƒ©ã‚¹ãƒˆæƒ…å ±ãƒšãƒ¼ã‚¸ã®ID
 				def uri
 					@uri
 				end
@@ -40,53 +40,53 @@ module Pixiv
 					@referer
 				end
 				
-				# @return [String] ƒCƒ‰ƒXƒg‚ÌID
+				# @return [String] ã‚¤ãƒ©ã‚¹ãƒˆã®ID
 				def illust_id
 					@illust_id
 				end
 				
-				# @return [String] ƒ^ƒCƒgƒ‹
+				# @return [String] ã‚¿ã‚¤ãƒˆãƒ«
 				def title
 					@title ||= Parser::Image.title(@page)
 				end
 				
-				# @return [String] ƒ†[ƒU–¼
+				# @return [String] ãƒ¦ãƒ¼ã‚¶å
 				def artist
 					@artist ||= Parser::Image.artist(@page)
 				end
 				
-				# @return [String] ƒ†[ƒUID
+				# @return [String] ãƒ¦ãƒ¼ã‚¶ID
 				def userid
 					@userid ||= Parser::Image.userid(@page)
 				end
 				
-				# @return [String] ÀÛ‚Ì‰æ‘œ‚ª’u‚©‚ê‚Ä‚¢‚é’u‚©‚ê‚Ä‚¢‚éURI
+				# @return [String] å®Ÿéš›ã®ç”»åƒãŒç½®ã‹ã‚Œã¦ã„ã‚‹ç½®ã‹ã‚Œã¦ã„ã‚‹URI
 				# EXAMPLE:
 				# 		http://i2.pixiv.net/img12/img/hoge123/
 				def location
 					@location ||= Parser::Image.location(@page) + "/"
 				end
 				
-				# @return [String] ƒCƒ‰ƒXƒg‚ÌŠg’£q
+				# @return [String] ã‚¤ãƒ©ã‚¹ãƒˆã®æ‹¡å¼µå­
 				# EXAMPLE:
 				#		.jpg, .gif, .png
 				def extension
 					@extension ||= Parser::Image.extension(@page)
 				end
 				
-				# @return [Presenter::Instance::Picture] ƒTƒ€ƒl‰æ‘œ
+				# @return [Presenter::Instance::Picture] ã‚µãƒ ãƒç”»åƒ
 				def thumbnail
 					@thumbnail ||= CreatePicture("_s")
 				end
 				
-				# @return [Presenter::Instance::Picture] ƒCƒ‰ƒXƒgî•ñ‰æ–Ê‚Ì‰æ‘œ
+				# @return [Presenter::Instance::Picture] ã‚¤ãƒ©ã‚¹ãƒˆæƒ…å ±ç”»é¢ã®ç”»åƒ
 				def medium
 					@medium ||= CreatePicture("_m")
 				end
 				
-				# @param [String] ƒCƒ‰ƒXƒgID‚ÌŒã‚É•t‚¯‚é“z
-				# @param [String] Šg’£qA©—R‚É‚Â‚¯‚½‚¢ê‡‚Í
-				# @return [Presenter::Instance::Picture] ‰æ‘œƒCƒ“ƒXƒ^ƒ“ƒX
+				# @param [String] ã‚¤ãƒ©ã‚¹ãƒˆIDã®å¾Œã«ä»˜ã‘ã‚‹å¥´
+				# @param [String] æ‹¡å¼µå­ã€è‡ªç”±ã«ã¤ã‘ãŸã„å ´åˆã¯
+				# @return [Presenter::Instance::Picture] ç”»åƒã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
 				def CreatePicture(prefix, ext=nil)
 					if ext == nil then ext = extension end
 					arg = {	

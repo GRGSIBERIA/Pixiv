@@ -1,4 +1,4 @@
-﻿=begin
+=begin
 ユーザ情報ページのデータを切り離すためのもの
 =end
 require 'date'

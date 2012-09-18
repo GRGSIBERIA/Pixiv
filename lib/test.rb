@@ -49,17 +49,17 @@ def showu(c, id)
 	puts u.detail.homepage
 	puts u.detail.twitter
 	
-	#pics = c.artist.bookmarks(id)
-	#for i in 0..40 do
-		#pic = pics[i]
-		#if pic != nil then pic.thumbnail.save("./") end
-	#	puts "bkm: " + pic.bookmark_count.to_s
-	#end
-	
-	tags = c.artist.tags(id)
-	for tag in tags do
-		puts tag.count.to_s + ":" + tag.name
+	pics = c.artist.bookmarks(id)
+	for i in 0..20 do
+		pic = pics[i]
+		if pic != nil then pic.large.save("./") end
+		puts "bkm: " + pic.bookmark_count.to_s
 	end
+	
+	#tags = c.artist.tags(id)
+	#for tag in tags do
+	#	puts tag.count.to_s + ":" + tag.name
+	#end
 end
 
 c = Pixiv::Client.new

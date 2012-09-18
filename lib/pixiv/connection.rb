@@ -1,4 +1,4 @@
-﻿=begin
+=begin
 Pixivと通信を行うためのクラス
 =end
 

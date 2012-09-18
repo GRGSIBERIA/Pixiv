@@ -1,4 +1,4 @@
-﻿=begin
+=begin
 エラーに関するファイル
 =end
 

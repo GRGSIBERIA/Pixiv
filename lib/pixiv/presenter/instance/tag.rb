@@ -1,4 +1,4 @@
-﻿=begin
+=begin
 タグ情報を入れるためのクラス
 =end
 require './pixiv/presenter/base.rb'
