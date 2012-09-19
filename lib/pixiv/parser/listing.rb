@@ -1,10 +1,24 @@
 ﻿=begin
 リスト表示になっているサムネイルの取得を行うためのユーティリティクラス
+取得と同時にgetでアクセスもするので注意
 =end
 require 'mechanize'
 
+=begin
+			NOTE:
+			paramで利用するパラメータ引数について。
+			paramはハッシュで、場合分けによって引数を使い分けたい場合に使ってます。
+			中には必須の引数があるので注意してください。
+			@param [String] :uri どこのページからサムネを引っ張り出すか
+			@param [String] :picture_count 画像件数が書いてあるパスを指定する、inner_textで読みだされるので注意
+			@param [String] :image_tag_path imgタグが存在するパスを指定
+			@param [String] :a_tag_is_two_parent aタグの親が2つ存在しているかどうかのフラグ
+			@param [String] :referer_is_two_parent pタグのせいでリファラーが祖父要素にある場合に何か入れる
+=end
+
+
 module Pixiv
-	module API
+	module Parser
 		class Listing
 			def initialize(agent)
 				@agent = agent
