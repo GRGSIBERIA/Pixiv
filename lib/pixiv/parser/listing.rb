@@ -81,7 +81,7 @@ module Pixiv
 							thumbnails << Presenter::Image::Thumbnail.new(@agent, arg_param)
 						end
 					rescue Pixiv::PageNotFoundError
-						break
+						next		# 取得できるものだけ取得したいので何もせずに無視する
 					end
 				end
 				thumbnails

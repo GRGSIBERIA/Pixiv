@@ -13,7 +13,7 @@ module Pixiv
 			# @param agent [Mechanize] セッションの確立している状態のもの
 			def initialize(agent)
 				super(agent)
-				@listing = Listing.new(agent)
+				@listing = Parser::Listing.new(agent)
 			end
 			
 			# ユーザ情報の取得を行う
