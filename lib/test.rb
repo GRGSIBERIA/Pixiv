@@ -52,8 +52,9 @@ def showu(c, id)
 	pics = c.artist.bookmarks(id)
 	for i in 0..20 do
 		pic = pics[i]
-		if pic != nil then pic.large.save("./") end
-		puts "bkm: " + pic.bookmark_count.to_s
+		puts pic.id
+		#if pic != nil then pic.thumbnail.save("./") end
+		#puts "bkm: " + pic.bookmark_count.to_s
 	end
 	
 	#tags = c.artist.tags(id)
@@ -70,4 +71,5 @@ c = Pixiv::Client.new
 #show(c, 10)	# 存在しないイラスト
 
 showu(c, 515127)
+showu(c, 29389)
 #showu(c, 44588)

@@ -11,18 +11,25 @@ module Pixiv
 			class Thumbnail < Image
 				# @param agent [Mechanize] エージェント
 				# @param param [Hash] 引数パラメータ
-				# @param param [Int] :illust_id イラストID
+				# @param param [Int] :illust_id イラストID (require)
 				# @param param [Int] :bookmark_count ブックマーク数
 				# @param param [String] :thumbnail_type サムネイルの種類, bookmark, tag, searchなど
 				# @param param [String] :location サーバ上の位置
 				# @param param [String] :extension 拡張子、事前に入れておく
 				def initialize(agent, param={})
 					super(agent, param[:illust_id], "thumbnail")
+					# 値が存在しなくてもOKな奴
 					param[:bookmark_count] ||= -1
+					param[:illust_title] ||= ""
+					param[:illust_author] ||= ""
 					@bookmark_count = param[:bookmark_count]
+					@extension = param[:extension]
+					@illust_title = param[:illust_title]
+					@artist = param[:illust_author]
+					
+					# 漫画用配列
 					@larges = Array.new
 					@bigs = Array.new
-					@extension = param[:extension]
 					
 					# 強制的にサーバ上の位置を再設定する
 					if param[:location] != nil then
@@ -33,6 +40,16 @@ module Pixiv
 					if param[:referer] != nil then
 						@referer = param[:referer]
 					end
+				end
+				
+				# @return [String] 作品名
+				def title
+					@illust_title
+				end
+				
+				# @return [String] 投稿者名
+				def artist 
+					@artist
 				end
 				
 				# サムネ画像の拡張子を取得するコード

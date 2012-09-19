@@ -45,7 +45,7 @@ module Pixiv
 				param[:uri] = "http://www.pixiv.net/member_illust.php?id=#{userid.to_s}"
 				param[:picture_count] = 'div[@class="two_column_body"]/h3/span'
 				param[:image_tag_path] = 'div[@class="display_works linkStyleWorks"]/ul/li/a/img'
-				param[:invalid_img_src] = '/source/'
+				#param[:invalid_img_src] = '/source/'
 				param[:a_tag_is_two_parent] = false
 				GetThumbnails(param)
 			end
@@ -59,7 +59,7 @@ module Pixiv
 				param[:uri] = "http://www.pixiv.net/bookmark.php?id=#{userid.to_s}"
 				param[:picture_count] = 'div[@class="two_column_body"]/h3/span'
 				param[:image_tag_path] = 'div[@class="display_works linkStyleWorks"]/ul/li/a/img'
-				param[:invalid_img_src] = '/source/'
+				#param[:invalid_img_src] = '/source/'
 				param[:bookmark_count] = true		# カウントしたいって意味
 				param[:a_tag_is_two_parent] = false
 				GetThumbnails(param)
@@ -84,7 +84,12 @@ module Pixiv
 			# レスポンスに応じたイラストを取得する
 			# @param userid [Int] ユーザID
 			def responses(userid)
-			
+				param[:uri] = "http://www.pixiv.net/response.php?mode=all&id=#{userid.to_s}"
+				param[:picture_count] = 'div[@class="one_column_top"]/div/p'
+				param[:image_tag_path] = 'div[@class="search_a2_result linkStyleWorks"]/ul/li/a/img'
+				#param[:invalid_img_src] = '/source/'
+				param[:a_tag_is_two_parent] = false
+				GetThumbnails(param)
 			end
 			
 			# @param param [Hash]
@@ -160,7 +165,7 @@ module Pixiv
 					begin
 						# イラストIDを抽出してサムネを追加していく
 						# 無効なURIが含まれる時があるのでその時は無視する
-						if !img['src'].include?(param[:invalid_img_src]) then
+						if img['src'].include?('pixiv.net/img') then
 							arg_param = SetupArgParams(img, param)	# サムネクラスに投げるパラメータの設定
 							if param[:bookmark_count] == true then	# ブクマ数を取得する
 								arg_param[:bookmark_count] = GetBookmarkCount(img, param[:a_tag_is_two_parent])
