@@ -13,7 +13,6 @@ require 'mechanize'
 			@param [String] :picture_count 画像件数が書いてあるパスを指定する、inner_textで読みだされるので注意
 			@param [String] :image_tag_path imgタグが存在するパスを指定
 			@param [String] :a_tag_is_two_parent aタグの親が2つ存在しているかどうかのフラグ
-			@param [String] :referer_is_two_parent pタグのせいでリファラーが祖父要素にある場合に何か入れる
 =end
 
 

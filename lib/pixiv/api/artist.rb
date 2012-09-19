@@ -4,6 +4,8 @@
 require './pixiv/api/base.rb'
 require './pixiv/parser/listing.rb'
 require './pixiv/presenter/image/thumbnail.rb'
+require './pixiv/presenter/instance/tag.rb'
+require './pixiv/safe.rb'
 
 module Pixiv
 	module API
@@ -18,12 +20,7 @@ module Pixiv
 			# @param userid [Int] ユーザID
 			def get(userid)
 				uri = "http://www.pixiv.net/member.php?id=#{userid.to_s}"
-				@agent.get(uri)
-				
-				# ユーザが存在しなければ落とす
-				if @agent.page.search('span[@class="error"]').length > 0 then
-					raise ArtistNotFoundError; end
-				
+				SafeGet.Artist(@agent, uri)
 				Presenter::Author::Artist.new(@agent, userid)
 			end
 			
@@ -31,12 +28,29 @@ module Pixiv
 			# @param userid [Int] ユーザID
 			# @param param [Hash]
 			# @param param [Range] :range 表示させたいページ範囲
+			# @param param [Presenter::Instance::Tag] :tag 絞り込みたいタグ
+			# @param param [String] :tag 絞り込みたいタグ
 			def pictures(userid, param={})
 				param[:uri] = "http://www.pixiv.net/member_illust.php?id=#{userid.to_s}"
+				param[:uri] += AppendTag(param[:tag])
 				param[:picture_count] = 'div[@class="two_column_body"]/h3/span'
 				param[:image_tag_path] = 'div[@class="display_works linkStyleWorks"]/ul/li/a/img'
 				param[:a_tag_is_two_parent] = false
 				@listing.GetThumbnails(param)
+			end
+			
+			# @param uri [String] アクセスしたいURL
+			# @param tag [Presenter::Instance::Tag] 絞り込みたいタグ
+			# @param tag [String] 絞り込みたいタグ
+			# @return [String] もし、指定されていればtagパラメータを返す
+			def AppendTag(uri, tag)
+				if tag != nil then
+					tag_str = tag.class == Presenter::Instance::Tag ?
+						tag.name : tag
+					"&tag=" + tag_str
+				else
+					""
+				end
 			end
 			
 			# ブックマークに登録したユーザを取得する
@@ -75,7 +89,6 @@ module Pixiv
 				param[:uri] = "http://www.pixiv.net/response.php?mode=all&id=#{userid.to_s}"
 				param[:picture_count] = 'div[@class="one_column_top"]/div/p'
 				param[:image_tag_path] = 'div[@class="search_a2_result linkStyleWorks"]/ul/li/a/img'
-				#param[:invalid_img_src] = '/source/'
 				param[:a_tag_is_two_parent] = false
 				@listing.GetThumbnails(param)
 			end
