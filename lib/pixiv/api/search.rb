@@ -42,13 +42,19 @@ module Pixiv
 			# paramから様々なパラメータを切り出してURIを生成する
 			# @return [String] パラメータ付きのURI
 			def MakeURI(param, words, mode)
-				uri = 'http://www.pixiv.net/search.php?' + MergeKeywords(words)
+				uri = 'http://www.pixiv.net/search.php?'
 				
+				uri += MergeKeywords(words, param[:include], param[:exclude])
 				uri += MakeSinceDate(param[:since_date])
 				uri += MakePartialMatch(mode, param[:partial_match])
 				uri += MakeOrder(param[:order])
 				uri += MakePictureSizeRange(param[:size])
 				uri += MakeAspectRatio(param[:ratio])
+				
+			end
+			
+			def MakeTools(tools)
+			
 			end
 			
 			# 日時を生成する
@@ -154,10 +160,30 @@ module Pixiv
 			
 			# キーワードを結合してエンコードする
 			# @param words [Array<String>] キーワード
+			# @param include [Array<String>] いずれかのキーワードを含む
+			# @param exclude [Array<String>] 除外するキーワード
 			# @return [String] URIエンコード済みパラメータ
-			def MergeKeywords(words)
+			def MergeKeywords(words, include, exclude)
 				merged_words = ""
 				words.each(|w| merged_words += words + " ")
+				merged_words.strip!
+				
+				# ～を含む文字列
+				if include != nil then
+					if include.class != Array then raise ArgumentError, "includeがArray型じゃない"; end
+					merged_words += " ("
+					include.each{|w| merged_words += w + " OR "}
+					merged_words.sub(/( OR )$/, "")
+					merged_words += ")"
+				end
+				
+				# 除外したい文字列
+				if exclude != nil then
+					if exclude.class != Array then raise ArgumentError, "excludeがArray型じゃない"; end
+					merged_words += " "
+					exclude.each{|w| merged_words += " -" + w}
+				end
+				
 				"&word=" + CGI.encode(merged_words)
 			end
 			private :MergeKeywords
