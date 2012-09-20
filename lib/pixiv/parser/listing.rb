@@ -10,7 +10,7 @@ require 'mechanize'
 			paramはハッシュで、場合分けによって引数を使い分けたい場合に使ってます。
 			中には必須の引数があるので注意してください。
 			@param [String] :uri どこのページからサムネを引っ張り出すか
-			@param [Range] :range どこのページからどこのページを読み込むか
+			@param [Range] :range どこのページからどこのページを読み込むか, 最初のページは0扱いにする
 			@param [String] :picture_count 画像件数が書いてあるパスを指定する、inner_textで読みだされるので注意
 			@param [String] :image_tag_path imgタグが存在するパスを指定
 			@param [String] :a_tag_is_two_parent aタグの親が2つ存在しているかどうかのフラグ
@@ -27,16 +27,33 @@ module Pixiv
 			# あるURIからサムネを取得する
 			def GetThumbnails(param)
 				pictures_array = Array.new	# いわゆる探索結果
-				page_num = 1						# 一度agentが指す位置を移動させておく
-
 				@agent.get(param[:uri])	# 一度最初のページを取得して最大ページ数を取得しておく
+				
+				# 検索する範囲を設定する
 				max_page = GetMaxPageNum(param)
+				range = SetRange(param[:range], max_page)	# :page_num, :max_page
 				
 				# 繰り返しページを探索して配列にPictureを継ぎ足していく
-				while GetPictures(param, param[:uri], page_num, max_page, pictures_array)	# 最初の1回は必ず実行される
-					page_num += 1
+				while GetPictures(param, range[:page_num], range[:max_page], pictures_array)	# 最初の1回は必ず実行される
+					range[:page_num] += 1
 				end
 				pictures_array
+			end
+			
+			# 検索範囲の設定
+			# @param range [Range] 検索範囲、nilの場合もある
+			# @param max_page [Int] 何ページ存在するか
+			# @return [Hash] 最初のページと最後のページ, 最初のページはイテレータとして利用する
+			def SetRange(range, max_page)
+				result = Hash.new
+				if range != nil then
+					result[:page_num] = max_page < range.first ? max_page : range.first
+					result[:max_page] = max_page < range.last ? max_page : range.last
+				else
+					result[:page_num] = 1
+					result[:max_page] = max_page
+				end
+				result
 			end
 			
 			# 何ページ存在するのか調べる
@@ -47,9 +64,9 @@ module Pixiv
 			end
 			
 			# 1ページからサムネを全て抜き出してpictures_arrayに入れる
-			def GetPictures(param, uri, page_num, max_page, pictures_array)
+			def GetPictures(param, page_num, max_page, pictures_array)
 				# ページを取得して存在チェック
-				@agent.get(uri + "&p=#{page_num.to_s}")
+				@agent.get(param[:uri] + "&p=#{page_num.to_s}")
 				if @agent.page.body.force_encoding('UTF-8').scan("見つかりませんでした".force_encoding('UTF-8')).length > 0 then
 					return nil; end
 				
