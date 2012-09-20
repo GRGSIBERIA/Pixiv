@@ -28,6 +28,7 @@ module Pixiv
 			# @param :size [Int] :wlt ある幅以上
 			# @param :size [Int] :hlt ある高さ以上
 			# @param param [Float] :ratio アスペクト比、+方向で横長、-方向で縦長、0で正方形
+			# @param param [String] :ratio vertical, horizontal, rectangleで指定
 			def keyword(words=[], param={})
 				if words.class != Array then raise ArgumentError, "wordsが配列になっていない"; end
 				if words.length <= 0 then raise ArgumentError, "キーワードが指定されていない"; end
@@ -50,11 +51,15 @@ module Pixiv
 				uri += MakeOrder(param[:order])
 				uri += MakePictureSizeRange(param[:size])
 				uri += MakeAspectRatio(param[:ratio])
-				
+				uri += MakeTool(param[:tool])
 			end
 			
-			def MakeTools(tools)
-			
+			def MakeTool(tool)
+				if tool != nil then
+					'&tool=' + CGI.encode(tool)
+				else
+					""
+				end
 			end
 			
 			# 日時を生成する
