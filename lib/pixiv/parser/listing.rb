@@ -10,6 +10,7 @@ require 'mechanize'
 			paramはハッシュで、場合分けによって引数を使い分けたい場合に使ってます。
 			中には必須の引数があるので注意してください。
 			@param [String] :uri どこのページからサムネを引っ張り出すか
+			@param [Range] :range どこのページからどこのページを読み込むか
 			@param [String] :picture_count 画像件数が書いてあるパスを指定する、inner_textで読みだされるので注意
 			@param [String] :image_tag_path imgタグが存在するパスを指定
 			@param [String] :a_tag_is_two_parent aタグの親が2つ存在しているかどうかのフラグ
@@ -26,15 +27,9 @@ module Pixiv
 			# あるURIからサムネを取得する
 			def GetThumbnails(param)
 				pictures_array = Array.new	# いわゆる探索結果
-				result = nil
-				
-				# 一度agentが指す位置を移動させておく
-				page_num = 2
-				if GetPictures(param, param[:uri], 1, 1, pictures_array) == nil
-					return pictures_array
-				end
-				
-				# 先にagent.pageを移動させておかないと使い物にならない
+				page_num = 1						# 一度agentが指す位置を移動させておく
+
+				@agent.get(param[:uri])	# 一度最初のページを取得して最大ページ数を取得しておく
 				max_page = GetMaxPageNum(param)
 				
 				# 繰り返しページを探索して配列にPictureを継ぎ足していく
