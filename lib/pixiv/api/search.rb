@@ -16,8 +16,10 @@ module Pixiv
 			# キーワードを指定して検索をかける
 			# @param words [Array<String>] 検索したいキーワード
 			# @param param [Hash]
+			# @param param [Array<String>] :include いずれかを含むキーワード
+			# @param param [Array<String>] :exclude 除外するキーワード
 			# @param param [Range] :range 検索をかけたいページ範囲
-			# @param param [Date] :since_day 日時
+			# @param param [Date] :since_date この日時以降の画像を取得する
 			# @param param [Object] :partial_match 部分一致するかどうか, 中に何かが入っていたら部分一致
 			# @param param [String] :size small, middle, largeのいずれかで大きさを指定
 			# @param param [Hash] :size 大きさを細かく指定したい場合に使う
@@ -30,7 +32,7 @@ module Pixiv
 				if words.class != Array then raise ArgumentError, "wordsが配列になっていない"; end
 				if words.length <= 0 then raise ArgumentError, "キーワードが指定されていない"; end
 				
-				param[:uri] = MakeURI(param, "keyword")
+				param[:uri] = MakeURI(param, words, "keyword")
 				param[:picture_count] = 'div/div[@class="info"]/span[@class="count"]'
 				param[:image_tag_path] = 'ul[@class="images autopagerize_page_element"]/li/a/p/img'
 				param[:a_tag_is_two_parent] = true
@@ -39,17 +41,27 @@ module Pixiv
 			
 			# paramから様々なパラメータを切り出してURIを生成する
 			# @return [String] パラメータ付きのURI
-			def MakeURI(param, mode)
+			def MakeURI(param, words, mode)
 				uri = 'http://www.pixiv.net/search.php?' + MergeKeywords(words)
 				
-				if param[:since_day] != nil and param[:since_day].class == Date then
-					uri += '&scd=' + param[:since_day].strftime("%Y-%m-%d")
-				end
-				
+				uri += MakeSinceDate(param[:since_date])
 				uri += MakePartialMatch(mode, param[:partial_match])
 				uri += MakeOrder(param[:order])
 				uri += MakePictureSizeRange(param[:size])
 				uri += MakeAspectRatio(param[:ratio])
+			end
+			
+			# 日時を生成する
+			def MakeSinceDate(since_date)
+				if since_date != nil then
+					if since_date.class == Date then
+						'&scd=' + since_date.strftime("%Y-%m-%d")
+					else
+						raise ArgumentError, "since_dayはDate型にしてください"
+					end
+				else
+					""
+				end
 			end
 			
 			# 並び順を生成する、orderに何か入ってると過去順
