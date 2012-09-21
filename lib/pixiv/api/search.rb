@@ -36,7 +36,7 @@ module Pixiv
 			end
 			
 			def tag(tagname, param={})
-				
+				Presenter::Search::Tags.new(@agent, tagname, param)
 			end
 		end
 	end

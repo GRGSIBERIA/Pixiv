@@ -65,7 +65,7 @@ module Pixiv
 						uri += 'tags.php?'
 					end
 					
-					uri += MergeKeywords(words, @param[:include], @param[:exclude])
+					uri += MergeKeywords(words, @param[:include], @param[:exclude], mode)
 					uri += MakeSinceDate(@param[:since_date])
 					uri += MakePartialMatch(mode, @param[:partial_match])
 					uri += MakeOrder(@param[:order])
@@ -196,8 +196,9 @@ module Pixiv
 				# @param words [Array<String>] キーワード
 				# @param include [Array<String>] いずれかのキーワードを含む
 				# @param exclude [Array<String>] 除外するキーワード
+				# @param mode [String] tagかsearchか
 				# @return [String] URIエンコード済みパラメータ
-				def MergeKeywords(words, include, exclude)
+				def MergeKeywords(words, include, exclude, mode)
 					merged_words = ""
 					if words.class == Array then
 						words.each{|w| merged_words += w + " "}
@@ -221,9 +222,15 @@ module Pixiv
 						exclude.each{|w| merged_words += " -" + w}
 					end
 					@merged_keywords = merged_words
-					"&word=" + CGI.escape(merged_words.toutf8)
+					
+					case mode
+					when "keyword"
+						"&word=" + CGI.escape(merged_words.toutf8)
+					when "tag"
+						"&tag=" + CGI.escape(merged_words.toutf8)
+					end
 				end
-				private :MergeKeywords
+ 				private :MergeKeywords
 			end
 		end
 	end
