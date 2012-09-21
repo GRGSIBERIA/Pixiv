@@ -34,7 +34,8 @@ module Pixiv
 				if words.length <= 0 then raise ArgumentError, "キーワードが指定されていない"; end
 				
 				param[:uri] = MakeURI(param, words, "keyword")
-				param[:picture_count] = 'div/div[@class="info"]/span[@class="count"]'
+				#param[:picture_count] = 'div[@class="label"]//div[@class="info"]//span[@class="count"]'
+				param[:picture_count] = 'div/div/span'
 				param[:image_tag_path] = 'ul[@class="images autopagerize_page_element"]/li/a/p/img'
 				param[:a_tag_is_two_parent] = true
 				@listing.GetThumbnails(param)
@@ -63,14 +64,12 @@ module Pixiv
 				uri += MakePictureSizeRange(param[:size])
 				uri += MakeAspectRatio(param[:ratio])
 				uri += MakeTool(param[:tool])
-				
-				puts "make: " + uri
 			end
 			
 			# ツール名をエンコードするだけ
 			def MakeTool(tool)
 				if tool != nil then
-					'&tool=' + CGI.encode(tool)
+					'&tool=' + CGI.escape(tool.toutf8)
 				else
 					""
 				end
@@ -184,7 +183,7 @@ module Pixiv
 			# @return [String] URIエンコード済みパラメータ
 			def MergeKeywords(words, include, exclude)
 				merged_words = ""
-				words.each(|w| merged_words += words + " ")
+				words.each{|w| merged_words += w + " "}
 				merged_words.strip!
 				
 				# ～を含む文字列
@@ -203,7 +202,7 @@ module Pixiv
 					exclude.each{|w| merged_words += " -" + w}
 				end
 				
-				"&word=" + CGI.encode(merged_words)
+				"&word=" + CGI.escape(merged_words.toutf8)
 			end
 			private :MergeKeywords
 		end

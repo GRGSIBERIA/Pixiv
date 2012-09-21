@@ -60,7 +60,7 @@ module Pixiv
 			def GetMaxPageNum(param)
 				max_page_text = @agent.page.at(param[:picture_count]).inner_text
 				max_page_num = max_page_text.scan(/[0-9]+/)[0].to_i
-				return max_page_num.div(20) + 1
+				max_page_num.div(20) + 1
 			end
 			
 			# 1ページからサムネを全て抜き出してpictures_arrayに入れる

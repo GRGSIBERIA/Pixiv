@@ -23,6 +23,8 @@ require './pixiv/presenter/instance/picture.rb'
 require './pixiv/api/base.rb'
 require './pixiv/api/image.rb'
 require './pixiv/api/artist.rb'
+require './pixiv/api/search.rb'
 
 require './pixiv/parser/image.rb'
 require './pixiv/parser/author.rb'
+require './pixiv/parser/listing.rb'

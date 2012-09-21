@@ -66,6 +66,17 @@ def showu(c, id)
 	#end
 end
 
+def showst(c, tag)
+	pics = c.search.keyword([tag], {:range => 1..3})
+	puts "count" + pics.length.to_s
+	for pic in pics do
+		if pic == nil then next end
+		
+		puts pic.illust_id
+	end
+	
+end
+
 c = Pixiv::Client.new
 
 #showi(c, 30042252)	# イラスト
@@ -73,6 +84,7 @@ c = Pixiv::Client.new
 #showi(c, 28637532)	# 漫画
 #show(c, 10)	# 存在しないイラスト
 
-showu(c, 515127)
-showu(c, 29389)
+#showu(c, 515127)
+#showu(c, 29389)
 #showu(c, 44588)
+showst(c, "おっぱい")
