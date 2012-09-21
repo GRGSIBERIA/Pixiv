@@ -67,14 +67,12 @@ def showu(c, id)
 end
 
 def showst(c, tag)
-	pics = c.search.keyword([tag], {:range => 1..3})
-	puts "count" + pics.length.to_s
-	for pic in pics do
-		if pic == nil then next end
-		
+	result = c.search.keyword([tag], {:range => 1..3})
+	puts "count:" + result.picture_count.to_s
+	puts "page:" + result.page_count.to_s
+	for pic in result.pictures do
 		puts pic.illust_id
 	end
-	
 end
 
 c = Pixiv::Client.new
