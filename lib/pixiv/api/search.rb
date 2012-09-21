@@ -9,7 +9,7 @@ require 'cgi'
 
 module Pixiv
 	module API
-		class Search < Base
+		class Search < Pixiv::API::Base
 			def initialize(agent)
 				super(agent)
 				@listing = Parser::Listing.new(agent)
@@ -32,7 +32,7 @@ module Pixiv
 			# @param param [Float] :ratio アスペクト比、+方向で横長、-方向で縦長、0で正方形
 			# @param param [String] :ratio vertical, horizontal, rectangleで指定
 			def keyword(words=[], param={})
-				Keywords.new(@agent, words, param)
+				Presenter::Search::Keywords.new(@agent, words, param)
 			end
 			
 			def tag(tagname, param={})

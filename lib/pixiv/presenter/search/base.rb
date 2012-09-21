@@ -1,5 +1,5 @@
-=begin
-ŒŸõAPI—p\‘¢‘Ì‚Ìƒx[ƒXƒNƒ‰ƒX
+ï»¿=begin
+æ¤œç´¢APIç”¨æ§‹é€ ä½“ã®ãƒ™ãƒ¼ã‚¹ã‚¯ãƒ©ã‚¹
 =end
 require './pixiv/parser/listing.rb'
 
@@ -11,40 +11,40 @@ module Pixiv
 					@agent = agent
 					@param = param
 					@words = words
-					@listing = Perser::Listing.new(agent)
+					@listing = Parser::Listing.new(agent)
 				end
 				
-				# @return [Presenter::Image::Thumbnail] ŒŸõ‚Åæ“¾‚Å‚«‚½ƒTƒ€ƒl
+				# @return [Presenter::Image::Thumbnail] æ¤œç´¢ã§å–å¾—ã§ããŸã‚µãƒ ãƒ
 				def pictures
-					@listing.GetThumbnail(@param)
+					@listing.GetThumbnails(@param)
 				end
 				
-				# @return [Int] ŒŸõ‚Éˆø‚Á‚©‚©‚Á‚½‰æ‘œ‚ÌŒ”
+				# @return [Int] æ¤œç´¢ã«å¼•ã£ã‹ã‹ã£ãŸç”»åƒã®ä»¶æ•°
 				def picture_count
 					@picture_count ||= GetPictureCount()
 				end
 				
-				# @return [Int] ‰½ƒy[ƒW‘¶İ‚·‚é‚©
-				def max_count
-					@max_count ||= GetMaxPageNum()
+				# @return [Int] ä½•ãƒšãƒ¼ã‚¸å­˜åœ¨ã™ã‚‹ã‹
+				def page_count
+					@page_count ||= GetMaxPageNum()
 				end
 				
-				# @return [Int] ŒŸõŒ‹‰Ê‚É‘Î‚·‚éƒy[ƒW”
+				# @return [Int] æ¤œç´¢çµæœã«å¯¾ã™ã‚‹ãƒšãƒ¼ã‚¸æ•°
 				def GetMaxPageNum()
-					@max_count = picture_count.div(20) + 1
+					picture_count.div(20) + 1
 				end
 				private :GetMaxPageNum
 				
-				# @return [Int] ŒŸõ‚Éˆø‚Á‚©‚©‚Á‚½‰æ‘œ‚ÌŒ”
+				# @return [Int] æ¤œç´¢ã«å¼•ã£ã‹ã‹ã£ãŸç”»åƒã®ä»¶æ•°
 				def GetPictureCount()
-					@agent.get(@param[:uri])	# ˆê“xÅ‰‚Ìƒy[ƒW‚ğæ“¾‚µ‚ÄÅ‘åƒy[ƒW”‚ğæ“¾‚µ‚Ä‚¨‚­
+					@agent.get(@param[:uri])	# ä¸€åº¦æœ€åˆã®ãƒšãƒ¼ã‚¸ã‚’å–å¾—ã—ã¦æœ€å¤§ãƒšãƒ¼ã‚¸æ•°ã‚’å–å¾—ã—ã¦ãŠã
 					max_page_text = @agent.page.at(@param[:picture_count]).inner_text
 					max_page_text.scan(/[0-9]+/)[0].to_i
 				end
 				private :GetPictureCount
 				
-				# param‚©‚ç—lX‚Èƒpƒ‰ƒ[ƒ^‚ğØ‚èo‚µ‚ÄURI‚ğ¶¬‚·‚é
-				# @return [String] ƒpƒ‰ƒ[ƒ^•t‚«‚ÌURI
+				# paramã‹ã‚‰æ§˜ã€…ãªãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’åˆ‡ã‚Šå‡ºã—ã¦URIã‚’ç”Ÿæˆã™ã‚‹
+				# @return [String] ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ä»˜ãã®URI
 				def MakeURI(words, mode)
 					uri = 'http://www.pixiv.net/'
 					
@@ -65,7 +65,7 @@ module Pixiv
 				end
 				protected :MakeURI
 				
-				# ƒc[ƒ‹–¼‚ğƒGƒ“ƒR[ƒh‚·‚é‚¾‚¯
+				# ãƒ„ãƒ¼ãƒ«åã‚’ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã™ã‚‹ã ã‘
 				def MakeTool(tool)
 					if tool != nil then
 						'&tool=' + CGI.escape(tool.toutf8)
@@ -75,13 +75,13 @@ module Pixiv
 				end
 				private :MakeTool
 				
-				# “ú‚ğ¶¬‚·‚é
+				# æ—¥æ™‚ã‚’ç”Ÿæˆã™ã‚‹
 				def MakeSinceDate(since_date)
 					if since_date != nil then
 						if since_date.class == Date then
 							'&scd=' + since_date.strftime("%Y-%m-%d")
 						else
-							raise ArgumentError, "since_day‚ÍDateŒ^‚É‚µ‚Ä‚­‚¾‚³‚¢"
+							raise ArgumentError, "since_dayã¯Dateå‹ã«ã—ã¦ãã ã•ã„"
 						end
 					else
 						""
@@ -89,7 +89,7 @@ module Pixiv
 				end
 				private :MakeSinceDate
 				
-				# •À‚Ñ‡‚ğ¶¬‚·‚éAorder‚É‰½‚©“ü‚Á‚Ä‚é‚Æ‰ß‹‡
+				# ä¸¦ã³é †ã‚’ç”Ÿæˆã™ã‚‹ã€orderã«ä½•ã‹å…¥ã£ã¦ã‚‹ã¨éå»é †
 				def MakeOrder(order)
 					if order != nil then
 						"&order=date"
@@ -99,14 +99,14 @@ module Pixiv
 				end
 				private :MakeOrder
 				
-				# •”•ªˆê’v‚ÆŠ®‘Sˆê’v‚Ì”»’è
+				# éƒ¨åˆ†ä¸€è‡´ã¨å®Œå…¨ä¸€è‡´ã®åˆ¤å®š
 				def MakePartialMatch(mode, partial_match)
 					case mode
 					when "keyword" then
-						# ƒL[ƒ[ƒh‚Ìê‡‚ÍŠ®‘Sˆê’v‚ª‘¶İ‚µ‚È‚¢
+						# ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®å ´åˆã¯å®Œå…¨ä¸€è‡´ãŒå­˜åœ¨ã—ãªã„
 						'&s_mode=s_tc'
 					when "tag" then
-						# •”•ªˆê’v‚Ìê‡‚Ì‚İ•t‚¯‚é
+						# éƒ¨åˆ†ä¸€è‡´ã®å ´åˆã®ã¿ä»˜ã‘ã‚‹
 						partial_match != nil ? '&s_mode=s_tag' : ""
 					else
 						""
@@ -114,22 +114,22 @@ module Pixiv
 				end
 				private :MakePartialMatch
 				
-				# ƒAƒXƒyƒNƒg”ä‚Ìİ’è
+				# ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”ã®è¨­å®š
 				def MakeAspectRatio(ratio)
 					if ratio != nil then
 						if ratio.class == String then
 							case ratio
-							when "horizontal"	# ‰¡’·
+							when "horizontal"	# æ¨ªé•·
 								ratio = "0.5"
-							when "vertical"	# c’·
+							when "vertical"	# ç¸¦é•·
 								ratio = "-0.5"
-							when "rectangle" # ³•ûŒ`
+							when "rectangle" # æ­£æ–¹å½¢
 								ratio = "0"
 							end
 						elsif ratio.class != Float then
 							ratio = ratio.to_s
 						else
-							raise ArgumentError, "Œ^‚ª‚¨‚©‚µ‚¢:" + ratio.class
+							raise ArgumentError, "å‹ãŒãŠã‹ã—ã„:" + ratio.class
 						end
 						"&ratio=" + ratio
 					else
@@ -138,14 +138,14 @@ module Pixiv
 				end
 				private :MakeAspectRatio
 				
-				# ‰æ‘œ‚Ì‘å‚«‚³‚ğw’è‚µ‚Ä‚»‚Ì”ÍˆÍ‚Ì‰æ‘œ‚ğæ“¾‚·‚é
-				# ngt‚ÍnˆÈ‰ºAnlt‚ÍnˆÈã‚ÌˆÓ–¡
+				# ç”»åƒã®å¤§ãã•ã‚’æŒ‡å®šã—ã¦ãã®ç¯„å›²ã®ç”»åƒã‚’å–å¾—ã™ã‚‹
+				# ngtã¯nä»¥ä¸‹ã€nltã¯nä»¥ä¸Šã®æ„å‘³
 				def MakePictureSizeRange(size)
 					if size != nil then
 						wgt = nil; hgt = nil; wlt = nil; hlt = nil
 
 						if size.class == String then
-							# ‰æ‘œ‚ÌƒTƒCƒY‚ğ•¶š—ñ‚Åw’è
+							# ç”»åƒã®ã‚µã‚¤ã‚ºã‚’æ–‡å­—åˆ—ã§æŒ‡å®š
 							case size
 							when "small" then
 								wgt = 1000
@@ -159,17 +159,17 @@ module Pixiv
 								wlt = 3001
 								hlt = 3001
 							else
-								raise ArgumentError, "small, middle, large‚Ì‚Ç‚ê‚©‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢"
+								raise ArgumentError, "small, middle, largeã®ã©ã‚Œã‹ã‚’æŒ‡å®šã—ã¦ãã ã•ã„"
 							end
 						elsif size.class == Hash then
-							# ”’l‚Å’¼Úw’è
+							# æ•°å€¤ã§ç›´æ¥æŒ‡å®š
 							wgt = size[:wgt]
 							hgt = size[:hgt]
 							wlt = size[:wlt]
 							hlt = size[:hlt]
 						end
 						
-						parameters = ""	# ‚È‚¢“z‚Í–³‹‚·‚é
+						parameters = ""	# ãªã„å¥´ã¯ç„¡è¦–ã™ã‚‹
 						if wgt != nil then parameters += '&wgt=' + wgt.to_s; end;
 						if hgt != nil then parameters += '&hgt=' + hgt.to_s; end;
 						if wlt != nil then parameters += '&wlt=' + wlt.to_s; end;
@@ -181,11 +181,11 @@ module Pixiv
 				end
 				private :MakePictureSizeRange
 				
-				# ƒL[ƒ[ƒh‚ğŒ‹‡‚µ‚ÄƒGƒ“ƒR[ƒh‚·‚é
-				# @param words [Array<String>] ƒL[ƒ[ƒh
-				# @param include [Array<String>] ‚¢‚¸‚ê‚©‚ÌƒL[ƒ[ƒh‚ğŠÜ‚Ş
-				# @param exclude [Array<String>] œŠO‚·‚éƒL[ƒ[ƒh
-				# @return [String] URIƒGƒ“ƒR[ƒhÏ‚İƒpƒ‰ƒ[ƒ^
+				# ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’çµåˆã—ã¦ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã™ã‚‹
+				# @param words [Array<String>] ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
+				# @param include [Array<String>] ã„ãšã‚Œã‹ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’å«ã‚€
+				# @param exclude [Array<String>] é™¤å¤–ã™ã‚‹ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
+				# @return [String] URIã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰æ¸ˆã¿ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿
 				def MergeKeywords(words, include, exclude)
 					merged_words = ""
 					if words.class == Array then
@@ -195,18 +195,18 @@ module Pixiv
 						merged_words = words
 					end
 					
-					# `‚ğŠÜ‚Ş•¶š—ñ
+					# ï½ã‚’å«ã‚€æ–‡å­—åˆ—
 					if include != nil then
-						if include.class != Array then raise ArgumentError, "include‚ªArrayŒ^‚¶‚á‚È‚¢"; end
+						if include.class != Array then raise ArgumentError, "includeãŒArrayå‹ã˜ã‚ƒãªã„"; end
 						merged_words += " ("
 						include.each{|w| merged_words += w + " OR "}
 						merged_words.sub(/( OR )$/, "")
 						merged_words += ")"
 					end
 					
-					# œŠO‚µ‚½‚¢•¶š—ñ
+					# é™¤å¤–ã—ãŸã„æ–‡å­—åˆ—
 					if exclude != nil then
-						if exclude.class != Array then raise ArgumentError, "exclude‚ªArrayŒ^‚¶‚á‚È‚¢"; end
+						if exclude.class != Array then raise ArgumentError, "excludeãŒArrayå‹ã˜ã‚ƒãªã„"; end
 						merged_words += " "
 						exclude.each{|w| merged_words += " -" + w}
 					end

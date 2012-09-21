@@ -1,4 +1,4 @@
-=begin
+﻿=begin
 
 =end
 require './pixiv/presenter/search/base.rb'

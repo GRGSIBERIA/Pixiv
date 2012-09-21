@@ -15,10 +15,15 @@ require './pixiv/presenter/image/manga.rb'
 require './pixiv/presenter/image/illust.rb'
 require './pixiv/presenter/image/thumbnail.rb'
 
+require './pixiv/presenter/search/base.rb'
+require './pixiv/presenter/search/keywords.rb'
+require './pixiv/presenter/search/tags.rb'
+
 require './pixiv/presenter/author/artist.rb'
 require './pixiv/presenter/author/detail.rb'
 
 require './pixiv/presenter/instance/picture.rb'
+require './pixiv/presenter/instance/tag.rb'
 
 require './pixiv/api/base.rb'
 require './pixiv/api/image.rb'
