@@ -40,10 +40,21 @@ module Pixiv
 				@listing.GetThumbnails(param)
 			end
 			
+			def tag(tagname, param={})
+				
+			end
+			
 			# paramから様々なパラメータを切り出してURIを生成する
 			# @return [String] パラメータ付きのURI
 			def MakeURI(param, words, mode)
-				uri = 'http://www.pixiv.net/search.php?'
+				uri = 'http://www.pixiv.net/'
+				
+				case mode
+				when "keyword" then 
+					uri += 'search.php?'
+				when "tag" then 
+					uri += 'tags.php?'
+				end
 				
 				uri += MergeKeywords(words, param[:include], param[:exclude])
 				uri += MakeSinceDate(param[:since_date])
@@ -52,8 +63,11 @@ module Pixiv
 				uri += MakePictureSizeRange(param[:size])
 				uri += MakeAspectRatio(param[:ratio])
 				uri += MakeTool(param[:tool])
+				
+				puts "make: " + uri
 			end
 			
+			# ツール名をエンコードするだけ
 			def MakeTool(tool)
 				if tool != nil then
 					'&tool=' + CGI.encode(tool)
@@ -88,11 +102,11 @@ module Pixiv
 			def MakePartialMatch(mode, partial_match)
 				case mode
 				when "keyword" then
-					# キーワードの場合は強制
+					# キーワードの場合は完全一致が存在しない
 					'&s_mode=s_tc'
 				when "tag" then
 					# 部分一致の場合のみ付ける
-					partial_match != nil ? '&s_mode=s_tag' : ""	
+					partial_match != nil ? '&s_mode=s_tag' : ""
 				else
 					""
 				end
