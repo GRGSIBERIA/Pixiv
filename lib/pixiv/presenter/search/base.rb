@@ -29,6 +29,16 @@ module Pixiv
 					@page_count ||= GetMaxPageNum()
 				end
 				
+				# @return [String] パラメータ付きのURI
+				def uri
+					@uri # コンストラクタで初期化されているはずなのでOK
+				end
+				
+				# @return [String] 結合済みの検索キーワード
+				def merged_keywords
+					@merged_keywords
+				end
+				
 				# @return [Int] 検索結果に対するページ数
 				def GetMaxPageNum()
 					picture_count.div(20) + 1
@@ -62,6 +72,7 @@ module Pixiv
 					uri += MakePictureSizeRange(@param[:size])
 					uri += MakeAspectRatio(@param[:ratio])
 					uri += MakeTool(@param[:tool])
+					@uri = uri
 				end
 				protected :MakeURI
 				
@@ -200,17 +211,16 @@ module Pixiv
 						if include.class != Array then raise ArgumentError, "includeがArray型じゃない"; end
 						merged_words += " ("
 						include.each{|w| merged_words += w + " OR "}
-						merged_words.sub(/( OR )$/, "")
+						merged_words.sub!(/( OR )$/, "")
 						merged_words += ")"
 					end
 					
 					# 除外したい文字列
 					if exclude != nil then
 						if exclude.class != Array then raise ArgumentError, "excludeがArray型じゃない"; end
-						merged_words += " "
 						exclude.each{|w| merged_words += " -" + w}
 					end
-					
+					@merged_keywords = merged_words
 					"&word=" + CGI.escape(merged_words.toutf8)
 				end
 				private :MergeKeywords

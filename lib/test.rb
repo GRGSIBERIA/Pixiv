@@ -66,8 +66,10 @@ def showu(c, id)
 	#end
 end
 
-def showst(c, tag)
-	result = c.search.keyword([tag], {:range => 1..3})
+def showsk(c, tag, param)
+	result = c.search.keyword([tag], param)
+	puts "uri:" + result.uri
+	puts "keywords:" + result.merged_keywords
 	puts "count:" + result.picture_count.to_s
 	puts "page:" + result.page_count.to_s
 	for pic in result.pictures do
@@ -85,4 +87,14 @@ c = Pixiv::Client.new
 #showu(c, 515127)
 #showu(c, 29389)
 #showu(c, 44588)
-showst(c, "おっぱい")
+
+param = {
+		:range => 1..3,
+		:include => ["R-18", "涼宮ハルヒ", "長門有希"],
+		:exclude => ["朝比奈みくる", "朝倉涼子"],
+		:ratio => "vertical",
+		:since_date => Date.new(2010, 5, 10),
+		:size => {:wlt => 1000, :hlt => 1000, :wgt => 3000, :hgt => 3000},
+		:tool => "SAI"
+	}
+showsk(c, "おっぱい", param)
