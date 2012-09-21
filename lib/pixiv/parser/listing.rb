@@ -27,7 +27,6 @@ module Pixiv
 			# あるURIからサムネを取得する
 			def GetThumbnails(param)
 				pictures_array = Array.new	# いわゆる探索結果
-				@agent.get(param[:uri])	# 一度最初のページを取得して最大ページ数を取得しておく
 				
 				# 検索する範囲を設定する
 				max_page = GetMaxPageNum(param)
@@ -58,6 +57,7 @@ module Pixiv
 			
 			# 何ページ存在するのか調べる
 			def GetMaxPageNum(param)
+				@agent.get(param[:uri])	# 一度最初のページを取得して最大ページ数を取得しておく
 				max_page_text = @agent.page.at(param[:picture_count]).inner_text
 				max_page_num = max_page_text.scan(/[0-9]+/)[0].to_i
 				max_page_num.div(20) + 1
