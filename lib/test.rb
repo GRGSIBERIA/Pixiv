@@ -50,7 +50,7 @@ def showu(c, id)
 	puts u.detail.homepage
 	puts u.detail.twitter
 	
-	pics = c.artist.bookmarks(id, {:range => 1..3})
+	pics = c.artist.favorites(id, {:range => 1..3})
 	puts "count:" + pics.length.to_s
 	for i in 0..20 do
 		pic = pics[i]

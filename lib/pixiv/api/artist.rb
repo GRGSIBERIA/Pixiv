@@ -32,6 +32,10 @@ module Pixiv
 			# @param param [String] :tag 絞り込みたいタグ
 			def pictures(userid, param={})
 				param[:uri] = "http://www.pixiv.net/member_illust.php?id=#{userid.to_s}"
+				if param[:tag] != nil then	# タグが有効であれば追加しておく
+					tag = param[:tag].class == String ? param[:tag] : param[:tag].name
+					param[:uri] += '&tag=' + tag
+				end
 				param[:uri] += AppendTag(param[:tag])
 				param[:picture_count] = 'div[@class="two_column_body"]/h3/span'
 				param[:image_tag_path] = 'div[@class="display_works linkStyleWorks"]/ul/li/a/img'
@@ -57,7 +61,7 @@ module Pixiv
 			# @param userid [Int] ユーザID
 			# @param param [Hash]
 			# @param param [Range] :range 表示させたいページ範囲
-			# @return [Array<Presenter::Thumbnail>] 取得できたサムネイル一覧
+			# @return [Array<Presenter::Image::Thumbnail>] 取得できたサムネイル一覧
 			def bookmarks(userid, param={})
 				param[:uri] = "http://www.pixiv.net/bookmark.php?id=#{userid.to_s}"
 				param[:picture_count] = 'div[@class="two_column_body"]/h3/span'
@@ -69,6 +73,7 @@ module Pixiv
 			
 			# 投稿されたイラストに付いたタグ一覧を取得する
 			# @param userid [Int] ユーザID
+			# @return [Array<Presenter::Instance::Tag>] イラストにつけられたタグの配列
 			def tags(userid)
 				# タグの場合、微妙に形式が異なるので注意
 				# 本当にタグとURIと件数だけ
@@ -79,6 +84,7 @@ module Pixiv
 			
 			# お気に入りに登録されたユーザを取得する
 			# @param userid [Int] ユーザID
+			# @return [Array<Presenter::Author::Icon>] ユーザのアイコンの配列
 			def favorites(userid, param={})
 				param[:uri] = "http://www.pixiv.net/bookmark.php?type=user&id=#{userid.to_s}"
 				param[:picture_count] = 'div/div/span[@class=count]'
@@ -88,6 +94,7 @@ module Pixiv
 			
 			# レスポンスに応じたイラストを取得する
 			# @param userid [Int] ユーザID
+			# @return [Array<Presenter::Image::Thumbnail>] レスポンスに応じたイラストのサムネ配列
 			def responses(userid, param={})
 				param[:uri] = "http://www.pixiv.net/response.php?mode=all&id=#{userid.to_s}"
 				param[:picture_count] = 'div[@class="one_column_top"]/div/p'
@@ -98,12 +105,16 @@ module Pixiv
 			
 			# @param param [Hash]
 			# @param param [String] :uri 取得しに行きたいURI
+			# @param param [Range] :range 表示するページ数
 			def GetUsers(param)
 				result_users = Array.new
 				param[:custom_max_page_count] = 48		# ページあたり48件
 				max_page = @listing.GetMaxPageNum(param)
+				range = param[:range]
+				start = range.first >= 1 ? range.first : 1
+				max_page = range.last > max_page ? max_page : range.last
 				
-				for page_num in 1..max_page do
+				for page_num in start..max_page do
 					# 1ページごとに洗い出しながら、サムネを拾ってインスタンス化していく
 					@agent.get(param[:uri] + "&p=#{page_num}")
 					users = @agent.page.search(:image_tag_path])
