@@ -26,6 +26,11 @@ module Pixiv
 					@userid
 				end
 				
+				# @return [Presenter::Instance::Picture] ユーザのアイコン画像
+				def avatar_icon
+					@avatar_icon ||= Parser::Author.avatar_icon(@page, @agent)
+				end
+				
 				# @return [Int] 投稿したイラスト数
 				def picture_count
 					@picture_count ||= Parser::Author.picture_count(@page)

@@ -36,6 +36,7 @@ def showu(c, id)
 	puts u.picture_count
 	puts u.bookmark_count
 	puts u.response_count
+	puts u.avatar_icon.uri
 	
 	puts u.detail.nickname
 	puts u.detail.profile
@@ -95,7 +96,7 @@ c = Pixiv::Client.new
 #showi(c, 28637532)	# 漫画
 #show(c, 10)	# 存在しないイラスト
 
-#showu(c, 515127)
+showu(c, 515127)
 #showu(c, 29389)
 #showu(c, 44588)
 
@@ -108,4 +109,4 @@ param = {
 		:size => {:wlt => 1000, :hlt => 1000, :wgt => 3000, :hgt => 3000},
 		:tool => "SAI"
 	}
-showst(c, "おっぱい", param)
+#showst(c, "おっぱい", param)

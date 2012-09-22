@@ -8,10 +8,12 @@ module Pixiv
 		module Instance
 			class Picture < Base
 				# @param agent [Mechanize] エージェント
-				# @param illust_id [Int] イラストのID
-				# @param location [String] イラストがサーバ上のどこに存在しているか
-				# @param referer [String] リファラー
-				# @param extension [String] 拡張子
+				# @param param [Hash]
+				# @param param [Int] :illust_id イラストのID
+				# @param param [String] :location イラストがサーバ上のどこに存在しているか
+				# @param param [String] :referer リファラー
+				# @param param [String] :extension 拡張子
+				# @param param [String] :prefix イラストIDの後に付ける奴
 				def initialize(agent, param = {})
 					super(agent)
 					@illust_id = param[:illust_id]

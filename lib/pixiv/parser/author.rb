@@ -2,6 +2,7 @@
 ユーザ情報ページのデータを切り離すためのもの
 =end
 require 'date'
+require './pixiv/presenter/instance/picture.rb'
 
 module Pixiv
 	module Parser
@@ -29,6 +30,20 @@ module Pixiv
 			# @return [Hash<String>] 色々な情報をテーブル単位で詰める
 			def self.get_profile_hash(page)
 				Author.GetTableHash(page)
+			end
+			
+			# @return [Presenter::Instance::Picture] ユーザのアイコン画像
+			def self.avatar_icon(page, agent)
+				icon_img = page.at('a[@class="avatar_m"]').child['src']
+				
+				param = {
+					:location => File.dirname(icon_img) + "/",
+					:extension => File.extname(icon_img),
+					:referer => page.uri,
+					:illust_id => File.basename(icon_img, ".*"),
+					:prefix => ""
+				}
+				Presenter::Instance::Picture.new(agent, param)
 			end
 			
 			# @return [Hash<String, String>] 
