@@ -39,7 +39,7 @@ module Pixiv
 				param = {
 					:location => File.dirname(icon_img) + "/",
 					:extension => File.extname(icon_img),
-					:referer => page.uri,
+					:referer => page.uri.to_s,
 					:illust_id => File.basename(icon_img, ".*"),
 					:prefix => ""
 				}
@@ -82,6 +82,7 @@ module Pixiv
 				else 0 end
 			end
 			
+			# 必要ないかな？
 			def self.extension(page, illust_id)
 				img_tag = page.at("li/a/img")
 				File.extname(img_tag['src'].split("?")[0])

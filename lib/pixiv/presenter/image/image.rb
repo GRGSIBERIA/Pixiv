@@ -14,7 +14,7 @@ module Pixiv
 				def initialize(agent, illust_id, picture_type)
 					super(agent)
 					@illust_id = illust_id
-					@uri = agent.page.uri
+					@uri = agent.page.uri.to_s
 					@type = picture_type
 					@referer = @uri
 				end

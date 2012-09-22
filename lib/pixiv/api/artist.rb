@@ -79,8 +79,11 @@ module Pixiv
 			
 			# お気に入りに登録されたユーザを取得する
 			# @param userid [Int] ユーザID
-			def favorites(userid)
-			
+			def favorites(userid, param={})
+				param[:uri] = "http://www.pixiv.net/bookmark.php?type=user&id=#{userid.to_s}"
+				param[:picture_count] = 'div/div/span[@class=count]'
+				param[:image_tag_path] = 'div[@class="usericon"]/a/img'
+				GetUsers(param)
 			end
 			
 			# レスポンスに応じたイラストを取得する
@@ -91,6 +94,48 @@ module Pixiv
 				param[:image_tag_path] = 'div[@class="search_a2_result linkStyleWorks"]/ul/li/a/img'
 				param[:a_tag_is_two_parent] = false
 				@listing.GetThumbnails(param)
+			end
+			
+			# @param param [Hash]
+			# @param param [String] :uri 取得しに行きたいURI
+			def GetUsers(param)
+				result_users = Array.new
+				param[:custom_max_page_count] = 48		# ページあたり48件
+				max_page = @listing.GetMaxPageNum(param)
+				
+				for page_num in 1..max_page do
+					# 1ページごとに洗い出しながら、サムネを拾ってインスタンス化していく
+					@agent.get(param[:uri] + "&p=#{page_num}")
+					users = @agent.page.search(:image_tag_path])
+					for user in users do
+						result_users << MakeUserIcon(user)
+					end
+				end
+				result_users
+			end
+			
+			# @param user [Nokogiri::Element] アイコンのimgタグ
+			# @return [Presenter::Author::Icon]
+			def MakeUserIcon(user)
+				illust_id = user.parent['href'].delete!('member.php?id=').to_i
+				nickname = user['alt']
+				
+				icon = MakeUserIcon(user, illust_id)
+				Presenter::Author::Icon.new(@agent, illust_id, nickname, icon)
+			end
+			
+			# @param user [Nokogiri::Element] アイコンのimgタグ
+			# @param illust_id [Int] アイコンのイラストID
+			# @return [Presenter::Instance::Picture] ユーザのミニアイコン
+			def MakeUserIcon(user, illust_id)
+				param = {
+					:illust_id => illust_id,
+					:referer => @agent.page.uri.to_s,
+					:extension => File.extname(user['src']),
+					:prefix => '_80',
+					:location => File.dirname(user['src'])
+				}
+				Presenter::Instance::Picture.new(@agent, param)
 			end
 			
 			# @param param [Hash]
