@@ -5,6 +5,7 @@ require './pixiv/api/base.rb'
 require './pixiv/parser/listing.rb'
 require './pixiv/presenter/image/thumbnail.rb'
 require './pixiv/presenter/instance/tag.rb'
+require './pixiv/presenter/author/icon.rb'
 require './pixiv/safe.rb'
 
 module Pixiv
@@ -117,7 +118,7 @@ module Pixiv
 				for page_num in start..max_page do
 					# 1ページごとに洗い出しながら、サムネを拾ってインスタンス化していく
 					@agent.get(param[:uri] + "&p=#{page_num}")
-					users = @agent.page.search(:image_tag_path])
+					users = @agent.page.search(param[:image_tag_path])
 					for user in users do
 						result_users << MakeUserIcon(user)
 					end
@@ -128,25 +129,29 @@ module Pixiv
 			# @param user [Nokogiri::Element] アイコンのimgタグ
 			# @return [Presenter::Author::Icon]
 			def MakeUserIcon(user)
-				illust_id = user.parent['href'].delete!('member.php?id=').to_i
+				user_id = user.parent['href'].delete!('member.php?id=').to_i
 				nickname = user['alt']
 				
-				icon = MakeUserIcon(user, illust_id)
-				Presenter::Author::Icon.new(@agent, illust_id, nickname, icon)
+				icon = MakeUserIconImage(user)
+				Presenter::Author::Icon.new(@agent, user_id, nickname, icon)
 			end
 			
 			# @param user [Nokogiri::Element] アイコンのimgタグ
-			# @param illust_id [Int] アイコンのイラストID
+			# @param illust_id [Int] イラストのID
 			# @return [Presenter::Instance::Picture] ユーザのミニアイコン
-			def MakeUserIcon(user, illust_id)
+			def MakeUserIconImage(user)
 				param = {
-					:illust_id => illust_id,
+					:illust_id => File.basename(user['src'], "_80.*").to_i,
 					:referer => @agent.page.uri.to_s,
 					:extension => File.extname(user['src']),
 					:prefix => '_80',
 					:location => File.dirname(user['src'])
 				}
 				Presenter::Instance::Picture.new(@agent, param)
+			end
+			
+			def MakeIllustID(src)
+				File.basename(src, "_80.*").to_i
 			end
 			
 			# @param param [Hash]

@@ -55,8 +55,8 @@ def showu(c, id)
 	for i in 0..20 do
 		pic = pics[i]
 		if pic == nil then next end
-		
-		puts pic.illust_id
+		puts pic.nickname
+		#puts pic.illust_id
 		#if pic != nil then pic.thumbnail.save("./") end
 		#puts "bkm: " + pic.bookmark_count.to_s
 	end
