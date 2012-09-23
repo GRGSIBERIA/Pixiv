@@ -84,7 +84,12 @@ module Pixiv
 				# @param pref [String] イラストIDの後につけたい識別子的なもの
 				# @return [String] 完全な画像のURI
 				def AppendedPrefixURI(pref)
-					 location + illust_id .to_s+ pref + extension
+					if illust_id != 0 then
+						location + illust_id .to_s+ pref + extension
+					else
+						#location + "no_img" + pref + extension
+						"http://source.pixiv.net/source/mobile/images/no_img#{pref}.png"
+					end
 				end
 				protected :AppendedPrefixURI
 			end

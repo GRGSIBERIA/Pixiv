@@ -111,9 +111,14 @@ module Pixiv
 				result_users = Array.new
 				param[:custom_max_page_count] = 48		# ページあたり48件
 				max_page = @listing.GetMaxPageNum(param)
-				range = param[:range]
-				start = range.first >= 1 ? range.first : 1
-				max_page = range.last > max_page ? max_page : range.last
+				
+				if param[:range] != nil then
+					range = param[:range]
+					start = range.first >= 1 ? range.first : 1
+					max_page = range.last > max_page ? max_page : range.last
+				else
+					start = 1
+				end
 				
 				for page_num in start..max_page do
 					# 1ページごとに洗い出しながら、サムネを拾ってインスタンス化していく
@@ -126,13 +131,13 @@ module Pixiv
 				result_users
 			end
 			
-			# @param user [Nokogiri::Element] アイコンのimgタグ
+			# @param user_icon [Nokogiri::Element] アイコンのimgタグ
 			# @return [Presenter::Author::Icon]
-			def MakeUserIcon(user)
-				user_id = user.parent['href'].delete!('member.php?id=').to_i
-				nickname = user['alt']
+			def MakeUserIcon(user_icon)
+				user_id = user_icon.parent['href'].delete!('member.php?id=').to_i
+				nickname = user_icon['alt']
 				
-				icon = MakeUserIconImage(user)
+				icon = MakeUserIconImage(user_icon)
 				Presenter::Author::Icon.new(@agent, user_id, nickname, icon)
 			end
 			
@@ -140,18 +145,15 @@ module Pixiv
 			# @param illust_id [Int] イラストのID
 			# @return [Presenter::Instance::Picture] ユーザのミニアイコン
 			def MakeUserIconImage(user)
+				illust_id = File.basename(user['src'], ".*").sub!(/(_80)$/, "").to_i
 				param = {
-					:illust_id => File.basename(user['src'], "_80.*").to_i,
+					:illust_id => illust_id,
 					:referer => @agent.page.uri.to_s,
 					:extension => File.extname(user['src']),
 					:prefix => '_80',
-					:location => File.dirname(user['src'])
+					:location => File.dirname(user['src']) + "/"
 				}
 				Presenter::Instance::Picture.new(@agent, param)
-			end
-			
-			def MakeIllustID(src)
-				File.basename(src, "_80.*").to_i
 			end
 			
 			# @param param [Hash]

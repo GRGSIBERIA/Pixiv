@@ -11,12 +11,12 @@ module Pixiv
 				# @param agent [Mechanize] エージェント
 				# @param userid [Int] ユーザID
 				# @param nickname [String] ユーザの表示名
-				# @param icon [Presenter::Instance::Picture] ユーザのミニアイコン
-				def initialize(agent, userid, nickname, icon)
+				# @param image [Presenter::Instance::Picture] ユーザのミニアイコン
+				def initialize(agent, userid, nickname, image)
 					super(agent)
 					@userid = userid
 					@nickname = nickname
-					@icon = icon
+					@image = image
 				end
 				
 				# @return [Int] ユーザID
@@ -30,8 +30,8 @@ module Pixiv
 				end
 				
 				# @return [Presenter::Instance::Picture] サムネのアイコン画像
-				def icon
-					@icon
+				def image
+					@image
 				end
 			end
 		end

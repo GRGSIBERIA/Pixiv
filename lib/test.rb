@@ -50,12 +50,11 @@ def showu(c, id)
 	puts u.detail.homepage
 	puts u.detail.twitter
 	
-	pics = c.artist.favorites(id, {:range => 1..3})
+	pics = c.artist.favorites(id)#, {:range => 1..3})
 	puts "count:" + pics.length.to_s
-	for i in 0..20 do
+	for i in 0..20 do #0..pics.length-1 do
 		pic = pics[i]
-		if pic == nil then next end
-		puts pic.nickname
+		pic.image.save("./")
 		#puts pic.illust_id
 		#if pic != nil then pic.thumbnail.save("./") end
 		#puts "bkm: " + pic.bookmark_count.to_s
