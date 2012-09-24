@@ -7,14 +7,15 @@ require 'mechanize'
 =begin
 			NOTE:
 			paramで利用するパラメータ引数について。
-			paramはハッシュで、場合分けによって引数を使い分けたい場合に使ってます。
+			paramはハッシュで引数を使い分けたい場合に使ってます。
 			中には必須の引数があるので注意してください。
 			@param [String] :uri どこのページからサムネを引っ張り出すか
-			@param [Range] :range どこのページからどこのページを読み込むか, 最初のページは0扱いにする
+			@param [Range] :range どこのページからどこのページを読み込むか, 最初のページは1。（任意）
 			@param [String] :picture_count 画像件数が書いてあるパスを指定する、inner_textで読みだされるので注意
 			@param [String] :image_tag_path imgタグが存在するパスを指定
 			@param [Bool] :a_tag_is_two_parent imgタグからaタグまで親が2つ存在しているかどうかのフラグ
 			@param [Bool] :do_bookmark_count ブクマのカウントを行うかどうかのフラグ
+			@param [Int]: custom_max_page_count そのページに存在し、取得もしたい画像の数
 =end
 
 
@@ -63,7 +64,7 @@ module Pixiv
 				@agent.get(param[:uri])	# 一度最初のページを取得して最大ページ数を取得しておく
 				max_page_text = @agent.page.at(param[:picture_count]).inner_text
 				max_page_num = max_page_text.scan(/[0-9]+/)[0].to_i
-				param[:custom_max_page_count] ||= 20
+				param[:custom_max_page_count] ||= 20	# 指定がなければデフォルトで20件
 				max_page_num.div(param[:custom_max_page_count]) + 1
 			end
 			
