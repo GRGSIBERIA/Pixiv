@@ -20,7 +20,7 @@ module Pixiv
 			# ユーザ情報の取得を行う
 			# @param userid [Int] ユーザID
 			def get(userid)
-				uri = "http://www.pixiv.net/member.php?id=#{userid.to_s}"
+				uri = "http://www.pixiv.net/member.php?id=#{userid}"
 				SafeGet.Artist(@agent, uri)
 				Presenter::Author::Artist.new(@agent, userid)
 			end
@@ -32,7 +32,7 @@ module Pixiv
 			# @param param [Presenter::Instance::Tag] :tag 絞り込みたいタグ
 			# @param param [String] :tag 絞り込みたいタグ
 			def pictures(userid, param={})
-				param[:uri] = "http://www.pixiv.net/member_illust.php?id=#{userid.to_s}"
+				param[:uri] = "http://www.pixiv.net/member_illust.php?id=#{userid}"
 				if param[:tag] != nil then	# タグが有効であれば追加しておく
 					tag = param[:tag].class == String ? param[:tag] : param[:tag].name
 					param[:uri] += '&tag=' + tag
@@ -64,7 +64,7 @@ module Pixiv
 			# @param param [Range] :range 表示させたいページ範囲
 			# @return [Array<Presenter::Image::Thumbnail>] 取得できたサムネイル一覧
 			def bookmarks(userid, param={})
-				param[:uri] = "http://www.pixiv.net/bookmark.php?id=#{userid.to_s}"
+				param[:uri] = "http://www.pixiv.net/bookmark.php?id=#{userid}"
 				param[:picture_count] = 'div[@class="two_column_body"]/h3/span'
 				param[:image_tag_path] = 'div[@class="display_works linkStyleWorks"]/ul/li/a/img'
 				param[:bookmark_count] = true		# カウントしたいって意味
@@ -79,7 +79,7 @@ module Pixiv
 				# タグの場合、微妙に形式が異なるので注意
 				# 本当にタグとURIと件数だけ
 				param = Hash.new
-				param[:uri] = "http://www.pixiv.net/member_tag_all.php?id=#{userid.to_s}"
+				param[:uri] = "http://www.pixiv.net/member_tag_all.php?id=#{userid}"
 				GetTags(param)
 			end
 			
@@ -87,7 +87,17 @@ module Pixiv
 			# @param userid [Int] ユーザID
 			# @return [Array<Presenter::Author::Icon>] ユーザのアイコンの配列
 			def favorites(userid, param={})
-				param[:uri] = "http://www.pixiv.net/bookmark.php?type=user&id=#{userid.to_s}"
+				param[:uri] = "http://www.pixiv.net/bookmark.php?type=user&id=#{userid}"
+				param[:picture_count] = 'div/div/span[@class=count]'
+				param[:image_tag_path] = 'div[@class="usericon"]/a/img'
+				GetUsers(param)
+			end
+			
+			# マイピクのユーザを取得する
+			# @param userid [Int] ユーザID
+			# @return [Array<Presenter::Author::Icon>] ユーザのアイコンの配列
+			def mypixiv(userid, param={})
+				param[:uri] = "http://www.pixiv.net/mypixiv_all.php?id=#{userid}"
 				param[:picture_count] = 'div/div/span[@class=count]'
 				param[:image_tag_path] = 'div[@class="usericon"]/a/img'
 				GetUsers(param)
@@ -97,7 +107,7 @@ module Pixiv
 			# @param userid [Int] ユーザID
 			# @return [Array<Presenter::Image::Thumbnail>] レスポンスに応じたイラストのサムネ配列
 			def responses(userid, param={})
-				param[:uri] = "http://www.pixiv.net/response.php?mode=all&id=#{userid.to_s}"
+				param[:uri] = "http://www.pixiv.net/response.php?mode=all&id=#{userid}"
 				param[:picture_count] = 'div[@class="one_column_top"]/div/p'
 				param[:image_tag_path] = 'div[@class="search_a2_result linkStyleWorks"]/ul/li/a/img'
 				param[:a_tag_is_two_parent] = false
