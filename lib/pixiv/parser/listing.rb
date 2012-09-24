@@ -13,7 +13,8 @@ require 'mechanize'
 			@param [Range] :range どこのページからどこのページを読み込むか, 最初のページは0扱いにする
 			@param [String] :picture_count 画像件数が書いてあるパスを指定する、inner_textで読みだされるので注意
 			@param [String] :image_tag_path imgタグが存在するパスを指定
-			@param [String] :a_tag_is_two_parent imgタグからaタグまで親が2つ存在しているかどうかのフラグ
+			@param [Bool] :a_tag_is_two_parent imgタグからaタグまで親が2つ存在しているかどうかのフラグ
+			@param [Bool] :do_bookmark_count ブクマのカウントを行うかどうかのフラグ
 =end
 
 
@@ -56,6 +57,8 @@ module Pixiv
 			end
 			
 			# 何ページ存在するのか調べる
+			# @param param [Hash]
+			# @return [Int] 最大ページ数
 			def GetMaxPageNum(param)
 				@agent.get(param[:uri])	# 一度最初のページを取得して最大ページ数を取得しておく
 				max_page_text = @agent.page.at(param[:picture_count]).inner_text
@@ -65,6 +68,10 @@ module Pixiv
 			end
 			
 			# 1ページからサムネを全て抜き出してpictures_arrayに入れる
+			# @param param [Hash]
+			# @param page_num [Int] ページ番号
+			# @param max_page [Int] 最大ページ数
+			# @param pictures_array [Array<Presenter::Image::Thumbnail>] サムネの結果を格納するための配列
 			def GetPictures(param, page_num, max_page, pictures_array)
 				# ページを取得して存在チェック
 				@agent.get(param[:uri] + "&p=#{page_num.to_s}")
@@ -81,6 +88,8 @@ module Pixiv
 			end
 			
 			# ページ内のイラストを取得する
+			# @param param [Hash]
+			# @return [Array<Presenter::Image::Thumbnail>] ページ内に存在しているサムネ
 			def GetPicturesArrayInPage(param)
 				thumbnails = Array.new # 表示されている件数だけ
 				img_array = @agent.page.search(param[:image_tag_path])
@@ -101,8 +110,11 @@ module Pixiv
 			end
 			
 			# ブクマ数をタグから探してくる
-			def GetBookmarkCount(img, a_tag_is_two_parent, do_count)
-				if do_count != nil then
+			# @param img [Nokogiri::Element] imgタグを示す要素
+			# @param a_tag_is_two_parent [Bool] trueならばimgタグから見てaタグが2階層上にある
+			# @param do_bookmark_count [Bool]
+			def GetBookmarkCount(img, a_tag_is_two_parent, do_bookmark_count)
+				if do_bookmark_count == true then
 					# aタグの上にpタグが挟まっている場合の処理
 					path = 'ul[@class="count-list"]/li/a'
 					count_list = a_tag_is_two_parent == true ? 
@@ -114,6 +126,8 @@ module Pixiv
 				end
 			end
 			
+			# @param img [Nokogiri::Element] imgタグの場所
+			# @param param [Hash]
 			def SetupArgParams(img, param)
 				# aタグがpタグのせいで祖父ノードにある場合の処理
 				img_src = img['src']
@@ -127,6 +141,68 @@ module Pixiv
 					:extension => File.extname(img_src),
 					:bookmark_count => do_bookmark_count
 				}
+			end
+			
+			# ユーザ情報一覧を取得する
+			# @param param [Hash]
+			# @param param [String] :uri 取得しに行きたいURI
+			# @param param [Range] :range 表示するページ数
+			def GetUsers(param)
+				result_users = Array.new
+				max_page = GetMaxPageNum(param)
+				
+				wash_pages = RoundRange(param[:range], max_page)
+				
+				for page_num in wash_pages do
+					# 1ページごとに洗い出しながら、サムネを拾ってインスタンス化していく
+					@agent.get(param[:uri] + "&p=#{page_num}")
+					users = @agent.page.search(param[:image_tag_path])
+					for user in users do
+						result_users << MakeUserIcon(user)
+					end
+				end
+				result_users
+			end
+			
+			# 指定した範囲にまとめる
+			# @param view_range [Range] paramで指定された表示範囲
+			# @param max_page [Int] 最大ページ数
+			# @return [Range] 丸めた後のページ範囲
+			def RoundRange(view_range, max_page)
+				start =1
+				last = max_page
+				if view_range != nil then
+					start = view_range.first >= 1 ? view_range.first : 1
+					last = view_range.last > max_page ? max_page : view_range.last
+				end
+				start..last
+			end
+			
+			# ユーザのアイコン情報を生成する
+			# @param user_icon [Nokogiri::Element] アイコンのimgタグ
+			# @return [Presenter::Author::Icon]
+			def MakeUserIcon(user_icon)
+				user_id = user_icon.parent['href'].delete!('member.php?id=').to_i
+				nickname = user_icon['alt']
+				
+				icon = MakeUserIconImage(user_icon)
+				Presenter::Author::Icon.new(@agent, user_id, nickname, icon)
+			end
+			
+			# ユーザのアイコンサムネを拾ってくるためのコード
+			# @param user [Nokogiri::Element] アイコンのimgタグ
+			# @param illust_id [Int] イラストのID
+			# @return [Presenter::Instance::Picture] ユーザのミニアイコン
+			def MakeUserIconImage(user)
+				illust_id = File.basename(user['src'], ".*").sub!(/(_80)$/, "").to_i
+				param = {
+					:illust_id => illust_id,
+					:referer => @agent.page.uri.to_s,
+					:extension => File.extname(user['src']),
+					:prefix => '_80',
+					:location => File.dirname(user['src']) + "/"
+				}
+				Presenter::Instance::Picture.new(@agent, param)
 			end
 		end
 	end

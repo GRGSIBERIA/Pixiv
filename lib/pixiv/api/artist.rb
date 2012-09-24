@@ -28,7 +28,7 @@ module Pixiv
 			# 投稿されたイラストを取得する
 			# @param userid [Int] ユーザID
 			# @param param [Hash]
-			# @param param [Range] :range 表示させたいページ範囲
+			# @param param [Range] :range 表示するページ範囲。1から、限界ページに達しても自動調整される。
 			# @param param [Presenter::Instance::Tag] :tag 絞り込みたいタグ
 			# @param param [String] :tag 絞り込みたいタグ
 			def pictures(userid, param={})
@@ -61,7 +61,7 @@ module Pixiv
 			# ブックマークに登録したユーザを取得する
 			# @param userid [Int] ユーザID
 			# @param param [Hash]
-			# @param param [Range] :range 表示させたいページ範囲
+			# @param param [Range] :range 表示するページ範囲。1から、限界ページに達しても自動調整される。
 			# @return [Array<Presenter::Image::Thumbnail>] 取得できたサムネイル一覧
 			def bookmarks(userid, param={})
 				param[:uri] = "http://www.pixiv.net/bookmark.php?id=#{userid}"
@@ -85,22 +85,28 @@ module Pixiv
 			
 			# お気に入りに登録されたユーザを取得する
 			# @param userid [Int] ユーザID
+			# @param param [Hash]
+			# @param param [Range] 表示するページ範囲。1から、限界ページに達しても自動調整される。
 			# @return [Array<Presenter::Author::Icon>] ユーザのアイコンの配列
 			def favorites(userid, param={})
 				param[:uri] = "http://www.pixiv.net/bookmark.php?type=user&id=#{userid}"
+				param[:custom_max_page_count] = 48
 				param[:picture_count] = 'div/div/span[@class=count]'
 				param[:image_tag_path] = 'div[@class="usericon"]/a/img'
-				GetUsers(param)
+				@listing.GetUsers(param)
 			end
 			
 			# マイピクのユーザを取得する
 			# @param userid [Int] ユーザID
+			# @param param [Hash]
+			# @param param [Range] :range 表示するページ範囲。1から、限界ページに達しても自動調整される。
 			# @return [Array<Presenter::Author::Icon>] ユーザのアイコンの配列
 			def mypixiv(userid, param={})
 				param[:uri] = "http://www.pixiv.net/mypixiv_all.php?id=#{userid}"
+				param[:custom_max_page_count] = 18
 				param[:picture_count] = 'div/div/span[@class=count]'
 				param[:image_tag_path] = 'div[@class="usericon"]/a/img'
-				GetUsers(param)
+				@listing.GetUsers(param)
 			end
 			
 			# レスポンスに応じたイラストを取得する
@@ -112,58 +118,6 @@ module Pixiv
 				param[:image_tag_path] = 'div[@class="search_a2_result linkStyleWorks"]/ul/li/a/img'
 				param[:a_tag_is_two_parent] = false
 				@listing.GetThumbnails(param)
-			end
-			
-			# @param param [Hash]
-			# @param param [String] :uri 取得しに行きたいURI
-			# @param param [Range] :range 表示するページ数
-			def GetUsers(param)
-				result_users = Array.new
-				param[:custom_max_page_count] = 48		# ページあたり48件
-				max_page = @listing.GetMaxPageNum(param)
-				
-				if param[:range] != nil then
-					range = param[:range]
-					start = range.first >= 1 ? range.first : 1
-					max_page = range.last > max_page ? max_page : range.last
-				else
-					start = 1
-				end
-				
-				for page_num in start..max_page do
-					# 1ページごとに洗い出しながら、サムネを拾ってインスタンス化していく
-					@agent.get(param[:uri] + "&p=#{page_num}")
-					users = @agent.page.search(param[:image_tag_path])
-					for user in users do
-						result_users << MakeUserIcon(user)
-					end
-				end
-				result_users
-			end
-			
-			# @param user_icon [Nokogiri::Element] アイコンのimgタグ
-			# @return [Presenter::Author::Icon]
-			def MakeUserIcon(user_icon)
-				user_id = user_icon.parent['href'].delete!('member.php?id=').to_i
-				nickname = user_icon['alt']
-				
-				icon = MakeUserIconImage(user_icon)
-				Presenter::Author::Icon.new(@agent, user_id, nickname, icon)
-			end
-			
-			# @param user [Nokogiri::Element] アイコンのimgタグ
-			# @param illust_id [Int] イラストのID
-			# @return [Presenter::Instance::Picture] ユーザのミニアイコン
-			def MakeUserIconImage(user)
-				illust_id = File.basename(user['src'], ".*").sub!(/(_80)$/, "").to_i
-				param = {
-					:illust_id => illust_id,
-					:referer => @agent.page.uri.to_s,
-					:extension => File.extname(user['src']),
-					:prefix => '_80',
-					:location => File.dirname(user['src']) + "/"
-				}
-				Presenter::Instance::Picture.new(@agent, param)
 			end
 			
 			# @param param [Hash]
