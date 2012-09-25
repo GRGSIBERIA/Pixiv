@@ -1,7 +1,7 @@
 ﻿require './pixiv.rb'
 
 def showi(c, id)
-	i = c.image.get(id)
+	i = c.image.info(id)
 	puts i.class
 	puts i.uri
 	puts i.title
@@ -30,7 +30,7 @@ def showi(c, id)
 end
 
 def showu(c, id)
-	u = c.artist.get(id)
+	u = c.artist.info(id)
 	puts u.userid
 	puts u.name
 	puts u.picture_count

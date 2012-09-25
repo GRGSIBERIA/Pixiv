@@ -19,7 +19,7 @@ module Pixiv
 			
 			# ユーザ情報の取得を行う
 			# @param userid [Int] ユーザID
-			def get(userid)
+			def info(userid)
 				uri = "http://www.pixiv.net/member.php?id=#{userid}"
 				SafeGet.Artist(@agent, uri)
 				Presenter::Author::Artist.new(@agent, userid)
