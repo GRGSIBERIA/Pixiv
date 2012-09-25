@@ -14,8 +14,18 @@ module Pixiv
 	class Client
 		attr_reader :image, :artist, :search
 	
-		def initialize
-			user_info = ReadConfiguration()
+		# @param param [Hash]
+		# @param param [String] :user_id ユーザID
+		# @param param [String] :password パスワード
+		def initialize(param={})
+			user_info = nil
+			if param.length > 0 then
+				user_info = Hash.new
+				user_info['user_id'] = param[:user_id]
+				user_info['password'] = param[:password]
+			else
+				user_info = ReadConfiguration()
+			end
 			@connection = Connection.new(user_info['user_id'], user_info['password'])
 			@image = API::Image.new(@connection.agent)
 			@artist = API::Artist.new(@connection.agent)
