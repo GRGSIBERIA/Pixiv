@@ -34,7 +34,7 @@ module Pixiv
 		
 		# ユーザIDやパスワードを保存する
 		def ReadConfiguration()
-			config = YAML::load_file("./pixiv_config.ini")['pixiv']
+			config = YAML::load_file("./pixiv/pixiv_config.ini")['pixiv']
 			# yaml example
 			# pixiv:
 			#		user_id:	hogehoge
