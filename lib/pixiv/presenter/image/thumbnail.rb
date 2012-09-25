@@ -78,6 +78,20 @@ module Pixiv
 					@bookmark_count
 				end
 				
+				# とにかく何でもいいから取得する
+				# @return [Presenter::Instance::Picture] イラスト用の画像
+				# @return [Array<Presenter::Instance::Picture] 漫画用の画像配列
+				def picture
+					# どちらかをテスト
+					if large != nil then	# イラストがなかったら漫画で試す
+						return large
+					elsif	larges != nil then
+						return larges
+					else
+						raise IllustNotFoundError, "イラストが見つかりません"
+					end
+				end
+				
 				# イラスト用の大きな画像を生成する
 				# @return [Presenter::Instance::Picture] イラストの大きな画像
 				def large

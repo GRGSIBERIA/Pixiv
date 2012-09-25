@@ -18,7 +18,7 @@ module Pixiv
 			# あるイラスト情報のあるページをクロールしに行く
 			# @param illust_id [Int] 情報を取得するイラストID
 			# @return [Presenter::Image] 取得したイラスト情報
-			def get(illust_id)
+			def info(illust_id)
 				uri = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=#{illust_id.to_s}"
 				@agent.get(uri)
 				
