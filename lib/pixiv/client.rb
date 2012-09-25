@@ -5,6 +5,7 @@ Pixivにアクセスするためのクライアントクラス
 require 'yaml'
 require 'mechanize'
 
+require './pixiv/crypt.rb'
 require './pixiv/api/base.rb'
 require './pixiv/api/image.rb'
 require './pixiv/api/artist.rb'
@@ -20,9 +21,7 @@ module Pixiv
 		def initialize(param={})
 			user_info = nil
 			if param.length > 0 then
-				user_info = Hash.new
-				user_info['user_id'] = param[:user_id]
-				user_info['password'] = param[:password]
+				user_info = Crypt.Decrypt(param[:user_id], param[:password])
 			else
 				user_info = ReadConfiguration()
 			end
@@ -30,6 +29,10 @@ module Pixiv
 			@image = API::Image.new(@connection.agent)
 			@artist = API::Artist.new(@connection.agent)
 			@search = API::Search.new(@connection.agent)
+		end
+		
+		def Decrypt(param)
+			
 		end
 		
 		# ユーザIDやパスワードを保存する
