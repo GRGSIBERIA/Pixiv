@@ -3,6 +3,7 @@
 取得と同時にgetでアクセスもするので注意
 =end
 require 'mechanize'
+require './pixiv/presenter/listing.rb'
 
 =begin
 			NOTE:
@@ -27,45 +28,72 @@ module Pixiv
 			end
 		
 			# あるURIからサムネを取得する
+			# @param param [Hash]
+			# @return [Presenter::Listing] 一覧
 			def GetThumbnails(param)
+				@agent.get(param[:uri])	# 一度最初のページを取得して最大ページ数を取得しておく
 				pictures_array = Array.new	# いわゆる探索結果
 				
 				# 検索する範囲を設定する
-				max_page = GetMaxPageNum(param)
-				range = SetRange(param[:range], max_page)	# :page_num, :max_page
+				content_count = GetContentCount(param)
+				max_page = GetMaxPageNum(param, content_count)
+				range = RoundRange(param[:range], max_page)	# :page_num, :max_page
 				
 				# 繰り返しページを探索して配列にPictureを継ぎ足していく
 				while GetPictures(param, range[:page_num], range[:max_page], pictures_array)	# 最初の1回は必ず実行される
 					range[:page_num] += 1
 				end
-				pictures_array
+				
+				Listing.new(@agent, "thumbnail", pictures_array, {
+					:page_count => max_page, 
+					:range => range,
+					:in_page_count => param[:custom_max_page_count],		# 先にGetMax～を呼ばないと死ぬ
+					:content_count => content_count})
 			end
 			
-			# 検索範囲の設定
-			# @param range [Range] 検索範囲、nilの場合もある
-			# @param max_page [Int] 何ページ存在するか
-			# @return [Hash] 最初のページと最後のページ, 最初のページはイテレータとして利用する
-			def SetRange(range, max_page)
-				result = Hash.new
-				if range != nil then
-					result[:page_num] = max_page < range.first ? max_page : range.first
-					result[:max_page] = max_page < range.last ? max_page : range.last
-				else
-					result[:page_num] = 1
-					result[:max_page] = max_page
+			# ユーザ情報一覧を取得する
+			# @param param [Hash]
+			# @param param [String] :uri 取得しに行きたいURI
+			# @param param [Range] :range 表示するページ数
+			# @return [Presenter::Listing] 一覧
+			def GetUsers(param)
+				@agent.get(param[:uri])	# 一度最初のページを取得して最大ページ数を取得しておく
+				result_users = Array.new
+				
+				content_count = GetContentCount(param)
+				max_page = GetMaxPageNum(param, content_count)
+				wash_pages = RoundRange(param[:range], max_page)
+				
+				for page_num in wash_pages do
+					# 1ページごとに洗い出しながら、サムネを拾ってインスタンス化していく
+					@agent.get(param[:uri] + "&p=#{page_num}")
+					users = @agent.page.search(param[:image_tag_path])
+					for user in users do
+						result_users << MakeUserIcon(user)
+					end
 				end
-				result
+				
+				Listing.new(@agent, "icon", result_users, {
+					:page_count => max_page, 
+					:range => wash_pages,
+					:in_page_count => param[:custom_max_page_count],		# 先にGetMax～を呼ばないと死ぬ
+					:content_count => content_count})
 			end
 			
 			# 何ページ存在するのか調べる
+			# @param content_count どれぐらいコンテンツが存在しているか
 			# @param param [Hash]
 			# @return [Int] 最大ページ数
-			def GetMaxPageNum(param)
-				@agent.get(param[:uri])	# 一度最初のページを取得して最大ページ数を取得しておく
-				max_page_text = @agent.page.at(param[:picture_count]).inner_text
-				max_page_num = max_page_text.scan(/[0-9]+/)[0].to_i
-				param[:custom_max_page_count] ||= 20	# 指定がなければデフォルトで20件
-				max_page_num.div(param[:custom_max_page_count]) + 1
+			def GetMaxPageNum(param, content_count)
+				div_count = param[:custom_max_page_count] ||= 20	# 指定がなければデフォルトで20件
+				content_count.div(div_count) + 1
+			end
+			
+			# @param param [Hash]
+			# @return [Int] 全体としてどれぐらいコンテンツの数が存在しているか
+			def GetContentCount(param)
+				contents_count_text = @agent.page.at(param[:picture_count]).inner_text
+				contents_num = contents_count_text.scan(/[0-9]+/)[0].to_i
 			end
 			
 			# 1ページからサムネを全て抜き出してpictures_arrayに入れる
@@ -142,27 +170,6 @@ module Pixiv
 					:extension => File.extname(img_src),
 					:bookmark_count => do_bookmark_count
 				}
-			end
-			
-			# ユーザ情報一覧を取得する
-			# @param param [Hash]
-			# @param param [String] :uri 取得しに行きたいURI
-			# @param param [Range] :range 表示するページ数
-			def GetUsers(param)
-				result_users = Array.new
-				max_page = GetMaxPageNum(param)
-				
-				wash_pages = RoundRange(param[:range], max_page)
-				
-				for page_num in wash_pages do
-					# 1ページごとに洗い出しながら、サムネを拾ってインスタンス化していく
-					@agent.get(param[:uri] + "&p=#{page_num}")
-					users = @agent.page.search(param[:image_tag_path])
-					for user in users do
-						result_users << MakeUserIcon(user)
-					end
-				end
-				result_users
 			end
 			
 			# 指定した範囲にまとめる
