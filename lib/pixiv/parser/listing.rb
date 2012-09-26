@@ -38,13 +38,19 @@ module Pixiv
 				content_count = GetContentCount(param)
 				max_page = GetMaxPageNum(param, content_count)
 				range = RoundRange(param[:range], max_page)	# :page_num, :max_page
-				
+								
 				# 繰り返しページを探索して配列にPictureを継ぎ足していく
-				while GetPictures(param, range[:page_num], range[:max_page], pictures_array)	# 最初の1回は必ず実行される
-					range[:page_num] += 1
+				for page_num in range do
+				#while GetPictures(param, range[:page_num], range[:max_page], pictures_array)	# 最初の1回は必ず実行される
+					# 1ページごとに洗い出しながら、サムネを拾ってインスタンス化していく
+					@agent.get(param[:uri] + "&p=#{page_num.to_s}")
+					if @agent.page.body.force_encoding('UTF-8').scan("見つかりませんでした".force_encoding('UTF-8')).length > 0 then
+						return nil; end
+
+					pictures_array.concat(GetPicturesArrayInPage(param))
 				end
 				
-				Listing.new(@agent, "thumbnail", pictures_array, {
+				Presenter::Listing.new(@agent, "thumbnail", pictures_array, {
 					:page_count => max_page, 
 					:range => range,
 					:in_page_count => param[:custom_max_page_count],		# 先にGetMax～を呼ばないと死ぬ
@@ -67,13 +73,15 @@ module Pixiv
 				for page_num in wash_pages do
 					# 1ページごとに洗い出しながら、サムネを拾ってインスタンス化していく
 					@agent.get(param[:uri] + "&p=#{page_num}")
+					if @agent.page.body.force_encoding('UTF-8').scan("見つかりませんでした".force_encoding('UTF-8')).length > 0 then
+						return nil; end
 					users = @agent.page.search(param[:image_tag_path])
 					for user in users do
 						result_users << MakeUserIcon(user)
 					end
 				end
 				
-				Listing.new(@agent, "icon", result_users, {
+				Presenter::Listing.new(@agent, "icon", result_users, {
 					:page_count => max_page, 
 					:range => wash_pages,
 					:in_page_count => param[:custom_max_page_count],		# 先にGetMax～を呼ばないと死ぬ

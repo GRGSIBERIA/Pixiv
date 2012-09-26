@@ -50,7 +50,7 @@ def showu(c, id)
 	puts u.detail.homepage
 	puts u.detail.twitter
 	
-	pics = c.artist.favorites(id)#, {:range => 1..3})
+	pics = c.artist.favorites(id).items #, {:range => 1..3})
 	puts "count:" + pics.length.to_s
 	for i in 0..20 do #0..pics.length-1 do
 		pic = pics[i]
@@ -95,7 +95,7 @@ c = Pixiv::Client.new
 #showi(c, 28637532)	# 漫画
 #show(c, 10)	# 存在しないイラスト
 
-showu(c, 515127)
+#showu(c, 515127)
 #showu(c, 29389)
 #showu(c, 44588)
 
@@ -108,4 +108,4 @@ param = {
 		:size => {:wlt => 1000, :hlt => 1000, :wgt => 3000, :hgt => 3000},
 		:tool => "SAI"
 	}
-#showst(c, "おっぱい", param)
+showst(c, "おっぱい", param)

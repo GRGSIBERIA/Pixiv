@@ -39,7 +39,6 @@ module Pixiv
 		def self.GetSecret()
 			File.read("./pixiv/cryptgen")
 		end
-		private :GetSecret
 		
 		# 暗号化
 		# @param source 暗号化したい文字列
@@ -51,7 +50,6 @@ module Pixiv
 			enc.pkcs5_keyivgen(pass)
 			enc.update(source) + enc.final
 		end
-		private :EncryptKey
 		
 		# 復号化
 		# @param source 復号化したい文字列
@@ -63,6 +61,5 @@ module Pixiv
 			dec.pkcs5_keyivgen(pass)
 			dec.update(source) + dec.final
 		end
-		private :DecryptKey
 	end
 end

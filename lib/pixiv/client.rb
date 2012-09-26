@@ -31,10 +31,6 @@ module Pixiv
 			@search = API::Search.new(@connection.agent)
 		end
 		
-		def Decrypt(param)
-			
-		end
-		
 		# ユーザIDやパスワードを保存する
 		def ReadConfiguration()
 			config = YAML::load_file("./pixiv/pixiv_config.ini")['pixiv']
