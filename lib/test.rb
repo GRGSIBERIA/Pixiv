@@ -78,12 +78,15 @@ def showsk(c, word, param)
 end
 
 def showst(c, tag, param)
+	#result = c.search.keyword(tag, param)
 	result = c.search.tag(tag, param)
 	puts "uri:" + result.uri
 	puts "keywords:" + result.merged_keywords
 	puts "count:" + result.picture_count.to_s
 	puts "page:" + result.page_count.to_s
-	for pic in result.pictures do
+	puts result.pictures.class
+	
+	for pic in result.pictures.items do
 		puts pic.illust_id
 	end
 end

@@ -6,7 +6,7 @@ require './pixiv/presenter/search/base.rb'
 module Pixiv
 	module Presenter
 		module Search
-			class Tags < Base
+			class Tags < Search::Base
 				def initialize(agent, tag, param)
 					super(agent, [tag], param)
 					@param[:uri] = MakeURI(@words, "tag")

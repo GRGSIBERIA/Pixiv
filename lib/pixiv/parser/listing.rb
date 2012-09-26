@@ -47,7 +47,7 @@ module Pixiv
 					if @agent.page.body.force_encoding('UTF-8').scan("見つかりませんでした".force_encoding('UTF-8')).length > 0 then
 						return nil; end
 
-					pictures_array.concat(GetPicturesArrayInPage(param))
+					GetPictures(param, page_num, pictures_array)
 				end
 				
 				Presenter::Listing.new(@agent, "thumbnail", pictures_array, {
@@ -107,21 +107,16 @@ module Pixiv
 			# 1ページからサムネを全て抜き出してpictures_arrayに入れる
 			# @param param [Hash]
 			# @param page_num [Int] ページ番号
-			# @param max_page [Int] 最大ページ数
 			# @param pictures_array [Array<Presenter::Image::Thumbnail>] サムネの結果を格納するための配列
-			def GetPictures(param, page_num, max_page, pictures_array)
+			def GetPictures(param, page_num, pictures_array)
 				# ページを取得して存在チェック
 				@agent.get(param[:uri] + "&p=#{page_num.to_s}")
 				if @agent.page.body.force_encoding('UTF-8').scan("見つかりませんでした".force_encoding('UTF-8')).length > 0 then
 					return nil; end
 				
 				# 何件の登録があるのか調べて存在するページ数か調べる
-				if max_page >= page_num
-					# ページごとに取得した画像を結合していく
-					pictures_array.concat(GetPicturesArrayInPage(param))
-				else
-					nil
-				end
+				# ページごとに取得した画像を結合していく
+				pictures_array.concat(GetPicturesArrayInPage(param))
 			end
 			
 			# ページ内のイラストを取得する

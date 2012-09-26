@@ -32,7 +32,7 @@ module Pixiv
 			end
 			
 			# @return [Array<Presenter::Image::Thumbnail>] サムネ
-			# @return items [Array<Presenter::Author::Icon] ユーザアイコン
+			# @return [Array<Presenter::Author::Icon] ユーザアイコン
 			def items
 				@items
 			end
