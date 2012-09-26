@@ -14,9 +14,9 @@ module Pixiv
 					@listing = Parser::Listing.new(agent)
 				end
 				
-				# @return [Presenter::Image::Thumbnail] 検索で取得できたサムネ
-				def pictures
-					@listing.GetThumbnails(@param)
+				# @return [Presenter::Listing] 検索で取得できた一覧クラス
+				def list
+					@list ||= @listing.GetThumbnails(@param)
 				end
 				
 				# @return [Int] 検索に引っかかった画像の件数

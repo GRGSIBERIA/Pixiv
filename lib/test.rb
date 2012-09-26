@@ -84,9 +84,8 @@ def showst(c, tag, param)
 	puts "keywords:" + result.merged_keywords
 	puts "count:" + result.picture_count.to_s
 	puts "page:" + result.page_count.to_s
-	puts result.pictures.class
 	
-	for pic in result.pictures.items do
+	for pic in result.list.items do
 		puts pic.illust_id
 	end
 end
