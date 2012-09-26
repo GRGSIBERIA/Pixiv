@@ -41,13 +41,14 @@ module Pixiv
 								
 				# 繰り返しページを探索して配列にPictureを継ぎ足していく
 				for page_num in range do
-				#while GetPictures(param, range[:page_num], range[:max_page], pictures_array)	# 最初の1回は必ず実行される
-					# 1ページごとに洗い出しながら、サムネを拾ってインスタンス化していく
-					@agent.get(param[:uri] + "&p=#{page_num.to_s}")
-					if @agent.page.body.force_encoding('UTF-8').scan("見つかりませんでした".force_encoding('UTF-8')).length > 0 then
-						return nil; end
-
-					GetPictures(param, page_num, pictures_array)
+					# サムネイルのタグを拾ってくる
+					thumb_element = RequestTargetElement(param[:uri] + "&p=#{page_num.to_s}", param[:image_tag_path])
+					for thumb in thumb_element do
+						# サムネ画像を拾ってくる
+						result = GetThumbnailPicture(img, param)
+						if result == nil then next end # 関係のない画像を拾ってきたときは無視
+						pictures_array << result
+					end
 				end
 				
 				Presenter::Listing.new(@agent, "thumbnail", pictures_array, {
@@ -72,10 +73,7 @@ module Pixiv
 				
 				for page_num in wash_pages do
 					# 1ページごとに洗い出しながら、サムネを拾ってインスタンス化していく
-					@agent.get(param[:uri] + "&p=#{page_num}")
-					if @agent.page.body.force_encoding('UTF-8').scan("見つかりませんでした".force_encoding('UTF-8')).length > 0 then
-						return nil; end
-					users = @agent.page.search(param[:image_tag_path])
+					users = RequestTargetElement(param[:uri] + "&p=#{page_num}", param[:image_tag_path])
 					for user in users do
 						result_users << MakeUserIcon(user)
 					end
@@ -86,6 +84,22 @@ module Pixiv
 					:range => wash_pages,
 					:in_page_count => param[:custom_max_page_count],		# 先にGetMax～を呼ばないと死ぬ
 					:content_count => content_count})
+			end
+			
+			# 対象のURIにリクエストを投げて、ページが存在するかどうか確認し、必要な要素を取得する
+			# @param uri [String] GETしに行くURI
+			# @param image_tag_path [String] 取得するimgタグへのXPath
+			# @return [Array<Nokogiri::Element>] imgタグの配列
+			def RequestTargetElement(uri, path)
+				@agent.get(uri)
+				# ページの存在の有無を確認
+				dont_exist = 
+					@agent.page.at('div[@class="no-item"]') == nil or 
+					@agent.page.at('div[@class="errorArea"]') == nil
+				if dont_exist then
+					return Array.new	# 存在しない場合は空の配列を返す
+				end
+				@agent.page.search(image_tag_path)
 			end
 			
 			# 何ページ存在するのか調べる
@@ -104,41 +118,17 @@ module Pixiv
 				contents_num = contents_count_text.scan(/[0-9]+/)[0].to_i
 			end
 			
-			# 1ページからサムネを全て抜き出してpictures_arrayに入れる
-			# @param param [Hash]
-			# @param page_num [Int] ページ番号
-			# @param pictures_array [Array<Presenter::Image::Thumbnail>] サムネの結果を格納するための配列
-			def GetPictures(param, page_num, pictures_array)
-				# ページを取得して存在チェック
-				@agent.get(param[:uri] + "&p=#{page_num.to_s}")
-				if @agent.page.body.force_encoding('UTF-8').scan("見つかりませんでした".force_encoding('UTF-8')).length > 0 then
-					return nil; end
-				
-				# 何件の登録があるのか調べて存在するページ数か調べる
-				# ページごとに取得した画像を結合していく
-				pictures_array.concat(GetPicturesArrayInPage(param))
-			end
-			
-			# ページ内のイラストを取得する
-			# @param param [Hash]
-			# @return [Array<Presenter::Image::Thumbnail>] ページ内に存在しているサムネ
-			def GetPicturesArrayInPage(param)
-				thumbnails = Array.new # 表示されている件数だけ
-				img_array = @agent.page.search(param[:image_tag_path])
-				for img in img_array do
-					begin
-						# イラストIDを抽出してサムネを追加していく
-						# 無効なURIが含まれる時があるのでその時は無視する
-						if img['src'].include?('pixiv.net/img') then
-							arg_param = SetupArgParams(img, param)	# サムネクラスに投げるパラメータの設定
-							
-							thumbnails << Presenter::Image::Thumbnail.new(@agent, arg_param)
-						end
-					rescue Pixiv::PageNotFoundError
-						next		# 取得できるものだけ取得したいので何もせずに無視する
-					end
+			# サムネの要素からサムネクラスのインスタンスを生成
+			# @param thumbnail [Nokogiri::Element] サムネ画像の要素
+			# @param param [Hash] パラメータ
+			# @return [Presenter::Image::Thumbnail] サムネクラス
+			def GetThumbnailPicture(thumbnail, param)
+				# 稀に関係のない画像を拾ってくることがある
+				if img['src'].include?('pixiv.new/img') then
+					arg_param = SetupArgParams(thumbnail, param)
+					Presenter::Image::Thumbnail.new(@agent, arg_param)
 				end
-				thumbnails
+				# nilだった場合はnilが評価される
 			end
 			
 			# ブクマ数をタグから探してくる
@@ -154,7 +144,7 @@ module Pixiv
 					if count_list == nil then return nil; end
 					count_list['data-tooltip'].scan(/[0-9]+/)[0].to_i
 				else
-					nil	# カウントしない場合はnil
+					-1	# カウントしない場合は-1
 				end
 			end
 			
