@@ -90,7 +90,7 @@ module Pixiv
 			# @param uri [String] GETしに行くURI
 			# @param image_tag_path [String] 取得するimgタグへのXPath
 			# @return [Array<Nokogiri::Element>] imgタグの配列
-			def RequestTargetElement(uri, path)
+			def RequestTargetElement(uri, image_tag_path)
 				@agent.get(uri)
 				# ページの存在の有無を確認
 				dont_exist = 
