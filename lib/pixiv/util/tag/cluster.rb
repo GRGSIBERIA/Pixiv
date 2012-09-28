@@ -14,12 +14,20 @@ module Pixiv
 						@tags = Array.new
 						@max = 0
 					else
-						@max = @tags[0].count
+						@max = @tags[@tags.length-1][0].count
 					end
 					param[:userid] ||= -1
 					param[:nickname] ||= "no"
 					@userid = param[:userid]
 					@nickname = param[:nickname]
+					
+					# タグ名ごとのタグ階層
+					@names = Hash.new
+					for line in tags do
+						for tag in line do
+							@names[tag.name] = tag
+						end
+					end
 				end
 				
 				# @return [Int] タグを所有するユーザID, ない場合は-1
@@ -37,6 +45,11 @@ module Pixiv
 					@tags
 				end
 				
+				# @return [Hash<String => Presenter::Instance::Tag>] タグの名前からタグを割り出す
+				def tag_by_name
+					@names
+				end
+				
 				# @return [Int] 一番大きい階層
 				def max
 					@max
@@ -44,13 +57,12 @@ module Pixiv
 				
 				# @return [Float] 一番大きな階層の逆数
 				def difference
-					@difference ||= 1.0 / max
+					@difference ||= 1.0 / max.to_f
 				end
-				private :difference
 				
 				# @return [Float] 長さ, 1に近づくほど良く付けられるタグ
 				def magnitude(num)
-					num * difference
+					(num+1).to_f * difference
 				end
 			end
 		end

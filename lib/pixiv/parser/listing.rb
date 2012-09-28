@@ -92,10 +92,11 @@ module Pixiv
 			# @return [Array<Nokogiri::Element>] imgタグの配列
 			def RequestTargetElement(uri, image_tag_path)
 				@agent.get(uri)
+				
 				# ページの存在の有無を確認
 				dont_exist = 
-					@agent.page.at('div[@class="no-item"]') == nil or 
-					@agent.page.at('div[@class="errorArea"]') == nil
+					@agent.page.at('div[@class="no-item"]') != nil or 
+					@agent.page.at('div[@class="errorArea"]') != nil
 				if dont_exist then
 					return Array.new	# 存在しない場合は空の配列を返す
 				end
@@ -108,14 +109,14 @@ module Pixiv
 			# @return [Int] 最大ページ数
 			def GetMaxPageNum(param, content_count)
 				div_count = param[:custom_max_page_count] ||= 20	# 指定がなければデフォルトで20件
-				content_count.div(div_count) + 1
+				(content_count / div_count) + 1
 			end
 			
 			# @param param [Hash]
 			# @return [Int] 全体としてどれぐらいコンテンツの数が存在しているか
 			def GetContentCount(param)
 				contents_count_text = @agent.page.at(param[:picture_count]).inner_text
-				contents_num = contents_count_text.scan(/[0-9]+/)[0].to_i
+				contents_count_text.scan(/[0-9]+/)[0].to_i
 			end
 			
 			# サムネの要素からサムネクラスのインスタンスを生成

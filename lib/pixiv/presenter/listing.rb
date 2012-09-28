@@ -21,7 +21,7 @@ module Pixiv
 				@items = items
 				@type = type
 				@in_page_count = param[:in_page_count]
-				@content_conut = param[:content_count]
+				@content_count = param[:content_count]
 				@page_count = param[:page_count]
 				@range = param[:range]
 			end

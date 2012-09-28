@@ -19,7 +19,7 @@ module Pixiv
 				if param[:tags] != nil then
 					cluster = Util::Tag.ClusteringTags(param[:tags], param)
 				else
-					tags = param[:client].artist.tags(param[:id])
+					tags = param[:client].artist.tags(param[:userid])
 					tags.sort{|a, b| a.count <=> b.count}
 					cluster = Util::Tag.ClusteringTags(tags, param)
 				end
@@ -40,6 +40,34 @@ module Pixiv
 				Util::Tag::Cluster.new(tag_cluster, param)
 			end
 			module_function :ClusteringTags
+			
+			# クラスター間の類似度を算出する
+			# @param source [Util::Tag::Cluster] A
+			# @param dest [Util::Tag::Cluster] B
+			# @param skip_magnitude [Float] この値以下のタグ値を無視する
+			# @return [Float] タグ間の類似度、平均で出してる
+			def ClusterSimilarity(source, dest, skip_magnitude=0.0)
+				tags_similarities = Array.new
+				for slines in source.tags do
+					for stag in slines do
+						smag = source.magnitude(stag.count-1)
+						if smag < skip_magnitude then next end
+						
+						dtag = dest.tag_by_name[stag.name]
+						if dtag == nil then next end	# 見つからない場合は次
+						
+						# 距離を求めているので短いほど類似度が高い
+						distance = (smag - dest.magnitude(dtag.count-1)).abs
+						tags_similarities << distance
+					end
+				end
+				
+				# 小さいほど良かったので高いほど良いほうに直してる
+				sum = 0.0
+				tags_similarities.each{|s| sum += s}
+				1.0 - (sum / tags_similarities.length)
+			end
+			module_function :ClusterSimilarity
 		end
 	end
 end

@@ -60,7 +60,7 @@ module Pixiv
 				end
 			end
 			
-			# ブックマークに登録したユーザを取得する
+			# ブックマークに登録したイラストを取得する
 			# @param userid [Int] ユーザID
 			# @param param [Hash]
 			# @param param [Range] :range 表示するページ範囲。1から、限界ページに達しても自動調整される。
