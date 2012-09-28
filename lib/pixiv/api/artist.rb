@@ -145,10 +145,14 @@ module Pixiv
 			def GetTagsLine(result_tags, tags_count, tags)
 				# タグが利用されたイラスト数と実際の名前を取得して格納する
 				count = tags_count.inner_text.to_i
-				tags.search('a').each{|tag|
-					result_tags << Presenter::Instance::Tag.new(
-						@agent, tag.inner_text, {:used_illust_count => count})
-				}
+				begin
+					tags.search('a').each{|tag|
+						result_tags << Presenter::Instance::Tag.new(
+							@agent, tag.inner_text, {:used_illust_count => count})
+					}
+				rescue NoMethodError#タグが見つからない
+					# 何もせずにスルーしておく
+				end
 			end
 		end
 	end
