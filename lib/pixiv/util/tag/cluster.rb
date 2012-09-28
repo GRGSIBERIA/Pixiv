@@ -8,9 +8,11 @@ module Pixiv
 			class Cluster
 				# @param clustered_tags [Array<Array<Presenter::Instance::Tag>>] クラスター済みのタグ
 				def initialize(clustered_tags, param={})
+					clustered_tags ||= Array.new	# タグの存在しないユーザ
 					@tags = clustered_tags
+					
 					if clustered_tags.length <= 0 then
-						puts "0以上タグが付けられたユーザを指定してください"
+						puts "#{param[:userid]}: 0以上タグが付けられたユーザを指定してください"
 						@tags = Array.new
 						@max = 0
 					else
