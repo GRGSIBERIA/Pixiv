@@ -32,6 +32,7 @@ module Pixiv
 			# @param param [Range] :range 表示するページ範囲。1から、限界ページに達しても自動調整される。
 			# @param param [Presenter::Instance::Tag] :tag 絞り込みたいタグ
 			# @param param [String] :tag 絞り込みたいタグ
+			# @return param [Presenter::Listing] 取得できたイラスト一覧
 			def pictures(userid, param={})
 				param[:uri] = "http://www.pixiv.net/member_illust.php?id=#{userid}"
 				if param[:tag] != nil then	# タグが有効であれば追加しておく
@@ -63,7 +64,7 @@ module Pixiv
 			# @param userid [Int] ユーザID
 			# @param param [Hash]
 			# @param param [Range] :range 表示するページ範囲。1から、限界ページに達しても自動調整される。
-			# @return [Array<Presenter::Image::Thumbnail>] 取得できたサムネイル一覧
+			# @return [Presenter::Listing] 取得できたサムネイル一覧
 			def bookmarks(userid, param={})
 				param[:uri] = "http://www.pixiv.net/bookmark.php?id=#{userid}"
 				param[:picture_count] = 'div[@class="two_column_body"]/h3/span'
