@@ -70,7 +70,6 @@ module Pixiv
 				work_alsos = page.search('p[@class=worksAlso]')
 				result = nil
 				for work in work_alsos do
-					# なんかよくわからんが、work.childがnilになる上に、aタグが無視される
 					if work.to_html.scan(search_str).length > 0 then
 						result = work.inner_text
 						break

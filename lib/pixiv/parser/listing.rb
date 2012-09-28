@@ -38,7 +38,7 @@ module Pixiv
 				content_count = GetContentCount(param)
 				max_page = GetMaxPageNum(param, content_count)
 				range = RoundRange(param[:range], max_page)	# :page_num, :max_page
-								
+				
 				# 繰り返しページを探索して配列にPictureを継ぎ足していく
 				for page_num in range do
 					# サムネイルのタグを拾ってくる
