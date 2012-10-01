@@ -1,5 +1,5 @@
 ﻿=begin
-タグの集合を扱いやすくするためのクラス
+ユーザ情報から集められたタグを格納する
 =end
 
 module Pixiv
@@ -7,6 +7,9 @@ module Pixiv
 		module Tag
 			class Cluster
 				# @param clustered_tags [Array<Array<Presenter::Instance::Tag>>] クラスター済みのタグ
+				# @param param [Hash]
+				# @param param [Int] :userid ユーザID
+				# @param param [String] :nickname ニックネーム
 				def initialize(clustered_tags, param={})
 					clustered_tags ||= Array.new	# タグの存在しないユーザ
 					@tags = clustered_tags

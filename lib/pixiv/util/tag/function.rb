@@ -41,24 +41,36 @@ module Pixiv
 			end
 			module_function :ClusteringTags
 			
+			def TagDistanceFromCluster(source, dest, source_tag, param={})
+				# あるタグ値以下は無視
+				param[:skip_magnitude] ||= 0.0
+				smag = source.magnitude(source_tag.count-1)
+				if smag < param[:skip_magnitude] then return 1; end
+				
+				# あるタグ階層より小さい場合は無視
+				param[:skip_tag_number] ||= 1
+				if dest.max < param[:skip_tag_number] then return 1; end
+				
+				dtag = dest.tag_by_name[source_tag.name]
+				if dtag == nil then return 1; end	# 見つからない場合は距離最大
+				
+				# 距離を求めているので短いほど類似度が高い
+				distance = (smag - dest.magnitude(dtag.count-1)).abs
+			end
+			module_function :TagDistanceFromCluster
+			
 			# クラスター間の類似度を算出する
 			# @param source [Util::Tag::Cluster] A
 			# @param dest [Util::Tag::Cluster] B
-			# @param skip_magnitude [Float] この値以下のタグ値を無視する
+			# @param param [Hash]
+			# @param param [Float] :skip_magnitude この値以下のタグ値を無視する
+			# @param param [Int] :skip_tag_number この値以下しかタグを持っていない人を無視する
 			# @return [Float] タグ間の類似度、平均で出してる
-			def ClusterSimilarity(source, dest, skip_magnitude=0.0)
+			def ClusterSimilarity(source, dest, param={})
 				tags_similarities = Array.new
 				for slines in source.tags do
 					for stag in slines do
-						smag = source.magnitude(stag.count-1)
-						if smag < skip_magnitude then next end
-						
-						dtag = dest.tag_by_name[stag.name]
-						if dtag == nil then next end	# 見つからない場合は次
-						
-						# 距離を求めているので短いほど類似度が高い
-						distance = (smag - dest.magnitude(dtag.count-1)).abs
-						tags_similarities << distance
+						tags_similarities << TagDistanceFromCluster(source, dest, stag, param)
 					end
 				end
 				
