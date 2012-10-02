@@ -45,7 +45,7 @@ module Pixiv
 					thumb_element = RequestTargetElement(param[:uri] + "&p=#{page_num.to_s}", param[:image_tag_path])
 					for thumb in thumb_element do
 						# サムネ画像を拾ってくる
-						result = GetThumbnailPicture(img, param)
+						result = GetThumbnailPicture(thumb, param)
 						if result == nil then next end # 関係のない画像を拾ってきたときは無視
 						pictures_array << result
 					end
@@ -125,7 +125,7 @@ module Pixiv
 			# @return [Presenter::Image::Thumbnail] サムネクラス
 			def GetThumbnailPicture(thumbnail, param)
 				# 稀に関係のない画像を拾ってくることがある
-				if img['src'].include?('pixiv.new/img') then
+				if thumbnail['src'].include?('pixiv.net/img') then
 					arg_param = SetupArgParams(thumbnail, param)
 					Presenter::Image::Thumbnail.new(@agent, arg_param)
 				end

@@ -13,16 +13,16 @@ module Pixiv
 			  # @return [<Array<Array<Presenter::Instance::Tag>>] 階層化済みのタグ配列
 				def self.Bookmarks(userid, param={})
 					illusts = PullImageInformations(userid, param)
-					tags = ConstellateTagsFromIllustInfo(illusts)
+					tags = ConstellateTagsFromIllustInfo(illusts)  # ここでタグを綺麗に並べる
 				end
 				
-				# タグを階層ごとに配列にまとめる
+				# ユーザが投稿したイラストのタグを取得する
         # :clientと:idもしくは:tagsのいずれかが必須
         # @param userid [Int] ユーザID
         # @param param [Hash]
         # @param param [Pixiv::Client] :client クライアント
         # @return [Array<Array<Presenter::Instance::Tag>] 階層ごとにまとめたタグ配列
-        def self.ArtistTags(userid, param={})
+        def self.PostedTags(userid, param={})
           tags = param[:client].artist.tags(userid)
           if tags == nil then return Array.new; end
           tags.sort{|a, b| a.count <=> b.count}
@@ -45,11 +45,16 @@ module Pixiv
 				#private :ConstellateTagsFromIllustInfo
 								
 				# 収集したタグをカウント付きのタグに直す
-				# @param tags [Array<Presenter::Instance::Tag>] 
+				# @param tags [Hash<String => Int>]
+				# @return [Array<Array<Presenter::Instance::Tag>>] 階層化したタグを返す 
 				def self.ModifyTagCounts(tags)
-          constellated_tags = Array.new
+				  max = tags.max{|a,b| a[1] <=> b[1]}[1] # タグ階層の最大値を求めてる
+          constellated_tags = Array.new(max)  # 二次元配列を作っておく
+          for i in 0..max-1 do
+            constellated_tags[i] = Array.new
+          end
           tags.each{|name, count| 
-            constellated_tags << 
+            constellated_tags[count-1] << 
                Pixiv::Presenter::Instance::Tag.new(nil, name, {:used_illust_count => count})
             }
           constellated_tags
@@ -59,10 +64,12 @@ module Pixiv
 				# ブクマのサムネ情報からイラスト情報を引き出す
 				# @param userid [Int] ユーザID
 				# @param param [Hash] パラメータ
+				# @return [Array<Presenter::Image::ImageInfo>] イラストの情報配列
 				def self.PullImageInformations(userid, param)
           illusts = Array.new
-          thumbnails = client.bookmarks(userid, param)
-          thumbnails.each{|thumb| illusts << client.image.info(thumb.illust_id)}
+          thumbnails = param[:client].artist.bookmarks(userid, param)
+          thumbnails.items.each{|thumb| 
+            illusts << param[:client].image.info(thumb.illust_id)}
           illusts
 				end
 				#private :PullImageInformations

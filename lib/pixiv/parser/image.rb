@@ -20,7 +20,7 @@ module Pixiv
 			
 			# @return [Array<String>] タグの配列
 			def self.tags(page)
-				path = 'span[@id=tags]/a'
+				path = 'dl/dd/span/ul[@class="tags"]/li/a'
 				
 				# 拾ってきたタグの中から意味のないタグを排除する
 				all_tags = page.search(path)
@@ -32,7 +32,7 @@ module Pixiv
 						end
 					}
 				end
-				return tags
+				tags
 			end
 			
 			# @return [String] 投稿者の名前

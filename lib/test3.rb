@@ -17,9 +17,10 @@ def WriteCluster(cluster)
 end
 
 client = Pixiv::Client.new
-source_tag_cluster = Pixiv::Util::Tag::Cluster.new(client, 515127)
+source_tag_cluster = Pixiv::Util::Tag::Cluster.new(client, "bookmarks", 515127)
 WriteCluster(source_tag_cluster)
 
+=begin
 similarity_text = "\xEF\xBB\xBF"
 
 cnt = 1
@@ -37,3 +38,4 @@ for user in favorite_list.items do
 end
 
 File.write("./data/similarity.csv", similarity_text)
+=end

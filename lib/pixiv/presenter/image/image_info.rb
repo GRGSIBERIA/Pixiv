@@ -10,14 +10,18 @@ module Pixiv
 			class ImageInfo < Image
 				def initialize(agent, illust_id, picture_type)
 					super(agent, illust_id, picture_type)
+					@tags = Array.new
 				end
 				
 				# @return [Array<Presenter::Instance::Tag>] タグ情報の配列
 				def tags
 					# 取得できたタグを走査して、タグ情報をTagクラスに入れていく
-					@tags ||= Parser::Image.tags(@page).each{|tag| 
-						tags << Presenter::Instance::Tag.new(@agent, tag)
-					}
+					if @tags.length <= 0 then
+					  Parser::Image.tags(@page).each{|tag| 
+					    @tags << Presenter::Instance::Tag.new(@agent, tag)
+					  }
+					end
+					@tags
 				end
 				
 				# @return [String] キャプション、説明

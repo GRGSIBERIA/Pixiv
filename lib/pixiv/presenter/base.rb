@@ -9,7 +9,9 @@ module Pixiv
 			# @param [Mechanize::Page] アクセスしたページ
 			def initialize(agent)
 				@agent = agent
-				@page = agent.page
+				if @agent != nil then
+				  @page = agent.page  # タグ取得の際に失敗することがあるので注意
+				end
 				#@size = agent.page.body.length
 				#@body = agent.page.body
 			end
