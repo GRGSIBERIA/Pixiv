@@ -12,7 +12,7 @@ module Pixiv
 					@counter = 0
 				end
 				
-				# @return [Hash<Presenter::Instance::Tag => Int>] タグ名からタグ数を引き出す
+				# @return [Hash<Presenter::Instance::Tag => Int>] タグからタグ数を引き出す
 				def tags
 					@tags
 				end

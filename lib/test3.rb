@@ -17,7 +17,7 @@ def WriteCluster(cluster)
 end
 
 client = Pixiv::Client.new
-source_tag_cluster = Pixiv::Util::Tag.Clustering({:client => client, :userid => 515127})
+source_tag_cluster = Pixiv::Util::Tag::Cluster.new(client, 515127)
 WriteCluster(source_tag_cluster)
 
 similarity_text = "\xEF\xBB\xBF"
@@ -26,8 +26,7 @@ cnt = 1
 favorite_users_tag_cluster = Hash.new
 favorite_list = client.artist.favorites(515127)
 for user in favorite_list.items do
-	# Hash<Int => Util::Tag::Cluster>
-	fav_cluster = Pixiv::Util::Tag.Clustering({:client => client, :userid => user.userid})
+	fav_cluster = Pixiv::Util::Tag::Cluster.new(client, user.userid)
 	favorite_users_tag_cluster[user.userid] = fav_cluster
 	WriteCluster(fav_cluster)
 	similarity_text += "#{fav_cluster.userid}, "

@@ -6,25 +6,19 @@ module Pixiv
 	module Util
 		module Tag
 			class Cluster
-				# @param clustered_tags [Array<Array<Presenter::Instance::Tag>>] クラスター済みのタグ
+				# @param userid [Int] ユーザID
 				# @param param [Hash]
-				# @param param [Int] :userid ユーザID
 				# @param param [String] :nickname ニックネーム
-				def initialize(clustered_tags, param={})
+				def initialize(client, userid, param={})
 					clustered_tags ||= Array.new	# タグの存在しないユーザ
-					@tags = clustered_tags
-					
-					if clustered_tags.length <= 0 then
-						puts "#{param[:userid]}: 0以上タグが付けられたユーザを指定してください"
-						@tags = Array.new
-						@max = 0
-					else
-						@max = @tags[@tags.length-1][0].count
-					end
-					param[:userid] ||= -1
+					param[:client] = client
 					param[:nickname] ||= "no"
-					@userid = param[:userid]
+					@userid = userid
 					@nickname = param[:nickname]
+					
+					@tags = Clustering(param)
+					@tags ||= Array.new		# 作品を投稿していないユーザ対策
+					PrepareTagsMaxCount()	# @maxの設定
 					
 					# タグ名ごとのタグ階層
 					@names = Hash.new
@@ -34,6 +28,57 @@ module Pixiv
 						end
 					end
 				end
+				
+				# 最も深いタグ階層を設定する
+				def PrepareTagsMaxCount()
+					if @tags.length <= 0 then
+						puts "#{@userid}: 1つ以上タグが付けられたユーザを指定してください"
+						@tags = Array.new
+						@max = 0
+					else
+						@max = @tags[@tags.length-1][0].count
+					end
+				end
+				private :PrepareTagsMaxCount
+				
+				# タグを階層ごとに配列にまとめる
+				# :clientと:idもしくは:tagsのいずれかが必須
+				# @param param [Hash]
+				# @param param [Pixiv::Client] :client クライアント
+				# @param param [Array<Presenter::Instance::Tag>] :tags まとめたいタグ配列
+				# [Array<Array<Presenter::Instance::Tag>] 階層ごとにまとめたタグ配列
+				def Clustering(param={})
+					tags = param[:client].artist.tags(@userid)
+					if tags == nil then return Array.new; end
+					tags.sort{|a, b| a.count <=> b.count}
+					cluster = ClusteringTags(tags, param)
+				end
+				private :Clustering
+				
+				# タグをまとめる, paramがないバージョン
+				# @param tags [Array<Presenter::Instance::Tag>] まとめたいタグ配列
+				# @return [Array<Array<Presenter::Instance::Tag>] 階層ごとにまとめたタグ配列
+				def ClusteringTags(tags, param={})
+					tag_cluster = nil
+					if tags.length > 0 then
+						tag_cluster = MakeTwoDimentionsTagsArray(tags)
+					end
+					tag_cluster
+				end
+				private :ClusteringTags
+				
+				# タグを二次元配列にまとめる
+				# @param tags [Array<Presenter::Instance::Tag>] まとめたいタグ配列
+				# @return [Array<Array<Presenter::Instance::Tag>] 階層ごとにまとめたタグ配列
+				def MakeTwoDimentionsTagsArray(tags)
+					max_count = 0		# タグのカウントの最大値を求める
+					tags.each{|tag| max_count = tag.count > max_count ? tag.count : max_count}
+					tag_cluster = Array.new(max_count)	# 二次元配列の生成
+					for i in 0..tag_cluster.length-1 do tag_cluster[i] = Array.new; end
+					tags.each{|tag| tag_cluster[tag.count-1] << tag}	# クラスター化したいタグを追加する
+					tag_cluster
+				end
+				private :MakeTwoDimentionsTagsArray
 				
 				# @return [Int] タグを所有するユーザID, ない場合は-1
 				def userid
