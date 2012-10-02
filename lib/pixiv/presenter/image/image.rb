@@ -36,6 +36,7 @@ module Pixiv
 					@uri
 				end
 				
+				# @return [String] リファラー先のURI
 				def referer
 					@referer
 				end

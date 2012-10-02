@@ -37,3 +37,4 @@ require './pixiv/parser/listing.rb'
 
 require './pixiv/util/tag/function.rb'
 require './pixiv/util/tag/cluster.rb'
+require './pixiv/util/tag/constellate.rb'
