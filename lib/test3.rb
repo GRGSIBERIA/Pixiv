@@ -20,6 +20,8 @@ client = Pixiv::Client.new
 source_tag_cluster = Pixiv::Util::Tag::Cluster.new(client, "bookmarks", 515127)
 WriteCluster(source_tag_cluster)
 
+
+
 =begin
 similarity_text = "\xEF\xBB\xBF"
 
