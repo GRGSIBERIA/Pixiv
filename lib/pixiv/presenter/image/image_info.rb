@@ -53,6 +53,11 @@ module Pixiv
 				def score_count
 					@score_count ||= Parser::Image.score_count(@page)
 				end
+				
+				# @return [Bool] R18かどうか
+				def r18
+				  @r18 = ||= Parser::Image.r18(@page)
+				end
 			end
 		end
 	end

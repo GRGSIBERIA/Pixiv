@@ -58,6 +58,11 @@ module Pixiv
 				page.search(path).children[1].inner_text
 			end
 			
+			def self.r18(page)
+			  path = 'ul[@class=meta]/li[@class="r-18"]'
+			  page.at(path) != nil ? true : false
+			end
+			
 			# @return [Array<String>] 使ってるツール
 			def self.tools(page)
 				result = Array.new

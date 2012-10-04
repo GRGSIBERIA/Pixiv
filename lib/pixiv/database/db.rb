@@ -19,6 +19,31 @@ module Pixiv
 				CheckBookmarkUserTagsArrayTable()
 			end
 			
+			def ExecuteAllTable(sql)
+			  @db.execute(sql + "tag_table;")
+        @db.execute(sql + "tool_table;")
+        @db.execute(sql + "illust_info_table;")
+        @db.execute(sql + "user_info_table;")
+        @db.execute(sql + "illust_tags_array_table;")
+        @db.execute(sql + "bookmark_user_table;")
+        @db.execute(sql + "bookmark_illust_table;")
+        @db.execute(sql + "tools_array_table;")
+        @db.execute(sql + "bookmark_illust_tags_array_table;")
+        @db.execute(sql + "bookmark_user_tags_array_table;")
+        @db.execute(sql + "illust_response_table;")
+			end
+			
+			# データベースの中身をクリアにする
+			def clear
+			  ExecuteAllTable('delete from ')
+			end
+			
+			# データベースを全て削除する
+			def drop
+			  ExecuteAllTable('drop table ')
+			end
+			
+			# データベースを閉じる
 			def close
 			  @db.close
 			end
@@ -33,6 +58,12 @@ module Pixiv
 			    count = row.join('\t')
 			  end
 			  count.to_i == 1 ? true : false
+			end
+			
+			def CheckIllustResponseTable()
+			  if !ExistTable("illust_response_table")
+			    @db.execute("create table illust_response_table ()")
+			  end
 			end
 			
 			# tag_tableの有無チェック
@@ -54,10 +85,11 @@ module Pixiv
 			  if !ExistTable("illust_info_table") then
 			    sql = <<EOS
 create table illust_info_table (
-illust_id integer primary key, 
-userid text, score integer, view integer, rated integer, 
+illust_id integer primary key, response_count integer,
+userid text, score integer, view integer, rated integer,
 title text, caption text, tags_array integer, favorited_count integer,
-location text);
+date text, tools_array_id integer, illust_type integer,
+r18 integer, size text);
 EOS
 			    @db.execute(sql)
 			  end
@@ -66,31 +98,31 @@ EOS
 			# ユーザ情報テーブルの有無チェック
 			def CheckUserInfoTable()
 			  if !ExistTable("user_info_table") then
-			    @db.execute("create table user_info_table (userid integer primary key, name text, nickname text, profile text);")
+			    @db.execute("create table user_info_table (userid integer primary key, name text, nickname text, profile text, location text);")
 			  end
 			end
 			
 			def CheckIllustTagsArrayTable()
 			  if !ExistTable("illust_tags_array_table") then
-			    @db.execute("create table illust_tags_array_table (userid integer primary key, tagid integer);")
+			    @db.execute("create table illust_tags_array_table (userid integer, tagid integer);")
 			  end
 			end
 			
 			def CheckBookmarkUserTable()
 			  if !ExistTable("bookmark_user_table") then
-			    @db.execute("create table bookmark_user_table (userid integer primary key, bookmark_userid integer);")
+			    @db.execute("create table bookmark_user_table (userid integer, bookmark_userid integer);")
 			  end
 			end
 			
 			def CheckBookmarkIllustTable()
 			  if !ExistTable("bookmark_illust_table") then
-          @db.execute("create table bookmark_illust_table (userid integer primary key, bookmark_illust_id integer);")
+          @db.execute("create table bookmark_illust_table (userid integer, bookmark_illust_id integer);")
         end
       end
       
       def CheckToolsArrayTable()
         if !ExistTable("tools_array_table") then
-          @db.execute("create table tools_array_table (illust_id integer, tool_id integer);")
+          @db.execute("create table tools_array_table (illust_id integer primary key, tool_id integer);")
         end
       end
       
