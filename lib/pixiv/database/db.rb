@@ -10,7 +10,7 @@ module Pixiv
 				CheckToolTable()
 				CheckIllustInfoTable()
 				CheckUserInfoTable()
-				CheckTagsArrayTable()
+				CheckIllustTagsArrayTable()
 				CheckBookmarkUserTable()
 				CheckBookmarkIllustTable()
 				CheckToolsArrayTable()
@@ -19,12 +19,16 @@ module Pixiv
 				CheckBookmarkUserTagsArrayTable()
 			end
 			
+			def close
+			  @db.close
+			end
+			
 			# テーブルの存在確認
 			# @param table_name [String] 確認したいテーブル名
 			# @return [Bool] true or false
 			def ExistTable(table_name)
 			  count = 0
-			  exist = 'select count(*) from sqlite_master where type="table" name="' + table_name + '";'
+			  exist = "select count(*) from sqlite_master where type='table' and name='#{table_name}';"
 			  @db.execute(exist) do |row|
 			    count = row.join('\t')
 			  end
@@ -48,13 +52,13 @@ module Pixiv
 			# illust_info_tableの有無チェック
 			def CheckIllustInfoTable()
 			  if !ExistTable("illust_info_table") then
-			    sql = << EOS
-			     create table illust_info_table (
-			       illust_id integer primary key, 
-			       userid text, score integer, view integer, rated integer, 
-			       title text, caption text, tags_array integer, favorited_count integer,
-			       location text);
-			    EOS
+			    sql = <<EOS
+create table illust_info_table (
+illust_id integer primary key, 
+userid text, score integer, view integer, rated integer, 
+title text, caption text, tags_array integer, favorited_count integer,
+location text);
+EOS
 			    @db.execute(sql)
 			  end
 			end
