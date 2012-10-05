@@ -59,7 +59,7 @@ module Pixiv
 			end
 			
 			def self.r18(page)
-			  path = 'ul[@class=meta]/li[@class="r-18"]'
+			  path = 'ul[@class="meta"]/li[@class="r-18"]'
 			  page.at(path) != nil ? true : false
 			end
 			

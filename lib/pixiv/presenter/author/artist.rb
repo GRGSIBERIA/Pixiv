@@ -26,6 +26,11 @@ module Pixiv
 					@userid
 				end
 				
+				# @return [String] サーバ上の位置を取得する
+				def location
+				  @location ||= Parser::Author.location(@page)
+				end
+				
 				# @return [Presenter::Instance::Picture] ユーザのアイコン画像
 				def avatar_icon
 					@avatar_icon ||= Parser::Author.avatar_icon(@page, @agent)

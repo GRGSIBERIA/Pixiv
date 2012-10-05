@@ -56,7 +56,7 @@ module Pixiv
 				
 				# @return [Bool] R18かどうか
 				def r18
-				  @r18 = ||= Parser::Image.r18(@page)
+				  @r18 ||= Parser::Image.r18(@page)
 				end
 			end
 		end

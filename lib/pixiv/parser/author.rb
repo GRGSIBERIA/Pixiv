@@ -32,6 +32,12 @@ module Pixiv
 				Author.GetTableHash(page)
 			end
 			
+			# @return [String] イラストのサーバ上の位置
+			def self.location(page)
+			  path = 'a[@class="avatar_m"]/img'
+			  File.dirname(page.at(path)['src'])
+			end
+			
 			# @return [Presenter::Instance::Picture] ユーザのアイコン画像
 			def self.avatar_icon(page, agent)
 				icon_img = page.at('a[@class="avatar_m"]').child['src']

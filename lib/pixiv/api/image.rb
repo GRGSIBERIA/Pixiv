@@ -22,9 +22,9 @@ module Pixiv
 				uri = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=#{illust_id.to_s}"
 				@agent.get(uri)
 				
-				# イラストが見つからなければnilを返す
+				# イラストが見つからなければ例外を返す
 				if @agent.page.search('span[@class=error]').length > 0 then
-					return nil 
+					raise IllustNotFoundError
 				end
 				
 				if !Parser::Image.is_manga(@agent.page) then	# イラスト

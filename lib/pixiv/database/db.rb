@@ -14,6 +14,7 @@ module Pixiv
 				CheckBookmarkUserTable()
 				CheckBookmarkIllustTable()
 				CheckToolsArrayTable()
+				CheckIllustResponseTable()
 				
 				CheckBookmarkIllustTagsArrayTable()
 				CheckBookmarkUserTagsArrayTable()
@@ -48,6 +49,16 @@ module Pixiv
 			  @db.close
 			end
 			
+			# 実行するときのラッパー
+			def execute(sql)
+			  puts sql
+			  @db.execute(sql)
+			end
+			
+			def db
+			  @db
+			end
+			
 			# テーブルの存在確認
 			# @param table_name [String] 確認したいテーブル名
 			# @return [Bool] true or false
@@ -62,7 +73,7 @@ module Pixiv
 			
 			def CheckIllustResponseTable()
 			  if !ExistTable("illust_response_table")
-			    @db.execute("create table illust_response_table ()")
+			    @db.execute("create table illust_response_table (illust_id integer, response_userid integer)")
 			  end
 			end
 			
@@ -85,10 +96,10 @@ module Pixiv
 			  if !ExistTable("illust_info_table") then
 			    sql = <<EOS
 create table illust_info_table (
-illust_id integer primary key, response_count integer,
+illust_id integer primary key, 
 userid text, score integer, view integer, rated integer,
-title text, caption text, tags_array integer, favorited_count integer,
-date text, tools_array_id integer, illust_type integer,
+title text, caption text,
+date text, illust_type integer,
 r18 integer, size text);
 EOS
 			    @db.execute(sql)
@@ -98,7 +109,7 @@ EOS
 			# ユーザ情報テーブルの有無チェック
 			def CheckUserInfoTable()
 			  if !ExistTable("user_info_table") then
-			    @db.execute("create table user_info_table (userid integer primary key, name text, nickname text, profile text, location text);")
+			    @db.execute("create table user_info_table (userid integer primary key, nickname text, profile text, location text);")
 			  end
 			end
 			
