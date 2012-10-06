@@ -24,6 +24,10 @@ module Pixiv
 					@tags
 				end
 				
+				def type
+				  @type
+				end
+				
 				# @return [String] キャプション、説明
 				def caption
 					@caption ||= Parser::Image.caption(@page)

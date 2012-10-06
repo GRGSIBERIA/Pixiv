@@ -12,13 +12,14 @@ module Pixiv
 					super(agent, illust_id, "manga")
 					@large = Array.new(page_count, nil)
 					@big = Array.new(page_count, nil)
+					@type = "manga"
 				end
 				
 				# @return [Int] ページ数
 				def page_count
 					@page_count ||= Parser::Image.size(@page).delete('漫画 ').delete('P').to_i
 				end
-												
+
 				# @return [Array<Array<Byte>>] 漫画の画像のバイナリを取得してくる
 				# NOTE: 一気に取得するので注意
 				def larges

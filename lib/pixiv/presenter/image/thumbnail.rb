@@ -26,6 +26,7 @@ module Pixiv
 					@extension = param[:extension]
 					@illust_title = param[:illust_title]
 					@artist = param[:illust_author]
+					@type = "thumbnail"
 					
 					# 漫画用配列
 					@larges = Array.new

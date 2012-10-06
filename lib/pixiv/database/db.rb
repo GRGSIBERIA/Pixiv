@@ -51,7 +51,6 @@ module Pixiv
 			
 			# 実行するときのラッパー
 			def execute(sql)
-			  puts sql
 			  @db.execute(sql)
 			end
 			
@@ -80,7 +79,7 @@ module Pixiv
 			# tag_tableの有無チェック
 			def CheckTagTable()
 			  if !ExistTable("tag_table") then
-			    @db.execute("create table tag_table (tagid integer primary key, name text);")
+			    @db.execute("create table tag_table (tagid integer primary key, name text, count integer);")
 			  end
 			end
 			
@@ -98,9 +97,8 @@ module Pixiv
 create table illust_info_table (
 illust_id integer primary key, 
 userid text, score integer, view integer, rated integer,
-title text, caption text,
-date text, illust_type integer,
-r18 integer, size text);
+title text, date text, illust_type text,
+r18 text, size text);
 EOS
 			    @db.execute(sql)
 			  end
@@ -109,7 +107,7 @@ EOS
 			# ユーザ情報テーブルの有無チェック
 			def CheckUserInfoTable()
 			  if !ExistTable("user_info_table") then
-			    @db.execute("create table user_info_table (userid integer primary key, nickname text, profile text, location text);")
+			    @db.execute("create table user_info_table (userid integer primary key, nickname text, location text);")
 			  end
 			end
 			

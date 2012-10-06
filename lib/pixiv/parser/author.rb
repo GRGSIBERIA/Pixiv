@@ -35,7 +35,18 @@ module Pixiv
 			# @return [String] イラストのサーバ上の位置
 			def self.location(page)
 			  path = 'a[@class="avatar_m"]/img'
-			  File.dirname(page.at(path)['src'])
+			  locate = File.dirname(page.at(path)['src'].sub("profile", "img"))
+			  if locate.include?("source.pixiv.net") then  # 見つからない場合は探す
+			    nkname = name(page)
+			    path = 'ul/li/a/img'
+			    page.search(path) do |e|
+			      if e['title'].include(nkname) then
+			        return File.dirname(e['src'])
+			      end
+			    end
+			    locate = ""
+			  end
+			  locate
 			end
 			
 			# @return [Presenter::Instance::Picture] ユーザのアイコン画像

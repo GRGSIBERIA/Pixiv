@@ -26,7 +26,7 @@ module Pixiv
 					@userid
 				end
 				
-				# @return [String] サーバ上の位置を取得する
+				# @return [String] サーバ上の位置を取得する, 空文字列の場合は投稿したことのないユーザ
 				def location
 				  @location ||= Parser::Author.location(@page)
 				end

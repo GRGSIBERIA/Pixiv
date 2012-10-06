@@ -39,25 +39,10 @@ module Pixiv
 					tag = param[:tag].class == String ? param[:tag] : param[:tag].name
 					param[:uri] += '&tag=' + tag
 				end
-				param[:uri] += AppendTag(param[:tag])
 				param[:picture_count] = 'div[@class="two_column_body"]/h3/span'
 				param[:image_tag_path] = 'div[@class="display_works linkStyleWorks"]/ul/li/a/img'
 				param[:a_tag_is_two_parent] = false
 				@listing.GetThumbnails(param)
-			end
-			
-			# @param uri [String] アクセスしたいURL
-			# @param tag [Presenter::Instance::Tag] 絞り込みたいタグ
-			# @param tag [String] 絞り込みたいタグ
-			# @return [String] もし、指定されていればtagパラメータを返す
-			def AppendTag(uri, tag)
-				if tag != nil then
-					tag_str = tag.class == Presenter::Instance::Tag ?
-						tag.name : tag
-					"&tag=" + tag_str
-				else
-					""
-				end
 			end
 			
 			# ブックマークに登録したイラストを取得する
