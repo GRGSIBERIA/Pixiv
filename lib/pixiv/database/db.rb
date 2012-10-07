@@ -7,31 +7,33 @@ module Pixiv
 			def initialize()
 				@db = SQLite3::Database.new('pixiv.db')
 				CheckTagTable()
-				CheckToolTable()
+				#CheckToolTable()
 				CheckIllustInfoTable()
 				CheckUserInfoTable()
 				CheckIllustTagsArrayTable()
 				CheckBookmarkUserTable()
 				CheckBookmarkIllustTable()
-				CheckToolsArrayTable()
+				#CheckToolsArrayTable()
 				CheckIllustResponseTable()
 				
 				CheckBookmarkIllustTagsArrayTable()
 				CheckBookmarkUserTagsArrayTable()
+				CheckCrawledIDTable()
 			end
 			
 			def ExecuteAllTable(sql)
 			  @db.execute(sql + "tag_table;")
-        @db.execute(sql + "tool_table;")
+        #@db.execute(sql + "tool_table;")
         @db.execute(sql + "illust_info_table;")
         @db.execute(sql + "user_info_table;")
         @db.execute(sql + "illust_tags_array_table;")
         @db.execute(sql + "bookmark_user_table;")
         @db.execute(sql + "bookmark_illust_table;")
-        @db.execute(sql + "tools_array_table;")
+        #@db.execute(sql + "tools_array_table;")
         @db.execute(sql + "bookmark_illust_tags_array_table;")
         @db.execute(sql + "bookmark_user_tags_array_table;")
         @db.execute(sql + "illust_response_table;")
+        @db.execute(sql + "crawled_id_table;")
 			end
 			
 			# データベースの中身をクリアにする
@@ -144,6 +146,13 @@ EOS
       def CheckBookmarkUserTagsArrayTable()
         if !ExistTable("bookmark_user_tags_array_table") then
           @db.execute("create table bookmark_user_tags_array_table (userid integer, tagid integer, stratum integer);")
+        end
+      end
+      
+      def CheckCrawledIDTable()
+        if !ExistTable("crawled_id_table") then
+          @db.execute("create table crawled_id_table (crawl_type text primary key, userid integer);")
+          @db.execute("insert into crawled_id_table values ('illust_by_user', 10)")
         end
       end
 		end
