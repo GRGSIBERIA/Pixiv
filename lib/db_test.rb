@@ -16,7 +16,7 @@ end
 # UserInfoTableにデータを突っ込む
 def CrawlUserInfo(client, db)
   puts "crawl user----"
-  for id in SetupRange(db, 100) do
+  for id in SetupRange(db, 1000) do
     begin
       info = client.artist.info(id)
       puts id
@@ -123,10 +123,11 @@ client = Pixiv::Client.new
 
 start_time = Time.now
 
-#CrawlUserInfo(client, db)
-CrawlIllustByUser(client, db)
+CrawlUserInfo(client, db)
+#CrawlIllustByUser(client, db)
 
 end_time = Time.now
 puts "time:" + (end_time - start_time).to_s + "s"
+puts Time.now.to_s
 
 db.close
