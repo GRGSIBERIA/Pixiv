@@ -16,19 +16,21 @@ end
 # UserInfoTableにデータを突っ込む
 def CrawlUserInfo(client, db)
   puts "crawl user----"
-  for id in SetupRange(db, 1000) do
+  db.db.transaction
+  for id in SetupRange(db, 3000) do
     begin
       info = client.artist.info(id)
       puts id
       deta = info.detail
       nickname = deta.nickname.gsub(/['"]/) {|ch| ch + ch}
       location = info.location
-      sql = "insert into user_info_table values (#{id}, '#{nickname}', '#{location}');"
-      db.execute(sql)
+      sql = "insert into user_info_table values (?, ?, ?);"
+      db.db.execute(sql, [id, nickname, location])
     rescue Pixiv::ArtistNotFoundError
       puts "notfound:#{id}"
     end
   end
+  db.db.commit
 end
 
 # UserInfoTableベースでイラストを取得する
