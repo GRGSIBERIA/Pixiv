@@ -81,7 +81,7 @@ module Pixiv
 			# tag_tableの有無チェック
 			def CheckTagTable()
 			  if !ExistTable("tag_table") then
-			    @db.execute("create table tag_table (tagid integer primary key, name text, count integer);")
+			    @db.execute("create table tag_table (tagid integer primary key, name text unique, count integer);")
 			  end
 			end
 			
@@ -98,9 +98,9 @@ module Pixiv
 			    sql = <<EOS
 create table illust_info_table (
 illust_id integer primary key, 
-userid text, score integer, view integer, rated integer,
+userid integer, score integer, view integer, rated integer,
 title text, date text, illust_type text,
-r18 text, size text);
+r18 text);
 EOS
 			    @db.execute(sql)
 			  end
@@ -152,7 +152,7 @@ EOS
       def CheckCrawledIDTable()
         if !ExistTable("crawled_id_table") then
           @db.execute("create table crawled_id_table (crawl_type text primary key, userid integer);")
-          @db.execute("insert into crawled_id_table values ('illust_by_user', 10)")
+          @db.execute("insert into crawled_id_table values ('illust_by_user', 9)")
         end
       end
 		end

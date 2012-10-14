@@ -17,7 +17,7 @@ end
 def CrawlUserInfo(client, db)
   puts "crawl user----"
   db.db.transaction
-  for id in SetupRange(db, 3000) do
+  for id in SetupRange(db, 5000) do
     begin
       info = client.artist.info(id)
       puts id
@@ -35,7 +35,11 @@ end
 
 # UserInfoTableベースでイラストを取得する
 def CrawlIllustByUser(client, db)
-  first_id = 10
+  first_id = 9
+  max_count = 20 # N人分取得する
+  count = 0
+  last_userid = 0
+  exec_array = Array.new
   db.db.execute("select userid from crawled_id_table") do |row|
     first_id = row[0].to_i  # 最後に調べたユーザIDを初期値にセット
   end
@@ -61,19 +65,32 @@ def CrawlIllustByUser(client, db)
           end
           r18 = info.r18 ? "t" : "f"
           
-          sql = "insert into illust_info_table values (#{illust_id}, #{row[0]}, #{score}, #{view}, #{rated}, '#{title}', '#{date}', '#{illust_type}', '#{r18}', '#{size}');"
-          #db.execute(spl)
-          puts sql
+          puts "#{row[0]} => #{illust_id}"
+          cols = [illust_id, row[0], score, view, rated, title, date.to_s, illust_type, r18]
+          sql = "insert into illust_info_table values (?, ?, ?, ?, ?, ?, ?, ?, ?);"
+          #db.db.execute(sql, cols)
+          exec_array << [sql, cols] # トランザクションさせたい
+          last_userid = row[0]
+          
           # タグをなんとかする
           EntryTags(db, info.tags, illust_id)
         end
-        if row[0] > 12 then break end
-        db.db.execute("update crawled_id_table set userid = #{userid} where crawl_type = 'illust_by_user'")  # 最後に記録したIDをここで
+        if max_count <= count then break end
+        count += 1
+        #db.db.execute("update crawled_id_table set userid = #{userid} where crawl_type = 'illust_by_user'")  # 最後に記録したIDをここで
       rescue Pixiv::IllustNotFoundError
         puts "notfound:#{row[0]}"
       end
     end
   end
+  
+  # トランザクション用に退避
+  db.db.transaction
+  for exec in exec_array do
+    db.db.execute(exec[0], exec[1])
+  end 
+  db.db.commit
+  db.db.execute("update crawled_id_table set userid = #{last_userid} where crawl_type = 'illust_by_user'")  # 最後に記録したIDをここで
 end
 
 # イラストごとにタグの登録
@@ -91,8 +108,8 @@ def EntryTags(db, tags, illust_id)
     tagname = tag.name.gsub(/['"]/) {|ch| ch + ch}
     tagname = tagname.toutf8
     begin
-      sql = "select tagid, count from tag_table where name = '#{tagname}';".toutf8
-      db.db.execute(sql) do |e|
+      sql = "select tagid, count from tag_table where name = ?;"
+      db.db.execute(sql, [tagname]) do |e|
         existflag = true        # 既に使用されているタグがあった
         tagid = e[0].to_i  # ここでIDが変更される
         cnt = e[1].to_i + 1
@@ -101,18 +118,22 @@ def EntryTags(db, tags, illust_id)
       # テーブルがない場合は怒られるので止める
     end
     sql = ""
+    cols = Array.new
     if !existflag then
       maxid += 1
-      sql = "insert into tag_table values (#{maxid}, '#{tagname}', 1);".toutf8  # タグの追加
+      cols = [maxid, tagname]
+      sql = "insert into tag_table values (?, ?, 1);"  # タグの追加
       tagid = maxid
+      db.db.execute(sql, cols)  # update回避のため仕方なく
     else
-      sql = "update tag_table set count = #{cnt} where tagid = #{tagid}".toutf8 # 見つかった場合はカウントを増やすだけ
+      cols = [cnt, tagid]
+      sql = "update tag_table set count = ? where tagid = ?;" # 見つかった場合はカウントを増やすだけ
     end
-    db.execute(sql)
-    puts "tag_tb:" + sql
-    sql = "insert into illust_tags_array_table values (#{illust_id}, #{tagid});".toutf8
-    db.execute(sql) # イラストごとのタグの追加
-    puts "arr_tb:" + sql
+    #db.db.execute(sql, cols)
+    
+    cols = [illust_id, tagid]
+    sql = "insert into illust_tags_array_table values (?, ?);"
+    db.db.execute(sql, cols) # イラストごとのタグの追加
     tagid = maxid
   end
 end
@@ -125,8 +146,8 @@ client = Pixiv::Client.new
 
 start_time = Time.now
 
-CrawlUserInfo(client, db)
-#CrawlIllustByUser(client, db)
+#CrawlUserInfo(client, db)
+CrawlIllustByUser(client, db)
 
 end_time = Time.now
 puts "time:" + (end_time - start_time).to_s + "s"
