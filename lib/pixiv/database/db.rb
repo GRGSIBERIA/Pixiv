@@ -7,29 +7,26 @@ module Pixiv
 			def initialize()
 				@db = SQLite3::Database.new('pixiv.db')
 				CheckTagTable()
-				#CheckToolTable()
 				CheckIllustInfoTable()
 				CheckUserInfoTable()
 				CheckIllustTagsArrayTable()
 				CheckBookmarkUserTable()
 				CheckBookmarkIllustTable()
-				#CheckToolsArrayTable()
 				CheckIllustResponseTable()
 				
 				CheckBookmarkIllustTagsArrayTable()
 				CheckBookmarkUserTagsArrayTable()
 				CheckCrawledIDTable()
+				CheckTagsArrayBufferTable()
 			end
 			
 			def ExecuteAllTable(sql)
 			  @db.execute(sql + "tag_table;")
-        #@db.execute(sql + "tool_table;")
         @db.execute(sql + "illust_info_table;")
         @db.execute(sql + "user_info_table;")
         @db.execute(sql + "illust_tags_array_table;")
         @db.execute(sql + "bookmark_user_table;")
         @db.execute(sql + "bookmark_illust_table;")
-        #@db.execute(sql + "tools_array_table;")
         @db.execute(sql + "bookmark_illust_tags_array_table;")
         @db.execute(sql + "bookmark_user_tags_array_table;")
         @db.execute(sql + "illust_response_table;")
@@ -81,14 +78,7 @@ module Pixiv
 			# tag_tableの有無チェック
 			def CheckTagTable()
 			  if !ExistTable("tag_table") then
-			    @db.execute("create table tag_table (tagid integer primary key, name text unique, count integer);")
-			  end
-			end
-			
-			# tool_tableの有無チェック
-			def CheckToolTable()
-			  if !ExistTable("tool_table") then
-			    @db.execute("create table tool_table (tool_id integer primary key, name text);")
+			    @db.execute("create table tag_table (tagid integer primary key autoincrement, name text unique, count integer);")
 			  end
 			end
 			
@@ -97,7 +87,7 @@ module Pixiv
 			  if !ExistTable("illust_info_table") then
 			    sql = <<EOS
 create table illust_info_table (
-illust_id integer primary key, 
+illust_id integer primary key autoincrement, 
 userid integer, score integer, view integer, rated integer,
 title text, date text, illust_type text,
 r18 text);
@@ -131,12 +121,6 @@ EOS
         end
       end
       
-      def CheckToolsArrayTable()
-        if !ExistTable("tools_array_table") then
-          @db.execute("create table tools_array_table (illust_id integer primary key, tool_id integer);")
-        end
-      end
-      
       def CheckBookmarkIllustTagsArrayTable()
         if !ExistTable("bookmark_illust_tags_array_table") then
           @db.execute("create table bookmark_illust_tags_array_table (userid integer, tagid integer, stratum integer);")
@@ -153,6 +137,12 @@ EOS
         if !ExistTable("crawled_id_table") then
           @db.execute("create table crawled_id_table (crawl_type text primary key, userid integer);")
           @db.execute("insert into crawled_id_table values ('illust_by_user', 9)")
+        end
+      end
+      
+      def CheckTagsArrayBufferTable()
+        if !ExistTable("tags_array_buffer_table") then
+          @db.execute("create table tags_array_buffer_table (illust_id integer, tagname text);")
         end
       end
 		end
