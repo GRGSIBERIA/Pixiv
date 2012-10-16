@@ -78,7 +78,7 @@ module Pixiv
 			# tag_tableの有無チェック
 			def CheckTagTable()
 			  if !ExistTable("tag_table") then
-			    @db.execute("create table tag_table (tagid integer primary key autoincrement, name text unique, count integer);")
+			    @db.execute("create table tag_table (tagid integer primary key, name text unique, count integer);")
 			  end
 			end
 			
@@ -87,7 +87,7 @@ module Pixiv
 			  if !ExistTable("illust_info_table") then
 			    sql = <<EOS
 create table illust_info_table (
-illust_id integer primary key autoincrement, 
+illust_id integer primary key, 
 userid integer, score integer, view integer, rated integer,
 title text, date text, illust_type text,
 r18 text);
@@ -137,6 +137,12 @@ EOS
         if !ExistTable("crawled_id_table") then
           @db.execute("create table crawled_id_table (crawl_type text primary key, userid integer);")
           @db.execute("insert into crawled_id_table values ('illust_by_user', 9)")
+        end
+      end
+      
+      def CheckTagsArrayTable()
+        if !ExistTable("tags_array_table") then
+          @db.execute("create table tags_array_table (illust_id integer, tagid integer)")
         end
       end
       

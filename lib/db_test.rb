@@ -70,8 +70,8 @@ def CrawlIllustByUser(client, db)
           r18 = info.r18 ? "t" : "f"
           
           puts "#{row[0]} => #{illust_id}"
-          cols = [row[0], score, view, rated, title, date.to_s, illust_type, r18]
-          sql = "insert into illust_info_table(userid,score,view,rated,title,date,illust_type,r18) values (?, ?, ?, ?, ?, ?, ?, ?);"
+          cols = [illust_id, row[0], score, view, rated, title, date.to_s, illust_type, r18]
+          sql = "insert into illust_info_table values (?, ?, ?, ?, ?, ?, ?, ?, ?);"
           exec_array << [sql, cols] # トランザクションさせたい
           last_userid = row[0]
           
