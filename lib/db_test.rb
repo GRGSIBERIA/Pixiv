@@ -42,7 +42,7 @@ end
 def CrawlIllustByUser(client, db)
   puts "crawl illust----------------"
   first_id = 9
-  max_count = 100 # N人分取得する
+  max_count = 1000 # N人分取得する
   count = 0
   last_userid = 0
   exec_array = Array.new
@@ -63,10 +63,8 @@ def CrawlIllustByUser(client, db)
           title = info.title
           date = info.date
           if info.class == Pixiv::Presenter::Image::Illust then
-            size = "#{info.width},#{info.height}"
             illust_type = "i"
           else
-            size = "#{info.page_count}p"
             illust_type = "m"
           end
           r18 = info.r18 ? "t" : "f"

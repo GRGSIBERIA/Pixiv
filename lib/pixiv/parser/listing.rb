@@ -115,8 +115,9 @@ module Pixiv
 			# @param param [Hash]
 			# @return [Int] 全体としてどれぐらいコンテンツの数が存在しているか
 			def GetContentCount(param)
-				contents_count_text = @agent.page.at(param[:picture_count]).inner_text
-				contents_count_text.scan(/[0-9]+/)[0].to_i
+				contents_count_text = @agent.page.at(param[:picture_count])
+				if contents_count_text == nil then return 0; end
+				contents_count_text.inner_text.scan(/[0-9]+/)[0].to_i
 			end
 			
 			# サムネの要素からサムネクラスのインスタンスを生成
