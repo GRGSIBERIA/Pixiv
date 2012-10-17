@@ -16,11 +16,19 @@ end
 def GetIllustsByTagID(db, tagid)
   # タグからイラストを検索する
   illusts = Array.new
-  sql = 'select illust_id from tags_array_table where tagid = ? limit 20'
-  db.execute(sql, [tag]) do |rows|
+  sql = 'select illust_id from tags_array_table where tagid = ? limit 30'
+  db.execute(sql, [tagid]) do |rows|
     illusts << rows[0].to_i
   end
   illusts  # return イラストIDの配列
+end
+
+def GetTagName(db, tagid)
+  sql = 'select name from tag_table where tagid = ? limit 1'
+  db.execute(sql, [tagid]) do |rows|
+    return rows[0]
+  end
+  nil
 end
 
 def GetPageByTagID(db, tagid)
@@ -29,7 +37,7 @@ def GetPageByTagID(db, tagid)
   # 1ページ分のイラスト情報
   illust_tags = Array.new
   for illust in illusts_by_tag do
-    illust_tags << GetTagsByIllustID(illust)
+    illust_tags << GetTagsByIllustID(db, illust)
   end
   illust_tags
 end
@@ -38,7 +46,7 @@ def SearchAlivePairs(db, tags)
   # 生き残る組み合わせをタグごとに探索する
   pairs_array = Array.new
   for tagid in tags do
-    page = GetPageByTagID(tagid)
+    page = GetPageByTagID(db, tagid)
     first = tags.clone  # 初期状態からどんどん除外していく
     for fcnt in 0..first.length-1 do
       for illust in page do
@@ -69,18 +77,20 @@ def ArrangeNonDuplicationPairs(pairs)
   non_duplication_array = Array.new
   for i in 0..pairs.length-1 do
     if pairs[i].length > 1 then
-      if non_duplication_array.index(paris[i][j]) == nil
-        non_duplication_array << pairs[i][j]
+      for j in 0..pairs[i].length-1 do
+        if non_duplication_array.index(pairs[i][j]) == nil
+          non_duplication_array << pairs[i][j]
+        end
       end
     end
   end
   non_duplication_array
 end
 
-def MakeHashToCountNonDuplicationPairs(db, paris)
+def MakeHashToCountNonDuplicationPairs(db, pairs)
   # タグIDをキーにしてそれぞれの検索件数を出す
   non_duplication_array = ArrangeNonDuplicationPairs(pairs)
-  counting_hash = Hsah.new
+  counting_hash = Hash.new
   non_duplication_array.each do |n|
     counting_hash[n] ||= GetCountFromTag(db, n)
   end
@@ -89,6 +99,8 @@ end
 
 def Clastering(db, illust_id)
   tags = GetTagsByIllustID(db, illust_id)
+  puts tags
+  puts GetTagName(db, tags[0])
   pairs = SearchAlivePairs(db, tags)
   
   # 存在している組み合わせの中で検索ヒット数を比較し、
@@ -97,5 +109,10 @@ def Clastering(db, illust_id)
 end
 
 db = Pixiv::Database::DB.new
+tags = Clastering(db.db, 1918421)
 
+puts "result-----"
+for tag in tags do
+  puts GetTagName(db.db, tag[0])
+end
 db.close
