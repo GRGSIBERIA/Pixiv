@@ -17,7 +17,7 @@ end
 def CrawlUserInfo(client, db)
   puts "crawl user----"
   exec_array = Array.new
-  for id in SetupRange(db, 5000) do
+  for id in SetupRange(db, 500) do
     begin
       info = client.artist.info(id)
       puts id
@@ -42,7 +42,7 @@ end
 def CrawlIllustByUser(client, db)
   puts "crawl illust----------------"
   first_id = 9
-  max_count = 500 # N人分取得する
+  max_count = 200 # N人分取得する
   count = 0
   last_userid = 0
   exec_array = Array.new
@@ -113,8 +113,8 @@ client = Pixiv::Client.new
 
 start_time = Time.now
 
-#CrawlUserInfo(client, db)
-CrawlIllustByUser(client, db)
+CrawlUserInfo(client, db)
+#CrawlIllustByUser(client, db)
 
 end_time = Time.now
 puts "time:" + (end_time - start_time).to_s + "s"

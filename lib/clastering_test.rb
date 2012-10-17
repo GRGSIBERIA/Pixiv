@@ -54,12 +54,46 @@ def SearchAlivePairs(db, tags)
   pairs_array
 end
 
+def GetCountFromTag(db, tagid)
+  # イラストに含まれるタグの件数を取得する
+  sql = 'select count(tagid) from tags_array_table where tagid = ?;'
+  count = 0
+  db.execute(sql, [tagid]) do |rows|
+    count = rows[0].to_i
+  end
+  count
+end
+
+def ArrangeNonDuplicationPairs(pairs)
+  # 重複なしの1次元配列に整理する
+  non_duplication_array = Array.new
+  for i in 0..pairs.length-1 do
+    if pairs[i].length > 1 then
+      if non_duplication_array.index(paris[i][j]) == nil
+        non_duplication_array << pairs[i][j]
+      end
+    end
+  end
+  non_duplication_array
+end
+
+def MakeHashToCountNonDuplicationPairs(db, paris)
+  # タグIDをキーにしてそれぞれの検索件数を出す
+  non_duplication_array = ArrangeNonDuplicationPairs(pairs)
+  counting_hash = Hsah.new
+  non_duplication_array.each do |n|
+    counting_hash[n] ||= GetCountFromTag(db, n)
+  end
+  counting_hash.sort {|(k1,v1),(k2,v2)| v2 <=> v1}
+end
+
 def Clastering(db, illust_id)
   tags = GetTagsByIllustID(db, illust_id)
   pairs = SearchAlivePairs(db, tags)
   
   # 存在している組み合わせの中で検索ヒット数を比較し、
   # 多い方が作品、少ない方がキャラとして区別する
+  counted_tags = MakeHashToCountNonDuplicationPairs(db, pairs)
 end
 
 db = Pixiv::Database::DB.new

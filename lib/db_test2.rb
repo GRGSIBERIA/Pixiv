@@ -15,7 +15,7 @@ def MargeIllustTables(db)
   
   db.db.execute('attach "dest.db" as dest;')
   db.db.execute('insert into illust_info_table select * from dest.illust_info_table where dest.userid > ' + usercount + ';')
-  db.db.execute('insert into tags_array_buffer_table select * from dest.tags_array_buffer_table where dest.illust_id > ' + illust_id + ';')
+  #db.db.execute('insert into tags_array_buffer_table select * from dest.tags_array_buffer_table where dest.illust_id > ' + illust_id + ';')
   db.db.execute('detach dest;')
 end
 
@@ -35,7 +35,7 @@ def ArrangeTagTables(db)
   arranged_hash = Hash.new
   db.db.execute('select * from tags_array_buffer_table;') do |rows|
     if !arranged_hash.key?(rows[1]) then
-      arranged_hash[rows[1]] = {:id => id, :count => 1, :illust_id => row[0].to_i}
+      arranged_hash[rows[1]] = {:id => id, :count => 1, :illust_id => rows[0].to_i}
       id += 1
     else
       arranged_hash[rows[1]][:count] += 1
@@ -51,5 +51,5 @@ def ArrangeTagTables(db)
 end
 
 db = Pixiv::Database::DB.new
-
+ArrangeTagTables(db)
 db.close

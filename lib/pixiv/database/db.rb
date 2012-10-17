@@ -18,6 +18,7 @@ module Pixiv
 				CheckBookmarkUserTagsArrayTable()
 				CheckCrawledIDTable()
 				CheckTagsArrayBufferTable()
+				CheckTagsArrayTable()
 			end
 			
 			def ExecuteAllTable(sql)
