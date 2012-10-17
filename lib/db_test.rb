@@ -42,7 +42,7 @@ end
 def CrawlIllustByUser(client, db)
   puts "crawl illust----------------"
   first_id = 9
-  max_count = 1000 # N人分取得する
+  max_count = 500 # N人分取得する
   count = 0
   last_userid = 0
   exec_array = Array.new

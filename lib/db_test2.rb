@@ -32,7 +32,7 @@ end
 # バッファのものをなんとかする
 def ArrangeTagTables(db)
   id = 1
-  arranged_hash = {}
+  arranged_hash = Hash.new
   db.db.execute('select * from tags_array_buffer_table;') do |rows|
     if !arranged_hash.key?(rows[1]) then
       arranged_hash[rows[1]] = {:id => id, :count => 1, :illust_id => row[0].to_i}
