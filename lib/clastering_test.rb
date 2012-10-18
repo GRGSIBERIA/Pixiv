@@ -158,6 +158,8 @@ end
 def DecisionTypeFromTag(db, tagids)
   count_hash = GetCountByTagIDs(db, tagids)
   
+  # TODO ペアから除外するべきタグを見つけるべき、ヒット数の多いタグが生き残る
+  
   # カウントを正規化して、ある一定値以下は除外する
   result_array = Array.new
   max = count_hash.max{|a,b| a[1] <=> b[1]}[1]
