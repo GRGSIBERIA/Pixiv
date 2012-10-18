@@ -31,6 +31,23 @@ def GetTagName(db, tagid)
   nil
 end
 
+# タグIDの配列からカウントを引き出す tagidsはArray
+def GetCountByTagIDs(db, tagids)
+  sql = 'select tagid, count from tag_table where tagid = ? '
+  if tagids.length < 1 then return nil; end
+  
+  for i in 1..tagids.length-1 do
+    sql += 'or tagid = ? '
+  end
+  sql += 'limit ' + tagids.length.to_s
+  
+  result = Hash.new
+  db.execute(sql, tagids) do |rows|
+    result[rows[0].to_i] = rows[1].to_i
+  end
+  result
+end
+
 def GetTagsNames(db, tagids)
   args = Array.new
   sql = 'select * from tag_table where tagid = ? '
@@ -43,7 +60,6 @@ def GetTagsNames(db, tagids)
   args << tagids.length
   
   result = Hash.new
-  puts sql
   db.execute(sql, args) do |rows|
     result[rows[0].to_i] = rows[1]
   end
@@ -61,30 +77,48 @@ def GetPageByTagID(db, tagid)
   illust_tags
 end
 
+# タグの出現回数を調べる
+def AppearCountFromTag(page)
+  tags_count_array = Hash.new
+  illust_count = page.length
+  for tags in page do
+    for tag in tags do
+      tags_count_array[tag] ||= 0
+      tags_count_array[tag] += 1
+    end
+  end
+  tags_count_array
+end
+
+# ある出現率以下のタグをすべて除外する
+def ExcludeCountingRatioOrLess(tags_count_array, illust_count)
+  pair = Array.new
+  illust_diff = 1.0 / illust_count  # ページ内のイラスト比率のタネ
+  tags_count_array.each{|k,v| 
+    if (v * illust_diff).to_f > 0.8 then
+      pair << k
+    end
+  }
+  # タグが1個以下の場合はnilを返すようにする
+  if pair.length <= 1 then return nil; end
+  pair
+end
+
 def SearchAlivePairs(db, tags)
   # 生き残る組み合わせをタグごとに探索する
   pairs_array = Array.new
   for tagid in tags do
     page = GetPageByTagID(db, tagid)
     
-    tags_count_array = Hash.new
-    illust_count = page.length
-    for tags in page do
-      for tag in tags do
-        tags_count_array[tag] ||= 0
-        tags_count_array[tag] += 1
-      end
-    end
+    # タグの出現回数を調べる
+    tags_count_array = AppearCountFromTag(page)
     
     # ページ内のイラスト数とタグのカウントが一致したら生き残り
-    pair = Array.new
-    illust_diff = 1.0 / illust_count
-    tags_count_array.each{|k,v| 
-      if (v * illust_diff) > 0.8 then
-        pair << k
-      end
-    }
-    pairs_array << pair
+    illust_count = page.length
+    pair = ExcludeCountingRatioOrLess(tags_count_array, illust_count)
+    if pair != nil then # ペアが作れなかったのは追加しない
+      pairs_array << pair
+    end
   end
   pairs_array
 end
@@ -116,8 +150,26 @@ def ExtractPairs(db, pairs)
       end
     end
   end
+  buffer_array
+  #GetTagsNames(db, buffer_array)
+end
+
+# タグの種別を調べる
+def DecisionTypeFromTag(db, tagids)
+  count_hash = GetCountByTagIDs(db, tagids)
   
-  GetTagsNames(db, buffer_array)
+  # カウントを正規化して、ある一定値以下は除外する
+  result_array = Array.new
+  max = count_hash.max{|a,b| a[1] <=> b[1]}[1]
+  count_norm = 1.0 / max.to_f
+  count_hash.each{|id, count| 
+    if (count.to_f * count_norm) > 0.001 then
+      result_array << id
+    end
+    }
+  result_array
+  
+  # TODO ちゃんと判別処理まで書く
 end
 
 def Clastering(db, illust_id)
@@ -133,7 +185,9 @@ def Clastering(db, illust_id)
   
   # 存在している組み合わせの中で検索ヒット数を比較し、
   # 多い方が作品、少ない方がキャラとして区別する
-  ExtractPairs(db, pairs)
+  aliving_tags = ExtractPairs(db, pairs)
+  id = DecisionTypeFromTag(db, aliving_tags)
+  GetTagsNames(db, id)
 end
 
 db = Pixiv::Database::DB.new
