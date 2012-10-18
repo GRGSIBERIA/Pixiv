@@ -16,7 +16,7 @@ end
 def GetIllustsByTagID(db, tagid)
   # タグからイラストを検索する
   illusts = Array.new
-  sql = 'select illust_id from tags_array_table where tagid = ? limit 30'
+  sql = 'select illust_id from tags_array_table where tagid = ? limit 10'
   db.execute(sql, [tagid]) do |rows|
     illusts << rows[0].to_i
   end
@@ -29,6 +29,25 @@ def GetTagName(db, tagid)
     return rows[0]
   end
   nil
+end
+
+def GetTagsNames(db, tagids)
+  args = Array.new
+  sql = 'select * from tag_table where tagid = ? '
+  args << tagids[0]
+  for i in 1..tagids.length-1
+    sql += 'or tagid = ? '
+    args << tagids[i]
+  end
+  sql += 'limit ?'
+  args << tagids.length
+  
+  result = Hash.new
+  puts sql
+  db.execute(sql, args) do |rows|
+    result[rows[0].to_i] = rows[1]
+  end
+  result  # Integer => String
 end
 
 def GetPageByTagID(db, tagid)
@@ -47,72 +66,79 @@ def SearchAlivePairs(db, tags)
   pairs_array = Array.new
   for tagid in tags do
     page = GetPageByTagID(db, tagid)
-    first = tags.clone  # 初期状態からどんどん除外していく
-    for fcnt in 0..first.length-1 do
-      for illust in page do
-        want_to_lost = illust.index(first[fcnt])
-        if want_to_lost == nil then # 見つからない場合は削除
-          first[fcnt] = -1
-        end
+    
+    tags_count_array = Hash.new
+    illust_count = page.length
+    for tags in page do
+      for tag in tags do
+        tags_count_array[tag] ||= 0
+        tags_count_array[tag] += 1
       end
-      first.delete(-1)  # 見つからなかった奴は消す
     end
-    pairs_array << first.clone  # cloneして戻す
+    
+    # ページ内のイラスト数とタグのカウントが一致したら生き残り
+    pair = Array.new
+    illust_diff = 1.0 / illust_count
+    tags_count_array.each{|k,v| 
+      if (v * illust_diff) > 0.8 then
+        pair << k
+      end
+    }
+    pairs_array << pair
   end
   pairs_array
-end
-
-def GetCountFromTag(db, tagid)
-  # イラストに含まれるタグの件数を取得する
-  sql = 'select count(tagid) from tags_array_table where tagid = ?;'
-  count = 0
-  db.execute(sql, [tagid]) do |rows|
-    count = rows[0].to_i
-  end
-  count
 end
 
 def ArrangeNonDuplicationPairs(pairs)
   # 重複なしの1次元配列に整理する
   non_duplication_array = Array.new
-  for i in 0..pairs.length-1 do
-    if pairs[i].length > 1 then
-      for j in 0..pairs[i].length-1 do
-        if non_duplication_array.index(pairs[i][j]) == nil
-          non_duplication_array << pairs[i][j]
-        end
+  for pair in pairs do
+    for item in pair do
+      if item != nil then
+        non_duplication_array << item
       end
     end
   end
   non_duplication_array
 end
 
-def MakeHashToCountNonDuplicationPairs(db, pairs)
-  # タグIDをキーにしてそれぞれの検索件数を出す
-  non_duplication_array = ArrangeNonDuplicationPairs(pairs)
-  counting_hash = Hash.new
-  non_duplication_array.each do |n|
-    counting_hash[n] ||= GetCountFromTag(db, n)
+def ExtractPairs(db, pairs)
+  extract_data = Hash.new
+  buffer_array = Array.new
+  for pair in pairs do
+    # 要素数が２以上ある＝ペアができているので追加
+    if pair.length > 1 then
+      for e in pair do
+        ind = buffer_array.index(e)
+        if ind == nil then  # 重複は無視したい
+          buffer_array << e
+        end
+      end
+    end
   end
-  counting_hash.sort {|(k1,v1),(k2,v2)| v2 <=> v1}
+  
+  GetTagsNames(db, buffer_array)
 end
 
 def Clastering(db, illust_id)
   tags = GetTagsByIllustID(db, illust_id)
-  puts tags
-  puts GetTagName(db, tags[0])
   pairs = SearchAlivePairs(db, tags)
+  
+  for p in pairs do
+    for t in p do
+      puts GetTagName(db, t)
+    end
+    puts "---"
+  end
   
   # 存在している組み合わせの中で検索ヒット数を比較し、
   # 多い方が作品、少ない方がキャラとして区別する
-  counted_tags = MakeHashToCountNonDuplicationPairs(db, pairs)
+  ExtractPairs(db, pairs)
 end
 
 db = Pixiv::Database::DB.new
 tags = Clastering(db.db, 1918421)
 
 puts "result-----"
-for tag in tags do
-  puts GetTagName(db.db, tag[0])
-end
+tags.each{|k,v| puts v.to_s}
 db.close

@@ -8,14 +8,10 @@ def MargeIllustTables(db)
   db.db.execute('select max(userid) from illust_info_table;') do |rows|
     usercount = rows[0].to_i
   end
-  illust_id = 0
-  db.db.execute('select max(tagid) from tags_array_buffer_table;') do |rows|
-    illust_id = rows[0].to_i
-  end
   
   db.db.execute('attach "dest.db" as dest;')
   db.db.execute('insert into illust_info_table select * from dest.illust_info_table where dest.userid > ' + usercount + ';')
-  #db.db.execute('insert into tags_array_buffer_table select * from dest.tags_array_buffer_table where dest.illust_id > ' + illust_id + ';')
+  db.db.execute('insert or ignore into tags_array_buffer_table select * from dest.tags_array_buffer_table;')
   db.db.execute('detach dest;')
 end
 
@@ -27,6 +23,23 @@ def MargeUserTable(db)
   db.db.execute('attach "dest.db" as dest;')
   db.db.execute('insert into user_info_table select * from dest.user_info_table where dest.userid > ' + usercount + ';')
   db.db.execute('detach dest;')
+end
+
+def DuplicateCheck(db)
+  datas = Array.new
+  sql = 'select distinct * from tags_array_buffer_table'
+  db.db.execute(sql) do |rows|
+    datas << [rows[0].to_i, rows[1]]
+  end
+  
+  db.db.execute('delete from tags_array_buffer_table')
+  
+  sql = 'insert or ignore into tags_array_buffer_table values (?, ?)'
+  db.db.transaction
+  for item in datas do
+    db.db.execute(sql, item)
+  end
+  db.db.commit
 end
 
 # バッファのものをなんとかする
@@ -45,11 +58,39 @@ def ArrangeTagTables(db)
   db.db.transaction
   arranged_hash.each do |k,v|
     db.db.execute('insert into tag_table values (?, ?, ?);', [v[:id], k, v[:count]])
-    db.db.execute('insert into tags_array_table values (?, ?)', [v[:illust_id], v[:id]])
+  end
+  db.db.commit
+end
+
+def ArrangeTagsArrayTable(db)
+  tag_hash = Hash.new
+  db.db.execute('select tagid, name from tag_table;') do |rows|
+    tag_hash[rows[1]] = rows[0].to_i
+  end
+  buffer_hash = Hash.new
+  db.db.execute('select illust_id, tagname from tags_array_buffer_table;') do |rows|
+    buffer_hash[rows[1]] ||= Array.new
+    buffer_hash[rows[1]] << rows[0].to_i
+  end
+  
+  exec = Array.new
+  sql = 'insert into tags_array_table values (?, ?);'
+  buffer_hash.each {|name, illusts|
+    for illust in illusts do
+      exec << [sql, [illust, tag_hash[name].to_i]]
+    end
+  }
+  
+  db.db.transaction
+  for e in exec do
+    db.db.execute(e[0], e[1])
   end
   db.db.commit
 end
 
 db = Pixiv::Database::DB.new
 ArrangeTagTables(db)
+ArrangeTagsArrayTable(db)
+#DuplicateCheck(db)
+
 db.close
