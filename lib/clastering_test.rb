@@ -31,6 +31,32 @@ def GetTagName(db, tagid)
   nil
 end
 
+def GetTagsByIllustIDs(db, illust_id)
+  # イラストIDの配列からタグの配列を抽出する
+  arg = [illust_id[0]]
+  sql = 'select tagid, illust_id from tags_array_table where illust_id = ?'
+  for i in 1..illust_id.length-1 do
+    sql += ' or illust_id = ?'
+    arg << illust_id[i]
+  end
+  
+  guard = illust_id[0]
+  result = Array.new
+  buffer = Array.new
+  db.execute(sql, arg) do |rows|
+    # 番犬が切り替わったとき、配列に詰める
+    if guard == rows[1].to_i then
+      buffer << rows[0].to_i
+    else
+      result << buffer
+      guard = rows[1].to_i  # 番犬の切り替え
+      buffer = [rows[0].to_i]
+    end
+  end
+  result.each{|r| puts "---"; puts r}
+  result
+end
+
 # タグIDの配列からカウントを引き出す tagidsはArray
 def GetCountByTagIDs(db, tagids)
   sql = 'select tagid, count from tag_table where tagid = ? '
@@ -70,11 +96,7 @@ def GetPageByTagID(db, tagid)
   illusts_by_tag = GetIllustsByTagID(db, tagid)   # タグIDを利用してタグのあるイラストを検索
     
   # 1ページ分のイラスト情報
-  illust_tags = Array.new
-  for illust in illusts_by_tag do
-    illust_tags << GetTagsByIllustID(db, illust)
-  end
-  illust_tags
+  illust_tags = GetTagsByIllustIDs(db, illusts_by_tag)
 end
 
 # タグの出現回数を調べる
@@ -192,8 +214,14 @@ def Clastering(db, illust_id)
   GetTagsNames(db, id)
 end
 
+
+start_time = Time.now
 db = Pixiv::Database::DB.new
 tags = Clastering(db.db, 1918421)
+end_time = Time.now
+puts "time:" + (end_time - start_time).to_s + "s"
+puts Time.now.to_s
+
 
 puts "result-----"
 tags.each{|k,v| puts v.to_s}

@@ -89,8 +89,8 @@ def ArrangeTagsArrayTable(db)
 end
 
 db = Pixiv::Database::DB.new
-DuplicateCheck(db)
-ArrangeTagTables(db)
+#DuplicateCheck(db)
+#ArrangeTagTables(db)
 ArrangeTagsArrayTable(db)
 
 db.close

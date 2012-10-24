@@ -1,0 +1,49 @@
+=begin
+イラストに付けられたタグを記述するためのテーブル
+=end
+require './pixiv/database/tables/table_base.rb'
+
+module Pixiv
+  module Database
+    module Tables
+      class TagsArrayTable < TableBase
+        def initialize(db)
+          super(db)
+        end
+        
+        # イラストからタグIDを取得する
+        # @param illust_id [Int] イラストID
+        # @return [Int] タグID
+        def GetTagsFromIllust(illust_id)
+          sql = 'select tagid from tags_array_table where illust_id = ?'
+          GetMulti(sql, [illust_id], "i")
+        end
+        
+        # イラストの配列からタグIDを取得する
+        # @param illusts [Array<Int>] イラストIDの配列
+        # @return [Int] いっしょくたにした状態のタグID配列
+        def GetTagsFromIllustArray(illusts)
+          sql = 'select tagid from tags_array_table'
+          GetArray(sql, illusts, "i", "illust_id")
+        end
+        
+        # タグIDからイラストの配列を取得する
+        # @param tagid [Int] タグID
+        # @param offset [Int] データベース上のレコード位置
+        # @param limit [Int] 取得上限件数
+        # @return [Array] 検索結果としてのイラスト
+        def GetIllustsFromTagID(tagid, offset=-1, limit=-1)
+          sql = 'select illust_id from tags_array_table where tagid = ?'
+          sql += StringedOffsetAndLimit(offset, limit)
+          GetMulti(sql, [tagid], 'i')
+        end
+        
+        # タグIDの配列
+        def GetIllustsFromTagIDArray(tagids, offset=-1, limit=-1)
+          sql = 'select illust_id, tagid from tags_array_table'
+          GetMultiArray(sql, tagids, ["i", "i"], "illust_id", [:illust_id, :tagid])
+        end
+      end
+    end
+  end
+end
