@@ -10,6 +10,14 @@ module Pixiv
           @db = db
         end
         
+        # レコード件数を取得する
+        # @param name [String] フィールド名
+        # @return [Int] レコード件数
+        def GetCount(name)
+          sql = "select count(#{name}) from tag_table limit 1"
+          GetSingle(sql, [], "i")
+        end
+        
         # 単一のデータを検索する
         # @param sql [String] SQL文
         # @param args [Array] 引数として渡したい配列
@@ -37,8 +45,16 @@ module Pixiv
         end
         
         # 複数の検索条件から複数の結果を得る
-        def GetMultiArray(sql, args, types, field_name, field_hash)
+        # @param sql [String] SQL文, where句などは入れない
+        # @param args [Array] 引数として渡したい配列
+        # @param types [Array<String>] 取得するデータの種類
+        # @param field_name [String] 検索をかけるフィールド名
+        # @param field_hash [Array<Symbol>] フィールドの並びと一致させたシンボルの配列
+        # @param limit [Int] 取得上限件数
+        # @return [Array<Hash>] 取得できたレコード、ハッシュのキーはfield_hashに影響
+        def GetMultiArray(sql, args, types, field_name, field_hash, limit=-1)
           sql += MakeWhereOr(args, field_name)
+          sql += CheckLimit(sql, limit)
           result = Array.new
           @db.execute(sql, args) do |row|
             buffer = Hash.new
@@ -63,16 +79,16 @@ module Pixiv
         # @return [Array] field_nameで指定したフィールドの値を配列で
         def GetArray(sql, args, type, field_name, limit=-1)
           sql += MakeWhereOr(args, field_name)
-          sql += CheckLimit(sql)
+          sql += CheckLimit(sql, limit)
           ExecuteArray(sql, args, type)
         end
         
         # Limit句が存在するかどうか調べる
         # @param sql [String] SQL文
         # @return [String] ない場合はLimit句をつける、あったら空文字にする
-        def CheckLimit(sql)
+        def CheckLimit(sql, limit)
           if sql.include?("limit") then
-            return limit > 0 ? ' limit ' + limit.to_s : ' limit ' + args.length.to_s
+            return limit > 0 ? ' limit ' + limit.to_s : ""
           end
           ""
         end

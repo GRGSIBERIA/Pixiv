@@ -1,5 +1,5 @@
-=begin
-ƒCƒ‰ƒXƒg‚É•t‚¯‚ç‚ê‚½ƒ^ƒO‚ğ‹Lq‚·‚é‚½‚ß‚Ìƒe[ƒuƒ‹
+ï»¿=begin
+ã‚¤ãƒ©ã‚¹ãƒˆã«ä»˜ã‘ã‚‰ã‚ŒãŸã‚¿ã‚°ã‚’è¨˜è¿°ã™ã‚‹ãŸã‚ã®ãƒ†ãƒ¼ãƒ–ãƒ«
 =end
 require './pixiv/database/tables/table_base.rb'
 
@@ -11,34 +11,45 @@ module Pixiv
           super(db)
         end
         
-        # ƒCƒ‰ƒXƒg‚©‚çƒ^ƒOID‚ğæ“¾‚·‚é
-        # @param illust_id [Int] ƒCƒ‰ƒXƒgID
-        # @return [Int] ƒ^ƒOID
+        # @return [Int] ãƒ¬ã‚³ãƒ¼ãƒ‰ä»¶æ•°
+        def count
+          @count ||= GetCount("illust_id")
+        end
+        
+        # ã‚¤ãƒ©ã‚¹ãƒˆã‹ã‚‰ã‚¿ã‚°IDã‚’å–å¾—ã™ã‚‹
+        # @param illust_id [Int] ã‚¤ãƒ©ã‚¹ãƒˆID
+        # @return [Int] ã‚¿ã‚°ID
         def GetTagsFromIllust(illust_id)
           sql = 'select tagid from tags_array_table where illust_id = ?'
           GetMulti(sql, [illust_id], "i")
         end
         
-        # ƒCƒ‰ƒXƒg‚Ì”z—ñ‚©‚çƒ^ƒOID‚ğæ“¾‚·‚é
-        # @param illusts [Array<Int>] ƒCƒ‰ƒXƒgID‚Ì”z—ñ
-        # @return [Int] ‚¢‚Á‚µ‚å‚­‚½‚É‚µ‚½ó‘Ô‚Ìƒ^ƒOID”z—ñ
+        # ã‚¤ãƒ©ã‚¹ãƒˆã®é…åˆ—ã‹ã‚‰ã‚¿ã‚°IDã‚’å–å¾—ã™ã‚‹
+        # @param illusts [Array<Int>] ã‚¤ãƒ©ã‚¹ãƒˆIDã®é…åˆ—
+        # @return [Int] ã„ã£ã—ã‚‡ããŸã«ã—ãŸçŠ¶æ…‹ã®ã‚¿ã‚°IDé…åˆ—
         def GetTagsFromIllustArray(illusts)
           sql = 'select tagid from tags_array_table'
           GetArray(sql, illusts, "i", "illust_id")
         end
         
-        # ƒ^ƒOID‚©‚çƒCƒ‰ƒXƒg‚Ì”z—ñ‚ğæ“¾‚·‚é
-        # @param tagid [Int] ƒ^ƒOID
-        # @param offset [Int] ƒf[ƒ^ƒx[ƒXã‚ÌƒŒƒR[ƒhˆÊ’u
-        # @param limit [Int] æ“¾ãŒÀŒ”
-        # @return [Array] ŒŸõŒ‹‰Ê‚Æ‚µ‚Ä‚ÌƒCƒ‰ƒXƒg
+        # ã‚¿ã‚°IDã‹ã‚‰ã‚¤ãƒ©ã‚¹ãƒˆã®é…åˆ—ã‚’å–å¾—ã™ã‚‹
+        # @param tagid [Int] ã‚¿ã‚°ID
+        # @param offset [Int] ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ä¸Šã®ãƒ¬ã‚³ãƒ¼ãƒ‰ä½ç½®
+        # @param limit [Int] å–å¾—ä¸Šé™ä»¶æ•°
+        # @return [Array] æ¤œç´¢çµæœã¨ã—ã¦ã®ã‚¤ãƒ©ã‚¹ãƒˆ
         def GetIllustsFromTagID(tagid, offset=-1, limit=-1)
           sql = 'select illust_id from tags_array_table where tagid = ?'
           sql += StringedOffsetAndLimit(offset, limit)
           GetMulti(sql, [tagid], 'i')
         end
         
-        # ƒ^ƒOID‚Ì”z—ñ
+        # ã‚¿ã‚°IDã®é…åˆ—
+        # @param tagids [Int] ã‚¿ã‚°IDã®é…åˆ—
+        # @param offset [Int] ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ä¸Šã®ä½ç½®
+        # @param limit [Int] å–å¾—ä¸Šé™ä»¶æ•°
+        # @return [Array<Hash>] ã‚¤ãƒ©ã‚¹ãƒˆIDã¨ã‚¿ã‚°IDã®ãƒšã‚¢ã€ãƒãƒƒã‚·ãƒ¥ã§ç®¡ç†
+        # @return [Array<Hash>] :illust_id ã‚¤ãƒ©ã‚¹ãƒˆID
+        # @return [Array<Hash>] :tagid ã‚¿ã‚°ID
         def GetIllustsFromTagIDArray(tagids, offset=-1, limit=-1)
           sql = 'select illust_id, tagid from tags_array_table'
           GetMultiArray(sql, tagids, ["i", "i"], "illust_id", [:illust_id, :tagid])

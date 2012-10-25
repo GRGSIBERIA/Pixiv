@@ -13,9 +13,14 @@ module Pixiv
           super(db)
         end
         
+        # @return [Int] レコード件数
+        def count
+          @count ||= GetCount("tagid")
+        end
+        
         # @param [Int] tagid タグのID
         # @return [String] タグ名
-        def GetTagName(tagid)
+        def GetTagNameFromTagID(tagid)
           sql = 'select name from tag_table where tagid = ? limit 1'
           GetSingle(sql, [tagid], "s")
         end
@@ -23,14 +28,14 @@ module Pixiv
         # @param tagids [Array<Int>] タグのID配列
         # @param limit [Int] 上限値
         # @return [Array<String>] 文字列の配列
-        def GetTagNames(tagids, limit=-1)
+        def GetTagNamesFromTagIDArray(tagids, limit=-1)
           sql = 'select name from tag_table'
           GetArray(sql, tagids, "s", "tagid", limit)
         end
         
         # @param tagname [String] タグ名
         # @return [Int] タグID
-        def GetTagID(tagname)
+        def GetTagIDFromTagName(tagname)
           sql = 'select tagid from tag_table where name = ? limit 1'
           GetSingle(sql, [tagname], "i")
         end
@@ -38,7 +43,7 @@ module Pixiv
         # @param tagnames [Array<String>] タグ名の配列
         # @param limit [Int] 上限値
         # @return [Array<Int>] タグIDの配列
-        def GetTagIDs(tagnames, limit=-1)
+        def GetTagIDFromTagNameArray(tagnames, limit=-1)
           sql = 'select tagid from tag_table'
           GetArray(sql, tagnames, "s", "name", limit)
         end
