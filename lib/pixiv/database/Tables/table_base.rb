@@ -55,6 +55,7 @@ module Pixiv
         def GetMultiArray(sql, args, types, field_name, field_hash, limit=-1)
           sql += MakeWhereOr(args, field_name)
           sql += CheckLimit(sql, limit)
+          puts sql
           result = Array.new
           @db.execute(sql, args) do |row|
             buffer = Hash.new
@@ -87,7 +88,7 @@ module Pixiv
         # @param sql [String] SQL文
         # @return [String] ない場合はLimit句をつける、あったら空文字にする
         def CheckLimit(sql, limit)
-          if sql.include?("limit") then
+          if !sql.include?("limit") then
             return limit > 0 ? ' limit ' + limit.to_s : ""
           end
           ""
