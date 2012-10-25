@@ -46,7 +46,7 @@ module Pixiv
             [:illust_id, :userid, :score, :view, :rated, :title, :date, :illust_type, :r18], 1)[0]
         end
         
-        # イラストIDからレコードを1件だけ取得する
+        # 複数のイラストIDから複数のレコードを取得する
         # @param illust_ids [Array<Int>] イラストIDの配列
         # @return [Array<Hash>] レコード情報
         # @return [Array<Hash>] :illust_id イラストID
@@ -65,6 +65,18 @@ module Pixiv
             [:illust_id, :userid, :score, :view, :rated, :title, :date, :illust_type, :r18], illust_ids.length)
         end
         
+        # ユーザIDからレコードを1件だけ取得する
+        # @param userid [Int] イラストIDの配列
+        # @return [Array<Hash>] レコード情報
+        # @return [Array<Hash>] :illust_id イラストID
+        #　@return [Array<Hash>] :userid ユーザID
+        # @return [Array<Hash>] :score 評価点数
+        # @return [Array<Hash>] :view 閲覧数
+        # @return [Array<Hash>] :rated 評価回数
+        # @return [Array<Hash>] :title タイトル
+        # @return [Array<Hash>] :date 投稿日時
+        # @return [Array<Hash>] :illust_type イラストか漫画か, i, m
+        # @return [Array<Hash>] :r18 R18のイラストか, t, f
         def GetRecordFromUserID(userid)
           sql = 'select illust_id, userid, score, view, rated, title, date, illust_type, r18 from illust_info_table'
           GetMultiArray(sql, [userid], 
@@ -72,11 +84,23 @@ module Pixiv
             [:illust_id, :userid, :score, :view, :rated, :title, :date, :illust_type, :r18], 1)[0]
         end
         
+        # 複数のユーザIDから複数のレコードを取得する
+        # @param userids [Array<Int>] イラストIDの配列
+        # @return [Array<Hash>] レコード情報
+        # @return [Array<Hash>] :illust_id イラストID
+        #　@return [Array<Hash>] :userid ユーザID
+        # @return [Array<Hash>] :score 評価点数
+        # @return [Array<Hash>] :view 閲覧数
+        # @return [Array<Hash>] :rated 評価回数
+        # @return [Array<Hash>] :title タイトル
+        # @return [Array<Hash>] :date 投稿日時
+        # @return [Array<Hash>] :illust_type イラストか漫画か, i, m
+        # @return [Array<Hash>] :r18 R18のイラストか, t, f
         def GetRecordFromIllustIDArray(userids)
           sql = 'select illust_id, userid, score, view, rated, title, date, illust_type, r18 from illust_info_table'
           GetMultiArray(sql, userids, 
             ["i", "i", "i", "i", "i", "s", "s", "s", "s"], "userid", 
-            [:illust_id, :userid, :score, :view, :rated, :title, :date, :illust_type, :r18], illust_ids.length)
+            [:illust_id, :userid, :score, :view, :rated, :title, :date, :illust_type, :r18], userids.length)
         end
       end
     end
