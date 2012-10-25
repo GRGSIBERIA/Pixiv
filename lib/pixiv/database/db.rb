@@ -2,6 +2,7 @@ require 'sqlite3'
 require './pixiv/database/tables/tag_table.rb'
 require './pixiv/database/tables/tags_array_table.rb'
 require './pixiv/database/tables/user_info_table.rb'
+require './pixiv/database/tables/illust_info_table.rb'
 
 module Pixiv
 	module Database
