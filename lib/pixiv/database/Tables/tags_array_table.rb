@@ -18,8 +18,8 @@ module Pixiv
         
         # イラストからタグIDを取得する
         # @param illust_id [Int] イラストID
-        # @return [Int] タグID
-        def GetTagsFromIllust(illust_id)
+        # @return [Array<Int>] タグIDの配列
+        def GetTagsFromIllustID(illust_id)
           sql = 'select tagid from tags_array_table where illust_id = ?'
           GetMulti(sql, [illust_id], "i")
         end
@@ -27,7 +27,7 @@ module Pixiv
         # イラストの配列からタグIDを取得する
         # @param illusts [Array<Int>] イラストIDの配列
         # @return [Int] いっしょくたにした状態のタグID配列
-        def GetTagsFromIllustArray(illusts)
+        def GetTagsFromIllustIDArray(illusts)
           sql = 'select tagid from tags_array_table'
           GetArray(sql, illusts, "i", "illust_id")
         end
