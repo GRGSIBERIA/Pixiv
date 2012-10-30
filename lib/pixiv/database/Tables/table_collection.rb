@@ -20,6 +20,8 @@ module Pixiv
           @user_info_table = UserInfoTable.new(db)
           @illust_info_table = IllustInfoTable.new(db)
         end
+        
+        attr_reader :table_base, :tag_table, :tags_array_table, :user_info_table, :illust_info_table
       end
     end
   end

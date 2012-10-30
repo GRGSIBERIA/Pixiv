@@ -6,6 +6,7 @@ module Pixiv
   module Database
     module Tables
       class TableBase
+        # @param db [SQLite3::Database] db
         def initialize(db)
           @db = db
         end
@@ -55,7 +56,6 @@ module Pixiv
         def GetMultiArray(sql, args, types, field_name, field_hash, limit=-1)
           sql += MakeWhereOr(args, field_name)
           sql += CheckLimit(sql, limit)
-          puts sql
           result = Array.new
           @db.execute(sql, args) do |row|
             buffer = Hash.new
@@ -116,10 +116,10 @@ module Pixiv
         def StringedOffsetAndLimit(offset, limit)
           result = ""
           if limit > 0 then 
-            result += ' limit ' + limit
+            result += ' limit ' + limit.to_s
           end
           if offset > 0 then
-            result += ' offset ' + offset
+            result += ' offset ' + offset.to_s
           end
           result
         end

@@ -26,10 +26,12 @@ module Pixiv
         
         # イラストの配列からタグIDを取得する
         # @param illusts [Array<Int>] イラストIDの配列
-        # @return [Int] いっしょくたにした状態のタグID配列
+        # @return [Array<Hash>] イラストIDとタグIDの配列
+        # @return [Array<Hash>] :illust_id イラストID
+        # @return [Array<Hash>] :tagid タグID
         def GetTagsFromIllustIDArray(illusts)
-          sql = 'select tagid from tags_array_table'
-          GetArray(sql, illusts, "i", "illust_id")
+          sql = 'select tagid, illust_id from tags_array_table'
+          GetMultiArray(sql, illusts, ["i", "i"], "illust_id", [:tagid, :illust_id])
         end
         
         # タグIDからイラストの配列を取得する
