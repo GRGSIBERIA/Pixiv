@@ -33,22 +33,10 @@ module Pixiv
             tags_by_searched = CollectPageToArrayHash(searched_tags_by_illusts)
             
             # ページ単位で残ったタグを調べる
-            tag_counter = Hash.new  # 見つかったタグを調べていく
-            tags_by_searched.each do |illust, tags|
-              tags_by_target.each do |counting_tag|
-                # 対象のタグが検索イラストのタグの中に見つかればカウントする
-                if tags.include?(counting_tag) and counting_tag != target_tag then
-                  tag_counter[counting_tag] ||= 0
-                  tag_counter[counting_tag] += 1
-                end
-              end
-            end
+            tag_counter = CountingTags(tags_by_searched, tags_by_target, target_tag) 
             
-            # カウントを確率に戻す
-            tag_counter.each do |tag, count|
-              tag_counter[tag] = count.to_f * limit_norm.to_f # イラストごとのタグの確率を求める
-            end
-            probs[target_tag] = tag_counter # タグごとの似たタグの確率
+            # カウントから確率を割り出す
+            probs[target_tag] = InferFromTagCount(tag_counter, limit_norm)   # タグごとの似たタグの確率
           end
           
           # probs => Hash<Int => Hash<Int => Float>>
@@ -57,7 +45,36 @@ module Pixiv
           probs
         end
         
-        def CountingTags(tags_by_searched)
+        # 確率をカウントから算出する
+        # @param tag_counter [Hash<Int => Int>] カウントを取得したいタグ
+        # @param limit_norm [Float] ページ内取得上限の逆数
+        # @return [Hash<Int => Hash>] 確率とカウントを返す
+        # @return [Hash<Int => Hash>] :count 出現数
+        # @return [Hash<Int => Hash>] :probability 確率
+        def InferFromTagCount(tag_counter, limit_norm)
+          probability = Hash.new
+          tag_counter.each do |tag, count|
+            # なんか数値が2倍になるので半分にしてる
+            probability[tag] = {:count => (count * 0.5).to_i, :probability => TanHFilter((count.to_f * limit_norm.to_f) * 0.5)}
+          end
+          probability
+        end
+        
+        # フィルタ、確率から信頼性を求める
+        # @param t [Float] 確率
+        # @return [Float] 信頼性
+        def TanHFilter(t)
+          t -= 0.5
+          n = 1.0 # 任意定数, tanhの曲線が中心に寄る
+          (Math.tanh(t*n*Math::PI)+1)*0.5
+        end
+        
+        # ページ単位で収集したタグの個数を調べる
+        # @param tags_by_searched [Array<Hash<Int => Array<Int>>] ページ単位でまとめたタグ
+        # @param tags_by_target [Array<Int>] 調べたいイラストのタグ配列
+        # @param target_tag [Int] 現在、確率を求めようとしているタグ
+        # @return tag_counter [Hash<Int => Int>] ページ単位でタグごとに記録したもの
+        def CountingTags(tags_by_searched, tags_by_target, target_tag)
           tag_counter = Hash.new  # 見つかったタグを調べていく
           tags_by_searched.each do |illust, tags|
             tags_by_target.each do |counting_tag|
@@ -71,11 +88,11 @@ module Pixiv
           tag_counter
         end
         
-        # イラストから収集したタグをなんとかハッシュにまとめる
+        # ページ単位で収集したタグをなんとかハッシュにまとめる
         # @param searched_tags_by_illusts [Array<Hash>] イラストから収集したタグ
         # @param searched_tags_by_illusts [Array<Hash>] :illust_id イラストID
         # @param searched_tags_by_illusts [Array<Hash>] :tagid タグID
-        # @return [Hash<Int => Int>] イラストID => タグID
+        # @return [Hash<Int => Array<Int>>] イラストID => タグIDの配列
         def CollectPageToArrayHash(searched_tags_by_illusts)
           tags_by_searched = Hash.new
           searched_tags_by_illusts.each do |record|

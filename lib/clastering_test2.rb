@@ -10,9 +10,10 @@ db = Pixiv::Database::DB.new
 collection = Pixiv::Database::Tables::TableCollection.new(db.db)
 
 guess = Pixiv::Database::Clastering::GuessTagType.new(collection)
-result = guess.GuessType(9223362)
-
-tags = result.keys
-
+result = guess.GuessType(7067745)
+ 
+tags = collection.table_base.GetMultiArray(
+  "select tagid, name from tag_table", result.keys, ["i", "s"], "tagid", [:tagid, :name]
+)
 puts result
-puts collection.tag_table.GetTagNamesFromTagIDArray(tags)
+puts tags
