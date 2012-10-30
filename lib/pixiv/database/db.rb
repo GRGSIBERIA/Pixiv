@@ -18,6 +18,8 @@ module Pixiv
 				CheckCrawledIDTable()
 				CheckTagsArrayBufferTable()
 				CheckTagsArrayTable()
+				CheckTagsProbabilityTable()
+				CheckAttributesProbabilityTable()
 			end
 			
 			def ExecuteAllTable(sql)
@@ -31,6 +33,8 @@ module Pixiv
         @db.execute(sql + "bookmark_user_tags_array_table;")
         @db.execute(sql + "illust_response_table;")
         @db.execute(sql + "crawled_id_table;")
+        @db.execute(sql + "tags_probability_table;")
+        @db.execute(sql + "attributes_probability_table;")
 			end
 			
 			# データベースの中身をクリアにする
@@ -149,6 +153,18 @@ EOS
       def CheckTagsArrayBufferTable()
         if !ExistTable("tags_array_buffer_table") then
           @db.execute("create table tags_array_buffer_table (illust_id integer, tagname text);")
+        end
+      end
+      
+      def CheckTagsProbabilityTable()
+        if !ExistTable("tags_probability_table") then
+          @db.execute("create table tags_probability_table (tagid integer primary key, works real, character real, attribute real)")
+        end
+      end
+      
+      def CheckAttributesProbabilityTable()
+        if !ExistTable("attributes_probability_table") then
+          @db.execute("create table attributes_probability_table (tagid integer primary key, works real, character real, other real)")
         end
       end
 		end
