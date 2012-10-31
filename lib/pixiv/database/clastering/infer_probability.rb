@@ -13,13 +13,29 @@ module Pixiv
         end
         
         # @param probs [Pixiv::Database::Clastering::Probability] 計算結果
-        def GuessTypes(probs)
+        def InferTypes(probs)
           # タグの種類の推測を行う
-          works = Hash.new
+          works = InferWorks(probs)
           characters = Array.new
           attributes = Hash.new
+        end
+        
+        def InferCharacters(probs, works)
+          # 一方向しか参照していないタグを探す、候補は全て記載する
+          # キャラタグは作品タグ単体を指し、高いスコアのもの
+          probs.probability.each do |target, condidate_hash|
+            
+          end
+        end
+        
+        # @param probs [Pixiv::Database::Clastering::Probability] 計算結果
+        # @return [Hash] 作品と思しきタグ
+        # @return [Hash] :tagid 作品タイトルのタグID
+        # @return [Hash] :count ページごとでカウントした時の出現数
+        def InferWorks(probs)
+          works = Hash.new
           
-          # 出現数を調べる
+          # 出現数を調べる, ページにおいて出現数の高いタグは作品の可能性が高い
           targeting_count = Hash.new
           probs.probability.each do |target, candidate_hash|
             candidate_hash.each do |candidate, attr|
@@ -28,17 +44,14 @@ module Pixiv
             end
           end
           
-          # worksを記録する
+          # worksを降順に直して一番大きいのを取り出す
           targeting_count.sort_by{|key, value| -value}.each do |key, value|
             works[:tagid] = key
             works[:count] = value
             break
           end
-          
-          
-          
           works
-        end        
+        end
         
         # @param illust_id [Int] 推測させたいイラストID
         # @return [Pixiv::Database::Clastering::Probability] 計算結果
