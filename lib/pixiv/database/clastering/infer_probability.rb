@@ -1,18 +1,48 @@
 =begin
 イラストのタグから作品、キャラクター、属性タグを推測するためのクラス  
 =end
+require './pixiv/database/clastering/probability.rb'
 
 module Pixiv
   module Database
     module Clastering
-      class GuessTagType
+      class InferProbability
         # @param table_collection [Pixiv::Database::Tables::TableCollection] テーブルの塊
         def initialize(table_collection)
           @tc = table_collection
         end
         
+        # @param probs [Pixiv::Database::Clastering::Probability] 計算結果
+        def GuessTypes(probs)
+          # タグの種類の推測を行う
+          works = Hash.new
+          characters = Array.new
+          attributes = Hash.new
+          
+          # 出現数を調べる
+          targeting_count = Hash.new
+          probs.probability.each do |target, candidate_hash|
+            candidate_hash.each do |candidate, attr|
+              targeting_count[candidate] ||= 0
+              targeting_count[candidate] += attr[:probability]
+            end
+          end
+          
+          # worksを記録する
+          targeting_count.sort_by{|key, value| -value}.each do |key, value|
+            works[:tagid] = key
+            works[:count] = value
+            break
+          end
+          
+          
+          
+          works
+        end        
+        
         # @param illust_id [Int] 推測させたいイラストID
-        def GuessType(illust_id)
+        # @return [Pixiv::Database::Clastering::Probability] 計算結果
+        def InferFromIllust(illust_id)
           page_limit = 5  # 1ページに存在するイラストの数
           limit_norm = 1.0 / page_limit.to_f
           probs = Hash.new
@@ -39,10 +69,7 @@ module Pixiv
             probs[target_tag] = InferFromTagCount(tag_counter, limit_norm)   # タグごとの似たタグの確率
           end
           
-          # probs => Hash<Int => Hash<Int => Float>>
-          # probs => Hash<tagid => Hash<tagid => probability>>
-          # {A => {B => 0.8, C => 0.6}, B => {A => 1.0}}
-          probs
+          Probability.new(probs, page_limit)
         end
         
         # 確率をカウントから算出する

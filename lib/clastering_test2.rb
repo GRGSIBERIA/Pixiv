@@ -4,16 +4,27 @@ Database::Clasteringのテスト用ファイル
 
 require './pixiv/database/db.rb'
 require './pixiv/database/tables/table_collection.rb'
-require './pixiv/database/clastering/guess_tag_type.rb'
+require './pixiv/database/clastering/infer_probability.rb'
 
 db = Pixiv::Database::DB.new
 collection = Pixiv::Database::Tables::TableCollection.new(db.db)
 
-guess = Pixiv::Database::Clastering::GuessTagType.new(collection)
-result = guess.GuessType(7067745)
+guess = Pixiv::Database::Clastering::InferProbability.new(collection)
+probs = guess.InferFromIllust(3007425)
+result = probs.probability
  
 tags = collection.table_base.GetMultiArray(
   "select tagid, name from tag_table", result.keys, ["i", "s"], "tagid", [:tagid, :name]
 )
-puts result
-puts tags
+result.each do |k,v|
+  puts k
+  puts v
+end
+
+tags.each do |v|
+  puts "#{v[:tagid]}, #{v[:name]}"
+end
+
+puts "-----------"
+
+puts guess.Guess(probs)
