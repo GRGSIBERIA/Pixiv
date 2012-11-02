@@ -56,7 +56,7 @@ module Pixiv
         # @param illust_id [Int] 推測させたいイラストID
         # @return [Pixiv::Database::Clastering::Probability] 計算結果
         def InferFromIllust(illust_id)
-          page_limit = 5  # 1ページに存在するイラストの数
+          page_limit = 10  # 1ページに存在するイラストの数
           limit_norm = 1.0 / page_limit.to_f
           probs = Hash.new
           

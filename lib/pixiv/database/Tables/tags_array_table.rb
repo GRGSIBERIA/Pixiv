@@ -56,6 +56,24 @@ module Pixiv
           sql = 'select illust_id, tagid from tags_array_table'
           GetMultiArray(sql, tagids, ["i", "i"], "illust_id", [:illust_id, :tagid])
         end
+        
+        # タグの名前から付けられたイラストの個数を取得
+        # @param tagname [String] 付けられた個数を出したいタグ名
+        # @return [Int] イラストの個数
+        def GetCountFromTagName(tagname)
+          sql = 'select tagid from tag_table where name = ?'
+          tagid = GetSingle(sql, [tagname], "i")
+          sql = 'select count(illust_id) from tags_array_table where tagid = ?'
+          GetSingle(sql, [tagid], "i")
+        end
+        
+        # タグIDから付けられたイラストの個数を取得
+        # @param tagid [Int] 付けられた個数を出したいタグID
+        # @return [Int] イラストの個数
+        def GetCountFromTagID(tagid)
+          sql = 'select count(illust_id) from tags_array_table where tagid = ?'
+          GetSingle(sql, [tagid], "i")
+        end
       end
     end
   end
