@@ -11,7 +11,7 @@ db = Pixiv::Database::DB.new
 collection = Pixiv::Database::Tables::TableCollection.new(db.db)
 guess = Pixiv::Database::Clastering::InferProbability.new(collection)
 
-target_name = '東方'
+target_name = '魔法少女まどか☆マギカ'
 count = collection.tags_array_table.GetCountFromTagName(target_name)
 id = collection.tag_table.GetTagIDFromTagName(target_name)
 array = collection.tags_array_table.GetIllustsFromTagID(id)
