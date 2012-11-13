@@ -30,7 +30,7 @@ module Pixiv
 				# @param num [Int] 画像の番号
 				# @return [Array<Byte>] 漫画の画像を個別に取得してくる
 				def large(num)
-					@large[num] ||= CreatePicture("_p#{num}_")
+					@large[num] ||= CreatePicture("_p#{num}")
 				end
 				
 				# @return [Array<Array<Byte>>] 漫画の大きな画像のバイナリを取得してくる
@@ -42,7 +42,7 @@ module Pixiv
 				# @param num [Int] 画像の番号
 				# @return [Array<Byte>] 漫画の大きな画像を個別に取得してくる
 				def big(num)
-					@big[num] ||= CreatePicture("_big_p#{num}_")
+					@big[num] ||= CreatePicture("_big_p#{num}")
 				end
 			end
 		end

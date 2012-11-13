@@ -39,7 +39,7 @@ module Pixiv
 					tag = param[:tag].class == String ? param[:tag] : param[:tag].name
 					param[:uri] += '&tag=' + tag
 				end
-				param[:picture_count] = 'div[@class="two_column_body"]/h3/span'
+				param[:picture_count] = 'div[@class="count-badge"]'
 				param[:image_tag_path] = 'div[@class="display_works linkStyleWorks"]/ul/li/a/img'
 				param[:a_tag_is_two_parent] = false
 				@listing.GetThumbnails(param)

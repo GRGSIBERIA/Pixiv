@@ -103,7 +103,7 @@ module Pixiv
 				# @param repeat_times [Int] 漫画に対する試行回数
 				# @return [Presenter::Instance::Picture] 漫画の大きな画像配列
 				def bigs(repeat_times=1)
-					if @bigs.length > 0 then
+					if @bigs.length == 0 then
 						@bigs ||= repeat_times.times{|i|
 							@bigs << CreatePicture("_big_p#{i.to_s}_")
 						}
@@ -114,7 +114,7 @@ module Pixiv
 				# @param repeat_times [Int] 漫画に対する試行回数
 				# @return [Presenter::Instance::Picture] 漫画の画像配列
 				def larges(repeat_times=1)
-					if @bigs.length > 0 then
+					if @bigs.length == 0 then
 						@larges ||= repeat_times.times{|i|
 							@larges << CreatePicture("_p#{i.to_s}_")
 						}
