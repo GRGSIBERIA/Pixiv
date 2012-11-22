@@ -34,7 +34,3 @@ require './pixiv/api/search.rb'
 require './pixiv/parser/image.rb'
 require './pixiv/parser/author.rb'
 require './pixiv/parser/listing.rb'
-
-require './pixiv/util/tag/function.rb'
-require './pixiv/util/tag/cluster.rb'
-require './pixiv/util/tag/constellate.rb'
